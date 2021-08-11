@@ -1940,8 +1940,6 @@ def returnPressedOuter(event):
     signIn()
     print(event)
 
-darkMode()
-
 root.bind("<Return>", returnPressedOuter)
 
 
