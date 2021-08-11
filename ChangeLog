@@ -1,0 +1,56 @@
+Changes made in V1.1:
+    -> Auto focus on sign in pop up window
+    -> Sign out button and functionality
+    -> Exit Button and functionality
+    -> Admin mode using special key combination
+    -> Different views for user mode and admin mode
+    -> Pressing Enter Submits the form on every page
+
+Changes made in V1.2:
+    -> Auto focus on 1st entry widget
+    -> Exit Confirmation dialog box
+
+Changes made in V1.3:
+    -> Added logo on welcome screen
+    -> Added OTP verification (Not Being sent to mobile)
+
+Changes made in V1.4:
+    -> Send OTP via sms
+    -> Store all the customer's (Checked in and checked out) in new table
+
+Changes made in V1.5:
+    -> Escape using the escape key
+
+Changes made in V1.6
+    -> Calculate the price to be payed
+    -> Added logo in the main screen
+    -> Changed the color of icon
+
+Changes made in V1.7
+    -> Calculate Price
+    -> Create invoice pdf
+    -> create directory on Desktop to save the invoices
+
+Changes made in V1.8
+    -> Bug Fixes
+    -> Added Status Bar (Not Updating)
+
+Changes made in V1.9
+    -> Added Scroll Bar to show all customers
+    -> Status Bar Updates
+
+Changes made in V1.10
+    -> Bug fixes
+
+Changes made in V1.11
+    -> Dark mode button, no functionality
+    -> Dark mode on welcome screen, sign in screen, main page
+
+Changes made in V1.12
+    -> Dark mode on show all rooms, update room, add room
+
+Changes made in V1.13
+    -> Dark mode on show all customers
+
+Changes made in V1.14
+    -> VCS set up
