@@ -142,7 +142,7 @@ def checkIn():
     customerNameLab.grid(row=0, column=0, pady=30, padx=5, sticky=E)
 
     # Customer Name Entry Box
-    customerName = Entry(frame1, width=30)
+    customerName = Entry(frame1, width=30, justify=CENTER)
     customerName.grid(row=0, column=1, padx=(15, 30), pady=25, sticky=W)
     customerName.focus_set()
 
@@ -151,7 +151,7 @@ def checkIn():
     customerAadhaarLab.grid(row=0, column=2, pady=25, padx=5, sticky=E)
 
     # Customer Aadhaar Entry Box
-    customerAadhaar = Entry(frame1, width=13)
+    customerAadhaar = Entry(frame1, width=30, justify=CENTER)
     customerAadhaar.grid(row=0, column=3, padx=(15, 0), pady=25, sticky=W)
 
     # Customer Mobile Number Label
@@ -159,7 +159,7 @@ def checkIn():
     customerMobileLab.grid(row=1, column=0, pady=25, padx=5, sticky=E)
 
     # Customer Mobile Entry Box
-    customerMobile = Entry(frame1, width=10)
+    customerMobile = Entry(frame1, width=30, justify=CENTER)
     customerMobile.grid(row=1, column=1, padx=(15, 30), pady=25, sticky=W)
 
     # Customer Room Id Label
@@ -292,21 +292,21 @@ def checkIn():
                     otpScreen.title("One Time Password")
 
                     # Sign in screen icon
-                    otpScreen.iconbitmap("./Assets/LogoColor.ico")
+                    otpScreen.iconbitmap("./Assets/LogoBlack.ico")
 
                     # Frame for otp
                     otpFrame = Frame(otpScreen, pady=5)
                     otpFrame.pack()
 
                     # Enter OTP Label
-                    unameLabel = Label(otpFrame, text="Enter OTP: ")
-                    unameLabel.grid(row=0, column=0)
+                    otpLabel = Label(otpFrame, text="Enter OTP: ")
+                    otpLabel.grid(row=0, column=0)
 
                     # OTP Entry Field
-                    optEntry = Entry(otpFrame)
-                    optEntry.grid(row=0, column=1)
-                    optEntry.focus_set()
-                    optEntry.configure(show="*")
+                    otpEntry = Entry(otpFrame, justify=CENTER)
+                    otpEntry.grid(row=0, column=1)
+                    otpEntry.focus_set()
+                    otpEntry.configure(show="*")
 
                     def submit():
                         global otpEntered
@@ -334,6 +334,19 @@ def checkIn():
 
                     # To automatically focus on the pop up screen
                     otpScreen.focus_force()
+
+                    # Dark Mode
+                    if darkModeFlag:
+                        otpScreen.configure(bg="#333333")
+                        otpScreen.iconbitmap("./Assets/LogoColor.ico")
+
+                        otpFrame.configure(bg="#333333")
+
+                        otpLabel.configure(bg="#333333", fg="#DADADA")
+                        otpEntry.configure(bg="#5D5D5D", fg="#DADADA", relief=FLAT, borderwidth=1)
+
+                        but.configure(bd=0, bg="#555555", fg="#DADADA", padx=8, pady=5)
+
 
                 # showOTPScreen()  # todo
 
@@ -384,7 +397,7 @@ def updateCustomer():
     customerIdLab.grid(row=0, column=0, pady=30, padx=5, sticky=E)
 
     # CustomerId entry Box
-    customerId = Entry(frame1)
+    customerId = Entry(frame1, justify=CENTER)
     customerId.grid(row=0, column=1, padx=(15, 30), pady=25, sticky=W)
     customerId.focus_set()
 
@@ -422,7 +435,7 @@ def updateCustomer():
             customerNameLab.grid(row=1, column=0, pady=30, padx=5, sticky=E)
 
             # Customer Name Entry Box
-            customerName = Entry(frame1, width=30)
+            customerName = Entry(frame1, width=30, justify=CENTER)
             customerName.insert(END, str(name))  # Inserting the already existing values
             customerName.grid(row=1, column=1, padx=(15, 30), pady=25, sticky=W)
             customerName.focus_set()
@@ -432,7 +445,7 @@ def updateCustomer():
             customerAadhaarLab.grid(row=1, column=2, pady=25, padx=(0, 5), sticky=E)
 
             # Customer Aadhaar Entry Box
-            customerAadhaar = Entry(frame1, width=13)
+            customerAadhaar = Entry(frame1, width=30, justify=CENTER)
             customerAadhaar.insert(END, aadhaar)  # Inserting the already existing values
             customerAadhaar.grid(row=1, column=3, pady=25, sticky=W)
 
@@ -441,7 +454,7 @@ def updateCustomer():
             customerMobileLab.grid(row=2, column=0, pady=25, padx=5, sticky=E)
 
             # Customer Mobile Entry Box
-            customerMobile = Entry(frame1, width=10)
+            customerMobile = Entry(frame1, width=30, justify=CENTER)
             customerMobile.insert(END, str(mobile))  # Inserting the already existing values
             customerMobile.grid(row=2, column=1, padx=(15, 30), pady=25, sticky=W)
 
@@ -542,7 +555,7 @@ def checkOut():
     customerIdLab.grid(row=0, column=0, pady=30)
 
     # Customer Id Entry Box
-    customerId = Entry(frame1)
+    customerId = Entry(frame1, justify=CENTER)
     customerId.grid(row=0, column=1, padx=(0, 30))
     customerId.focus_set()
 
@@ -579,7 +592,7 @@ def checkOut():
             customerNameLab.grid(row=1, column=0, pady=30)
 
             # Customer Name Entry Box
-            customerName = Entry(frame1, width=30)
+            customerName = Entry(frame1, width=30, justify=CENTER)
             customerName.insert(END, str(name))  # Inserting the already existing values
             customerName.configure(state=DISABLED)  # So that details cannot be changed
             customerName.grid(row=1, column=1, padx=(0, 30), pady=25)
@@ -589,7 +602,7 @@ def checkOut():
             customerAadhaarLab.grid(row=1, column=2, pady=25)
 
             # Customer Aadhaar Entry Box
-            customerAadhaar = Entry(frame1, width=14)
+            customerAadhaar = Entry(frame1, width=30, justify=CENTER)
             customerAadhaar.insert(END, aadhaar)  # Inserting the already existing values
             customerAadhaar.configure(state=DISABLED)  # So that details cannot be changed
             customerAadhaar.grid(row=1, column=3, padx=(30, 0), pady=25)
@@ -599,7 +612,7 @@ def checkOut():
             customerMobileLab.grid(row=2, column=0, pady=25)
 
             # Customer Mobile Entry Box
-            customerMobile = Entry(frame1, width=10)
+            customerMobile = Entry(frame1, width=30, justify=CENTER)
             customerMobile.insert(END, str(mobile))  # Inserting the already existing values
             customerMobile.configure(state=DISABLED)  # So that details cannot be changed
             customerMobile.grid(row=2, column=1, padx=(0, 30), pady=25)
@@ -698,7 +711,7 @@ def findCustomer():
     customerIdLab.grid(row=0, column=0, pady=30)
 
     # Customer Id Entry Box
-    customerId = Entry(frame1)
+    customerId = Entry(frame1, justify=CENTER)
     customerId.grid(row=0, column=1, padx=(0, 30))
     customerId.focus_set()
 
@@ -737,7 +750,7 @@ def findCustomer():
             customerNameLab.grid(row=1, column=0, pady=30)
 
             # Customer Name Entry Box
-            customerName = Entry(frame1, width=30)
+            customerName = Entry(frame1, width=30, justify=CENTER)
             customerName.insert(END, str(name))  # Inserting the already existing values
             customerName.configure(state=DISABLED)  # So that details cannot be changed
             customerName.grid(row=1, column=1, padx=(0, 30), pady=25)
@@ -747,7 +760,7 @@ def findCustomer():
             customerAadhaarLab.grid(row=1, column=2, pady=25)
 
             # Customer Aadhaar Entry Box
-            customerAadhaar = Entry(frame1, width=14)
+            customerAadhaar = Entry(frame1, width=30, justify=CENTER)
             customerAadhaar.insert(END, aadhaar)  # Inserting the already existing values
             customerAadhaar.configure(state=DISABLED)  # So that details cannot be changed
             customerAadhaar.grid(row=1, column=3, padx=(30, 0), pady=25)
@@ -757,7 +770,7 @@ def findCustomer():
             customerMobileLab.grid(row=2, column=0, pady=25)
 
             # Customer Mobile Entry Box
-            customerMobile = Entry(frame1, width=10)
+            customerMobile = Entry(frame1, width=30, justify=CENTER)
             customerMobile.insert(END, str(mobile))  # Inserting the already existing values
             customerMobile.configure(state=DISABLED)  # So that details cannot be changed
             customerMobile.grid(row=2, column=1, padx=(0, 30), pady=25)
@@ -1312,7 +1325,7 @@ def addRoom():
     roomRateLab.grid(row=1, column=2, padx=30, pady=35)
 
     # Room Rate Entry Box
-    roomRate = Entry(frame1, width=6)
+    roomRate = Entry(frame1, width=6, justify=CENTER)
     roomRate.grid(row=1, column=3, padx=(15, 0), pady=25)
 
     # To send query to add room to database
@@ -1494,7 +1507,7 @@ def updateRoom():
                 roomRateLab.grid(row=1, column=2, pady=25)
 
                 # Room Rate Entry Box
-                roomRate = Entry(frame1, width=6)
+                roomRate = Entry(frame1, width=6, justify=CENTER)
                 roomRate.insert(END, str(rate))  # Inserting the already existing value
                 roomRate.grid(row=1, column=3, padx=(30, 0), pady=25)
 
@@ -1884,7 +1897,7 @@ def signIn():
     unameLabel.grid(row=0, column=0)
 
     # Username Entry Field
-    uname = Entry(userNameFrame)
+    uname = Entry(userNameFrame, justify=CENTER)
     uname.grid(row=0, column=1)
     uname.focus_set()
 
@@ -1897,7 +1910,7 @@ def signIn():
     pWordLabel.grid(row=0, column=0)
 
     # Password Entry Field
-    pWord = Entry(passwordFrame, show="*")
+    pWord = Entry(passwordFrame, show="*", justify=CENTER)
     pWord.grid(row=0, column=1)
 
     # To Toggle password View
