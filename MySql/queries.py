@@ -78,9 +78,13 @@ def addCustomer(name, aadhaar, mobile, roomId, inDate):
 
 
 # To check if customer exists using customerId
-def searchCustomer(customerId):
+def searchCustomer(customerId, caller="notFind"):
     # Fetching all the customerIds to compare
-    comm = "select CustomerId from " + global_.tbCustomers
+    if global_.accessLevel == "Admin" and caller == "find":
+        comm = "select CustomerId from " + global_.tbAllCustomers
+    else:
+        comm = "select CustomerId from " + global_.tbCustomers
+
     global_.cur.execute(comm)
     customerRes = global_.cur.fetchall()
 
@@ -97,9 +101,14 @@ def searchCustomer(customerId):
 
 
 # To display details about a specific customer
-def selectCustomer(customerId):
+def selectCustomer(customerId, caller="notFind"):
     # Select all the details of the customer using customerId
-    comm = "select * from {} where customerId='{}'".format(global_.tbCustomers, customerId)
+    if global_.accessLevel == "Admin" and caller == "find":
+        comm = "select * from {} where customerId='{}'".format(global_.tbAllCustomers, customerId)
+        print("Using Admin")
+    else:
+        comm = "select * from {} where customerId='{}'".format(global_.tbCustomers, customerId)
+
     global_.cur.execute(comm)
     customer = global_.cur.fetchone()  # customer -> tuple -> (customerId, name, aadhaar, mobile)
 

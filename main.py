@@ -562,7 +562,6 @@ def checkOut():
 
     # To search the customer in database
     def searchCustomer():
-
         # Running the MySQL query to see if customerId exists
         customerResult = queries.searchCustomer(str(customerId.get()))
 
@@ -722,7 +721,7 @@ def findCustomer():
         global_.updateStatus("Finding...")
 
         # Running the MySQL query to see if customerId exists
-        customerResult = queries.searchCustomer(str(customerId.get()))
+        customerResult = queries.searchCustomer(str(customerId.get()), "find")
 
         # Customer Not found
         if customerResult == 0:
@@ -741,7 +740,7 @@ def findCustomer():
             global_.updateStatus("Found Him/Her ;)")
 
             # Getting the customer's details to display
-            name, aadhaar, mobile = queries.selectCustomer(customerId.get())
+            name, aadhaar, mobile = queries.selectCustomer(customerId.get(), "find")
 
             # Adding spaces in aadhaar number for better readability
             aadhaar = aadhaar[0:4] + " " + aadhaar[4:8] + " " + aadhaar[8:12]
@@ -1549,7 +1548,8 @@ def updateRoom():
                     roomRateLab.configure(bg="#2A2A2A", fg="#DADADA")
                     roomRate.configure(bg="#505050", fg="#DADADA", relief=FLAT, borderwidth=3)
 
-                    submitCustomerDetails.configure(bg="#505050", fg="#DADADA", bd=0, highlightthickness=0, pady=5, padx=8)
+                    submitCustomerDetails.configure(bg="#505050", fg="#DADADA", bd=0,
+                                                    highlightthickness=0, pady=5, padx=8)
 
     # Search Button
     submitButton = Button(frame1, text="Search", command=searchRoom)
