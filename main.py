@@ -138,33 +138,33 @@ def checkIn():
     # Displaying the options
 
     # Customer Name Label
-    customerNameLab = Label(frame1, text="Name of Customer: ")
-    customerNameLab.grid(row=0, column=0, pady=30)
+    customerNameLab = Label(frame1, text="Name of Customer:")
+    customerNameLab.grid(row=0, column=0, pady=30, padx=5, sticky=E)
 
     # Customer Name Entry Box
     customerName = Entry(frame1, width=30)
-    customerName.grid(row=0, column=1, padx=(0, 30), pady=25)
+    customerName.grid(row=0, column=1, padx=(15, 30), pady=25, sticky=W)
     customerName.focus_set()
 
     # Customer Aadhaar Label
-    customerAadhaarLab = Label(frame1, text="Customer's Aadhaar Number: ")
-    customerAadhaarLab.grid(row=0, column=2, pady=25)
+    customerAadhaarLab = Label(frame1, text="Customer's Aadhaar Number:")
+    customerAadhaarLab.grid(row=0, column=2, pady=25, padx=5, sticky=E)
 
     # Customer Aadhaar Entry Box
-    customerAadhaar = Entry(frame1, width=14)
-    customerAadhaar.grid(row=0, column=3, padx=(30, 0), pady=25)
+    customerAadhaar = Entry(frame1, width=13)
+    customerAadhaar.grid(row=0, column=3, padx=(15, 0), pady=25, sticky=W)
 
     # Customer Mobile Number Label
-    customerMobileLab = Label(frame1, text="Mobile Number: ")
-    customerMobileLab.grid(row=1, column=0, pady=25)
+    customerMobileLab = Label(frame1, text="Mobile Number:")
+    customerMobileLab.grid(row=1, column=0, pady=25, padx=5, sticky=E)
 
     # Customer Mobile Entry Box
     customerMobile = Entry(frame1, width=10)
-    customerMobile.grid(row=1, column=1, padx=(0, 30), pady=25)
+    customerMobile.grid(row=1, column=1, padx=(15, 30), pady=25, sticky=W)
 
     # Customer Room Id Label
     customerRoomIdLab = Label(frame1, text="Room Type: ")
-    customerRoomIdLab.grid(row=1, column=2, pady=25)
+    customerRoomIdLab.grid(row=1, column=2, pady=25, padx=5, sticky=E)
 
     # Rooms Option Menu
     room = StringVar()  # Tkinter string data type
@@ -182,7 +182,7 @@ def checkIn():
 
     # To display the drop down menu
     customerRoomId = OptionMenu(frame1, room, *roomNames)
-    customerRoomId.grid(row=1, column=3, padx=15, pady=25)
+    customerRoomId.grid(row=1, column=3, padx=(15, 0), pady=25, sticky=W)
 
     # To send query to add customer to database
     def addCustomer():
@@ -380,12 +380,12 @@ def updateCustomer():
     clearFrame(frame1)
 
     # Select Customer Id Label
-    customerIdLab = Label(frame1, text="Enter Customer Id: ")
-    customerIdLab.grid(row=0, column=0, pady=30)
+    customerIdLab = Label(frame1, text="Enter Customer Id:")
+    customerIdLab.grid(row=0, column=0, pady=30, padx=5, sticky=E)
 
     # CustomerId entry Box
     customerId = Entry(frame1)
-    customerId.grid(row=0, column=1, padx=(0, 30))
+    customerId.grid(row=0, column=1, padx=(15, 30), pady=25, sticky=W)
     customerId.focus_set()
 
     # To Fetch Customer's Details
@@ -419,31 +419,31 @@ def updateCustomer():
 
             # Customer Name Label
             customerNameLab = Label(frame1, text="Name of customer: ")
-            customerNameLab.grid(row=1, column=0, pady=30)
+            customerNameLab.grid(row=1, column=0, pady=30, padx=5, sticky=E)
 
             # Customer Name Entry Box
             customerName = Entry(frame1, width=30)
             customerName.insert(END, str(name))  # Inserting the already existing values
-            customerName.grid(row=1, column=1, padx=(0, 30), pady=25)
+            customerName.grid(row=1, column=1, padx=(15, 30), pady=25, sticky=W)
             customerName.focus_set()
 
             # Customer Aadhaar Label
             customerAadhaarLab = Label(frame1, text="Customer's Aadhaar Number: ")
-            customerAadhaarLab.grid(row=1, column=2, pady=25)
+            customerAadhaarLab.grid(row=1, column=2, pady=25, padx=(0, 5), sticky=E)
 
             # Customer Aadhaar Entry Box
-            customerAadhaar = Entry(frame1, width=14)
+            customerAadhaar = Entry(frame1, width=13)
             customerAadhaar.insert(END, aadhaar)  # Inserting the already existing values
-            customerAadhaar.grid(row=1, column=3, padx=(30, 0), pady=25)
+            customerAadhaar.grid(row=1, column=3, pady=25, sticky=W)
 
             # Customer Mobile Number Label
             customerMobileLab = Label(frame1, text="Mobile Number: ")
-            customerMobileLab.grid(row=2, column=0, pady=25)
+            customerMobileLab.grid(row=2, column=0, pady=25, padx=5, sticky=E)
 
             # Customer Mobile Entry Box
             customerMobile = Entry(frame1, width=10)
             customerMobile.insert(END, str(mobile))  # Inserting the already existing values
-            customerMobile.grid(row=2, column=1, padx=(0, 30), pady=25)
+            customerMobile.grid(row=2, column=1, padx=(15, 30), pady=25, sticky=W)
 
             # To send the query to update details
             def submitUpdateCustomer():
@@ -484,7 +484,7 @@ def updateCustomer():
 
             # Update Customer Details Button
             submitCustomerDetails = Button(frame1, text="Update", width=15, command=submitUpdateCustomer)
-            submitCustomerDetails.grid(row=2, column=2, columnspan=2)
+            submitCustomerDetails.grid(row=2, column=2, columnspan=2, sticky=W)
 
             # Key bind to submit on pressing return
             def returnPressedInner(event):
@@ -509,7 +509,7 @@ def updateCustomer():
 
     # Search Button
     submitButton = Button(frame1, text="Search", command=searchCustomer)
-    submitButton.grid(row=0, column=2, pady=25)
+    submitButton.grid(row=0, column=2, pady=25, sticky=W)
 
     # Key bind to submit on pressing return
     def returnPressed(event):
