@@ -875,7 +875,7 @@ def showCustomers():
                 padx=20,
                 pady=8,
                 font=("Ariel", 10))
-            customerIdHeading.grid(row=0, column=0, sticky=NSEW)
+            customerIdHeading.grid(row=0, column=0, sticky=NSEW, padx=(50, 0))
 
             # Name
             customerNameHeading = Label(
@@ -951,7 +951,7 @@ def showCustomers():
                     padx=20,
                     pady=8,
                     font=("Ariel", 10))
-                customerId.grid(row=j, column=0, sticky=NSEW)
+                customerId.grid(row=j, column=0, sticky=NSEW, padx=(50, 0))
 
                 # Customer Name
                 customerName = Label(
