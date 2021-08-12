@@ -610,6 +610,22 @@ def checkOut():
             for j in frame1.winfo_children():
                 j.bind("<Return>", returnPressedInner)
 
+            if darkModeFlag:
+                # Dark Mode
+                customerNameLab.configure(bg="#2A2A2A", fg="#DADADA")
+                customerName.configure(disabledbackground="#505050", disabledforeground="#888888", relief=FLAT,
+                                       borderwidth=3)
+
+                customerAadhaarLab.configure(bg="#2A2A2A", fg="#DADADA")
+                customerAadhaar.configure(disabledbackground="#505050", disabledforeground="#888888", relief=FLAT,
+                                          borderwidth=3)
+
+                customerMobileLab.configure(bg="#2A2A2A", fg="#DADADA")
+                customerMobile.configure(disabledbackground="#505050", disabledforeground="#888888", relief=FLAT,
+                                         borderwidth=3)
+
+                submitCustomerDetails.configure(bg="#505050", fg="#DADADA", bd=0, highlightthickness=0, pady=5, padx=8)
+
     # Search Button
     submitButton = Button(frame1, text="Search", command=searchCustomer)
     submitButton.grid(row=0, column=2, pady=25)
@@ -621,6 +637,13 @@ def checkOut():
 
     for i in frame1.winfo_children():
         i.bind("<Return>", returnPressed)
+
+    # Dark Mode
+    if darkModeFlag:
+        customerIdLab.configure(bg="#2A2A2A", fg="#DADADA")
+        customerId.configure(bg="#505050", fg="#DADADA", relief=FLAT, borderwidth=3)
+
+        submitButton.configure(bg="#505050", fg="#DADADA", bd=0, highlightthickness=0, pady=5, padx=8)
 
 
 # To fetch customer's details
@@ -702,15 +725,20 @@ def findCustomer():
             customerMobile.configure(state=DISABLED)  # So that details cannot be changed
             customerMobile.grid(row=2, column=1, padx=(0, 30), pady=25)
 
-            # Dark Mode
-            customerNameLab.configure(bg="#2A2A2A", fg="#DADADA")
-            customerName.configure(disabledbackground="#505050", disabledforeground="#888888", relief=FLAT, borderwidth=3)
 
-            customerAadhaarLab.configure(bg="#2A2A2A", fg="#DADADA")
-            customerAadhaar.configure(disabledbackground="#505050", disabledforeground="#888888", relief=FLAT, borderwidth=3)
+            if darkModeFlag:
+                # Dark Mode
+                customerNameLab.configure(bg="#2A2A2A", fg="#DADADA")
+                customerName.configure(disabledbackground="#505050", disabledforeground="#888888", relief=FLAT,
+                                       borderwidth=3)
 
-            customerMobileLab.configure(bg="#2A2A2A", fg="#DADADA")
-            customerMobile.configure(disabledbackground="#505050", disabledforeground="#888888", relief=FLAT, borderwidth=3)
+                customerAadhaarLab.configure(bg="#2A2A2A", fg="#DADADA")
+                customerAadhaar.configure(disabledbackground="#505050", disabledforeground="#888888", relief=FLAT,
+                                          borderwidth=3)
+
+                customerMobileLab.configure(bg="#2A2A2A", fg="#DADADA")
+                customerMobile.configure(disabledbackground="#505050", disabledforeground="#888888", relief=FLAT,
+                                         borderwidth=3)
 
     # Search Button
     submitButton = Button(frame1, text="Search", command=searchCustomer)
@@ -725,10 +753,11 @@ def findCustomer():
         i.bind("<Return>", returnPressed)
 
     # Dark Mode
-    customerIdLab.configure(bg="#2A2A2A", fg="#DADADA")
-    customerId.configure(bg="#505050", fg="#DADADA", relief=FLAT, borderwidth=3)
+    if darkModeFlag:
+        customerIdLab.configure(bg="#2A2A2A", fg="#DADADA")
+        customerId.configure(bg="#505050", fg="#DADADA", relief=FLAT, borderwidth=3)
 
-    submitButton.configure(bg="#505050", fg="#DADADA", bd=0, highlightthickness=0, pady=5, padx=8)
+        submitButton.configure(bg="#505050", fg="#DADADA", bd=0, highlightthickness=0, pady=5, padx=8)
 
 
 # To see all checked in Customers
