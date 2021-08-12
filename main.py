@@ -61,6 +61,7 @@ root.resizable(height=0, width=0)
 
 darkModeFlag = False
 
+
 # To clear a frame before populating it
 def clearFrame(frame):
     for i in frame.winfo_children():
@@ -310,7 +311,7 @@ def checkIn():
 
                     def submit():
                         global otpEntered
-                        otpEntered = optEntry.get()
+                        otpEntered = otpEntry.get()
                         otpScreen.destroy()
                         validate()
 
@@ -346,7 +347,6 @@ def checkIn():
                         otpEntry.configure(bg="#5D5D5D", fg="#DADADA", relief=FLAT, borderwidth=1)
 
                         but.configure(bd=0, bg="#555555", fg="#DADADA", padx=8, pady=5)
-
 
                 # showOTPScreen()  # todo
 
