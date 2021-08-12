@@ -85,6 +85,7 @@ def lenCheck(text, length):
     else:
         return 0  # Wrong length
 
+
 # Success message pop up box using tkinter.messagebox
 def successMsgBox(title, message):
     messagebox.showinfo(title, message)
@@ -354,7 +355,7 @@ def checkIn():
 
     # Submit Button
     submitCustomerDetails = Button(frame1, text="Submit", width=15, command=addCustomer)
-    submitCustomerDetails.grid(row=2, column=1, columnspan=2)
+    submitCustomerDetails.grid(row=2, column=1, columnspan=2, pady=15)
 
     # Key bind to submit on pressing return
     def returnPressed(event):
@@ -422,7 +423,7 @@ def updateCustomer():
         # Customer Found
         elif customerResult == 1:
 
-            global_.updateStatus("Always Correct Your Mistakes ^_^")
+            global_.updateStatus("Correct Your Mistakes")
 
             # Getting the customer's details to display
             name, aadhaar, mobile = queries.selectCustomer(customerId.get())
@@ -431,7 +432,7 @@ def updateCustomer():
             aadhaar = aadhaar[0:4] + " " + aadhaar[4:8] + " " + aadhaar[8:12]
 
             # Customer Name Label
-            customerNameLab = Label(frame1, text="Name of customer: ")
+            customerNameLab = Label(frame1, text="Name of customer:")
             customerNameLab.grid(row=1, column=0, pady=30, padx=5, sticky=E)
 
             # Customer Name Entry Box
@@ -441,13 +442,13 @@ def updateCustomer():
             customerName.focus_set()
 
             # Customer Aadhaar Label
-            customerAadhaarLab = Label(frame1, text="Customer's Aadhaar Number: ")
+            customerAadhaarLab = Label(frame1, text="Customer's Aadhaar Number:")
             customerAadhaarLab.grid(row=1, column=2, pady=25, padx=(0, 5), sticky=E)
 
             # Customer Aadhaar Entry Box
             customerAadhaar = Entry(frame1, width=30, justify=CENTER)
             customerAadhaar.insert(END, aadhaar)  # Inserting the already existing values
-            customerAadhaar.grid(row=1, column=3, pady=25, sticky=W)
+            customerAadhaar.grid(row=1, column=3, padx=(15, 0), pady=25, sticky=W)
 
             # Customer Mobile Number Label
             customerMobileLab = Label(frame1, text="Mobile Number: ")
@@ -522,7 +523,7 @@ def updateCustomer():
 
     # Search Button
     submitButton = Button(frame1, text="Search", command=searchCustomer)
-    submitButton.grid(row=0, column=2, pady=25, sticky=W)
+    submitButton.grid(row=0, column=2, columnspan=2, pady=25, sticky=W)
 
     # Key bind to submit on pressing return
     def returnPressed(event):
@@ -551,12 +552,12 @@ def checkOut():
     clearFrame(frame1)
 
     # Select Customer Id Label
-    customerIdLab = Label(frame1, text="Enter Customer Id: ")
-    customerIdLab.grid(row=0, column=0, pady=30)
+    customerIdLab = Label(frame1, text="Enter Customer Id:")
+    customerIdLab.grid(row=0, column=0, pady=30, padx=5, sticky=E)
 
     # Customer Id Entry Box
     customerId = Entry(frame1, justify=CENTER)
-    customerId.grid(row=0, column=1, padx=(0, 30))
+    customerId.grid(row=0, column=1, padx=(15, 30), pady=25, sticky=W)
     customerId.focus_set()
 
     # To search the customer in database
@@ -589,33 +590,33 @@ def checkOut():
 
             # Customer Name Label
             customerNameLab = Label(frame1, text="Name of customer: ")
-            customerNameLab.grid(row=1, column=0, pady=30)
+            customerNameLab.grid(row=1, column=0, pady=30, padx=5, sticky=E)
 
             # Customer Name Entry Box
             customerName = Entry(frame1, width=30, justify=CENTER)
             customerName.insert(END, str(name))  # Inserting the already existing values
             customerName.configure(state=DISABLED)  # So that details cannot be changed
-            customerName.grid(row=1, column=1, padx=(0, 30), pady=25)
+            customerName.grid(row=1, column=1, padx=(15, 30), pady=25, sticky=W)
 
             # Customer Aadhaar Label
             customerAadhaarLab = Label(frame1, text="Customer's Aadhaar Number: ")
-            customerAadhaarLab.grid(row=1, column=2, pady=25)
+            customerAadhaarLab.grid(row=1, column=2, pady=25, padx=(0, 5), sticky=E)
 
             # Customer Aadhaar Entry Box
             customerAadhaar = Entry(frame1, width=30, justify=CENTER)
             customerAadhaar.insert(END, aadhaar)  # Inserting the already existing values
             customerAadhaar.configure(state=DISABLED)  # So that details cannot be changed
-            customerAadhaar.grid(row=1, column=3, padx=(30, 0), pady=25)
+            customerAadhaar.grid(row=1, column=3, padx=(15, 0), pady=25, sticky=W)
 
             # Customer Mobile Number Label
             customerMobileLab = Label(frame1, text="Mobile Number: ")
-            customerMobileLab.grid(row=2, column=0, pady=25)
+            customerMobileLab.grid(row=2, column=0, pady=25, padx=5, sticky=E)
 
             # Customer Mobile Entry Box
             customerMobile = Entry(frame1, width=30, justify=CENTER)
             customerMobile.insert(END, str(mobile))  # Inserting the already existing values
             customerMobile.configure(state=DISABLED)  # So that details cannot be changed
-            customerMobile.grid(row=2, column=1, padx=(0, 30), pady=25)
+            customerMobile.grid(row=2, column=1, padx=(15, 30), pady=25, sticky=W)
 
             # To send the query to remove details
             def removeCustomer():
@@ -648,9 +649,9 @@ def checkOut():
                 # Running the checkout function again
                 checkOut()
 
-            # Update Customer Details Button
-            submitCustomerDetails = Button(frame1, text="Check Out", width=15, command=removeCustomer)
-            submitCustomerDetails.grid(row=2, column=2, columnspan=2)
+            # Remove Customer Button
+            removeCustomerButton = Button(frame1, text="Check Out", width=15, command=removeCustomer)
+            removeCustomerButton.grid(row=2, column=2, columnspan=2, sticky=W)
 
             # Key bind to submit on pressing return
             def returnPressedInner(event):
@@ -674,11 +675,11 @@ def checkOut():
                 customerMobile.configure(disabledbackground="#505050", disabledforeground="#888888", relief=FLAT,
                                          borderwidth=3)
 
-                submitCustomerDetails.configure(bg="#505050", fg="#DADADA", bd=0, highlightthickness=0, pady=5, padx=8)
+                removeCustomerButton.configure(bg="#505050", fg="#DADADA", bd=0, highlightthickness=0, pady=5, padx=8)
 
     # Search Button
     submitButton = Button(frame1, text="Search", command=searchCustomer)
-    submitButton.grid(row=0, column=2, pady=25)
+    submitButton.grid(row=0, column=2, columnspan=2, pady=25, sticky=W)
 
     # Key bind to submit on pressing return
     def returnPressed(event):
@@ -707,12 +708,12 @@ def findCustomer():
     clearFrame(frame1)
 
     # Select Customer Id Label
-    customerIdLab = Label(frame1, text="Enter Customer Id: ")
-    customerIdLab.grid(row=0, column=0, pady=30)
+    customerIdLab = Label(frame1, text="Enter Customer Id:")
+    customerIdLab.grid(row=0, column=0, pady=30, padx=5, sticky=E)
 
     # Customer Id Entry Box
     customerId = Entry(frame1, justify=CENTER)
-    customerId.grid(row=0, column=1, padx=(0, 30))
+    customerId.grid(row=0, column=1, padx=(15, 30), pady=25, sticky=W)
     customerId.focus_set()
 
     # To search the customer in database
@@ -746,35 +747,34 @@ def findCustomer():
             aadhaar = aadhaar[0:4] + " " + aadhaar[4:8] + " " + aadhaar[8:12]
 
             # Customer Name Label
-            customerNameLab = Label(frame1, text="Name of customer: ")
-            customerNameLab.grid(row=1, column=0, pady=30)
+            customerNameLab = Label(frame1, text="Name of customer:")
+            customerNameLab.grid(row=1, column=0, pady=30, padx=5, sticky=E)
 
             # Customer Name Entry Box
             customerName = Entry(frame1, width=30, justify=CENTER)
             customerName.insert(END, str(name))  # Inserting the already existing values
             customerName.configure(state=DISABLED)  # So that details cannot be changed
-            customerName.grid(row=1, column=1, padx=(0, 30), pady=25)
+            customerName.grid(row=1, column=1, padx=(15, 30), pady=25, sticky=W)
 
             # Customer Aadhaar Label
-            customerAadhaarLab = Label(frame1, text="Customer's Aadhaar Number: ")
-            customerAadhaarLab.grid(row=1, column=2, pady=25)
+            customerAadhaarLab = Label(frame1, text="Customer's Aadhaar Number:")
+            customerAadhaarLab.grid(row=1, column=2, pady=25, padx=(0, 5), sticky=E)
 
             # Customer Aadhaar Entry Box
             customerAadhaar = Entry(frame1, width=30, justify=CENTER)
             customerAadhaar.insert(END, aadhaar)  # Inserting the already existing values
             customerAadhaar.configure(state=DISABLED)  # So that details cannot be changed
-            customerAadhaar.grid(row=1, column=3, padx=(30, 0), pady=25)
+            customerAadhaar.grid(row=1, column=3, padx=(15, 0), pady=25, sticky=W)
 
             # Customer Mobile Number Label
-            customerMobileLab = Label(frame1, text="Mobile Number: ")
-            customerMobileLab.grid(row=2, column=0, pady=25)
+            customerMobileLab = Label(frame1, text="Mobile Number:")
+            customerMobileLab.grid(row=2, column=0, pady=25, padx=5, sticky=E)
 
             # Customer Mobile Entry Box
             customerMobile = Entry(frame1, width=30, justify=CENTER)
             customerMobile.insert(END, str(mobile))  # Inserting the already existing values
             customerMobile.configure(state=DISABLED)  # So that details cannot be changed
-            customerMobile.grid(row=2, column=1, padx=(0, 30), pady=25)
-
+            customerMobile.grid(row=2, column=1, padx=(15, 30), pady=25, sticky=W)
 
             if darkModeFlag:
                 # Dark Mode
@@ -1270,8 +1270,8 @@ def addRoom():
     clearFrame(frame1)
 
     # Room Id Label
-    roomIdLab = Label(frame1, text="Select Room Type: ")
-    roomIdLab.grid(row=0, column=0, pady=30)
+    roomIdLab = Label(frame1, text="Select Room Type:")
+    roomIdLab.grid(row=0, column=0, pady=30, padx=5, sticky=E)
 
     # Room Id Option Menu
     room = StringVar()  # Tkinter string data type
@@ -1289,11 +1289,11 @@ def addRoom():
 
     # AC Available Label
     ACLab = Label(frame1, text="AC: ")
-    ACLab.grid(row=0, column=2, pady=25)
+    ACLab.grid(row=0, column=2, pady=25, padx=15, sticky=E)
 
     # AC Value Label
     ACLab2 = Label(frame1)
-    ACLab2.grid(row=0, column=3, padx=(15, 0), pady=25)
+    ACLab2.grid(row=0, column=3, padx=(5, 0), pady=25, sticky=W)
     ACLab2.configure(text="No Info")
 
     # To check if AC is available
@@ -1310,23 +1310,23 @@ def addRoom():
 
     # Options menu to select the room and update AC status
     roomIdSelector = OptionMenu(frame1, room, *roomNames, command=updateAC)
-    roomIdSelector.grid(row=0, column=1, padx=(0, 30), pady=25)
+    roomIdSelector.grid(row=0, column=1, padx=(15, 30), pady=25, sticky=W)
 
     # Quantity of rooms Label
-    qtyRoomsLab = Label(frame1, text="How many rooms are available?: ")
-    qtyRoomsLab.grid(row=1, column=0, pady=30)
+    qtyRoomsLab = Label(frame1, text="How many rooms are available? :")
+    qtyRoomsLab.grid(row=1, column=0, pady=25, padx=5, sticky=E)
 
     # Quantity of Rooms Scale
     qtyRooms = Scale(frame1, from_=1, to=10, orient=HORIZONTAL)
-    qtyRooms.grid(row=1, column=1, padx=(0, 30), pady=(15, 25))
+    qtyRooms.grid(row=1, column=1, padx=(15, 30), pady=25, sticky=W)
 
     # Room Rate Label
     roomRateLab = Label(frame1, text="Rate({}): ".format("\u20B9"))  # u"\u20B9" -> rupees symbol
-    roomRateLab.grid(row=1, column=2, padx=30, pady=35)
+    roomRateLab.grid(row=1, column=2, pady=25, padx=15, sticky=E)
 
     # Room Rate Entry Box
     roomRate = Entry(frame1, width=6, justify=CENTER)
-    roomRate.grid(row=1, column=3, padx=(15, 0), pady=25)
+    roomRate.grid(row=1, column=3, padx=(15, 0), pady=25, sticky=W)
 
     # To send query to add room to database
     def submitRoomAdd():
@@ -1390,7 +1390,7 @@ def addRoom():
 
     # Submit Button
     submitCustomerDetails = Button(frame1, text="Submit", width=15, command=submitRoomAdd)
-    submitCustomerDetails.grid(row=2, column=1, columnspan=2)
+    submitCustomerDetails.grid(row=2, column=1, columnspan=2, pady=15)
 
     # Key bind to submit on pressing return
     def returnPressed(event):
@@ -1429,8 +1429,8 @@ def updateRoom():
     clearFrame(frame1)
 
     # Room Id Label
-    roomIdLab = Label(frame1, text="Select Room Type: ")
-    roomIdLab.grid(row=0, column=0, pady=30)
+    roomIdLab = Label(frame1, text="Select Room Type:")
+    roomIdLab.grid(row=0, column=0, pady=30, padx=5, sticky=E)
 
     # Room Id Option Menu
     room = StringVar()  # Tkinter string data type
@@ -1448,7 +1448,7 @@ def updateRoom():
 
     # Options menu to select the room
     roomIdSelector = OptionMenu(frame1, room, *roomNames)
-    roomIdSelector.grid(row=0, column=1, padx=(0, 30), pady=25)
+    roomIdSelector.grid(row=0, column=1, padx=(15, 30), pady=25, sticky=W)
 
     # To search by roomId if room exists in database
     def searchRoom():
@@ -1495,21 +1495,21 @@ def updateRoom():
 
                 # Quantity of rooms Label
                 qtyRoomsLab = Label(frame1, text="How many rooms are available?: ")
-                qtyRoomsLab.grid(row=1, column=0, pady=25)
+                qtyRoomsLab.grid(row=1, column=0, pady=30, padx=5, sticky=E)
 
                 # Quantity of Rooms Selector
                 qtyRooms = Scale(frame1, from_=1, to=10, orient=HORIZONTAL)
                 qtyRooms.set(qty)  # Inserting the already existing value
-                qtyRooms.grid(row=1, column=1, padx=(0, 30), pady=25)
+                qtyRooms.grid(row=1, column=1, padx=(15, 30), pady=25, sticky=W)
 
                 # Room Rate Label
                 roomRateLab = Label(frame1, text="Rate({}): ".format("\u20B9"))  # "\u20B9" -> rupees symbol
-                roomRateLab.grid(row=1, column=2, pady=25)
+                roomRateLab.grid(row=1, column=2, pady=25, padx=(0, 5), sticky=E)
 
                 # Room Rate Entry Box
                 roomRate = Entry(frame1, width=6, justify=CENTER)
                 roomRate.insert(END, str(rate))  # Inserting the already existing value
-                roomRate.grid(row=1, column=3, padx=(30, 0), pady=25)
+                roomRate.grid(row=1, column=3, padx=(15, 0), pady=25, sticky=W)
 
                 # To send query to update room
                 def submitRoomUpdate():
@@ -1531,7 +1531,7 @@ def updateRoom():
 
                 # Update Button
                 submitCustomerDetails = Button(frame1, text="Submit", width=15, command=submitRoomUpdate)
-                submitCustomerDetails.grid(row=2, column=1, columnspan=2)
+                submitCustomerDetails.grid(row=2, column=1, columnspan=2, pady=15, padx=(15,0))
 
                 # Key bind to submit on pressing return
                 def returnPressedInner(event):
@@ -1553,7 +1553,7 @@ def updateRoom():
 
     # Search Button
     submitButton = Button(frame1, text="Search", command=searchRoom)
-    submitButton.grid(row=0, column=2, pady=25)
+    submitButton.grid(row=0, column=2, pady=25, sticky=W)
 
     # Key bind to submit on pressing return
     def returnPressed(event):
@@ -1590,6 +1590,7 @@ def showRooms():
 
         # Displaying the error
         errorMsgBox("Search", "No Rooms Found")
+        addRoom()
 
     # Rooms Found, Displaying the table
     else:
@@ -1603,7 +1604,7 @@ def showRooms():
             relief=GROOVE,
             padx=20,
             pady=8)
-        roomHeading.grid(row=0, column=0, sticky=NSEW)
+        roomHeading.grid(row=0, column=0, sticky=NSEW, padx=(125,0), pady=(100, 0))
 
         # AC
         acHeading = Label(
@@ -1613,7 +1614,7 @@ def showRooms():
             relief=GROOVE,
             padx=20,
             pady=8)
-        acHeading.grid(row=0, column=1, stick=NSEW)
+        acHeading.grid(row=0, column=1, stick=NSEW, pady=(100, 0))
 
         # Quantity
         qtyHeading = Label(
@@ -1623,7 +1624,7 @@ def showRooms():
             relief=GROOVE,
             padx=20,
             pady=8)
-        qtyHeading.grid(row=0, column=2, sticky=NSEW)
+        qtyHeading.grid(row=0, column=2, sticky=NSEW, pady=(100, 0))
 
         # Rate
         rateHeading = Label(
@@ -1633,7 +1634,7 @@ def showRooms():
             relief=GROOVE,
             padx=20,
             pady=8)
-        rateHeading.grid(row=0, column=3, sticky=NSEW)
+        rateHeading.grid(row=0, column=3, sticky=NSEW, pady=(100, 0))
 
         # j is row number
         j = 1
@@ -1673,7 +1674,7 @@ def showRooms():
                 relief=GROOVE,
                 padx=20,
                 pady=8)
-            idRoom.grid(row=j, column=0, sticky=NSEW)
+            idRoom.grid(row=j, column=0, sticky=NSEW, padx=(125,0))
 
             # AC room?
             acRoom = Label(

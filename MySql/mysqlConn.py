@@ -10,13 +10,13 @@ import mysql.connector as sql
 import global_
 
 
-# To establish the connection with MySQL server on 100.70.221.3 (My IP address) and store the status and
+# To establish the connection with MySQL server on 100.70.57.243 (My IP address) and store the status and
 # connection status in the vars.status and vars.condition
 def estConnect():
     try:
 
         # Connecting to the MySQL server
-        global_.conn = sql.connect(host="100.70.221.3", user=global_.username, password=global_.password)
+        global_.conn = sql.connect(host="100.70.57.243", user=global_.username, password=global_.password)
 
         # Checking If Connection Was Successful
         if global_.conn.is_connected():
