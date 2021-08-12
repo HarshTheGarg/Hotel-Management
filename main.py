@@ -138,7 +138,7 @@ def checkIn():
     # Displaying the options
 
     # Customer Name Label
-    customerNameLab = Label(frame1, text="Name of customer: ")
+    customerNameLab = Label(frame1, text="Name of Customer: ")
     customerNameLab.grid(row=0, column=0, pady=30)
 
     # Customer Name Entry Box
@@ -351,6 +351,23 @@ def checkIn():
     for i in frame1.winfo_children():
         i.bind("<Return>", returnPressed)
 
+    # Dark Mode
+    if darkModeFlag:
+        customerNameLab.configure(bg="#2A2A2A", fg="#DADADA")
+        customerName.configure(bg="#505050", fg="#DADADA", relief=FLAT, borderwidth=3)
+
+        customerAadhaarLab.configure(bg="#2A2A2A", fg="#DADADA")
+        customerAadhaar.configure(bg="#505050", fg="#DADADA", relief=FLAT, borderwidth=3)
+
+        customerMobileLab.configure(bg="#2A2A2A", fg="#DADADA")
+        customerMobile.configure(bg="#505050", fg="#DADADA", relief=FLAT, borderwidth=3)
+
+        customerRoomIdLab.configure(bg="#2A2A2A", fg="#DADADA")
+        customerRoomId.configure(bg="#505050", fg="#DADADA", highlightthickness=0, relief=FLAT, borderwidth=3)
+        customerRoomId["menu"].config(bg="#555555", fg="#DADADA", bd=0)
+
+        submitCustomerDetails.configure(bg="#505050", fg="#DADADA", bd=0, highlightthickness=0, pady=5, padx=8)
+
 
 # Update Customer Info:
 def updateCustomer():
@@ -477,6 +494,19 @@ def updateCustomer():
             for j in frame1.winfo_children():
                 j.bind("<Return>", returnPressedInner)
 
+            # Dark Mode
+            if darkModeFlag:
+                customerNameLab.configure(bg="#2A2A2A", fg="#DADADA")
+                customerName.configure(bg="#505050", fg="#DADADA", relief=FLAT, borderwidth=3)
+
+                customerAadhaarLab.configure(bg="#2A2A2A", fg="#DADADA")
+                customerAadhaar.configure(bg="#505050", fg="#DADADA", relief=FLAT, borderwidth=3)
+
+                customerMobileLab.configure(bg="#2A2A2A", fg="#DADADA")
+                customerMobile.configure(bg="#505050", fg="#DADADA", relief=FLAT, borderwidth=3)
+
+                submitCustomerDetails.configure(bg="#505050", fg="#DADADA", bd=0, highlightthickness=0, pady=5, padx=8)
+
     # Search Button
     submitButton = Button(frame1, text="Search", command=searchCustomer)
     submitButton.grid(row=0, column=2, pady=25)
@@ -488,6 +518,13 @@ def updateCustomer():
 
     for i in frame1.winfo_children():
         i.bind("<Return>", returnPressed)
+
+    # Dark Mode
+    if darkModeFlag:
+        customerIdLab.configure(bg="#2A2A2A", fg="#DADADA")
+        customerId.configure(bg="#505050", fg="#DADADA", relief=FLAT, borderwidth=3)
+
+        submitButton.configure(bg="#505050", fg="#DADADA", bd=0, highlightthickness=0, pady=5, padx=8)
 
 
 # To remove a customer
