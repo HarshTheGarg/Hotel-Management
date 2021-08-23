@@ -259,8 +259,8 @@ def price(customerId, outDate):
     inDate = global_.cur.fetchone()[0]
 
     # No of days
-    days = (outDate - inDate).days
-    return rate*days
+    days_ = (outDate - inDate).days
+    return rate*days_
 
 
 # Function to add a room to database
