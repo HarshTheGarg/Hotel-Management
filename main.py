@@ -543,7 +543,7 @@ def updateCustomer():
 
 # To remove a customer
 def checkOut():
-    global_.updateStatus("Someone Leaving? :-[")
+    global_.updateStatus("MONEY! YAY!!!")
 
     # Changing the Title of the window
     root.title("Hotel Man - Check Out")
@@ -1530,7 +1530,7 @@ def updateRoom():
 
                 # Update Button
                 submitCustomerDetails = Button(frame1, text="Submit", width=15, command=submitRoomUpdate)
-                submitCustomerDetails.grid(row=2, column=1, columnspan=2, pady=15, padx=(15,0))
+                submitCustomerDetails.grid(row=2, column=1, columnspan=2, pady=15, padx=(15, 0))
 
                 # Key bind to submit on pressing return
                 def returnPressedInner(event):
@@ -1604,7 +1604,7 @@ def showRooms():
             relief=GROOVE,
             padx=20,
             pady=8)
-        roomHeading.grid(row=0, column=0, sticky=NSEW, padx=(125,0), pady=(100, 0))
+        roomHeading.grid(row=0, column=0, sticky=NSEW, padx=(125, 0), pady=(100, 0))
 
         # AC
         acHeading = Label(
@@ -1674,7 +1674,7 @@ def showRooms():
                 relief=GROOVE,
                 padx=20,
                 pady=8)
-            idRoom.grid(row=j, column=0, sticky=NSEW, padx=(125,0))
+            idRoom.grid(row=j, column=0, sticky=NSEW, padx=(125, 0))
 
             # AC room?
             acRoom = Label(

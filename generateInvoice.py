@@ -130,7 +130,7 @@ def generateInvoice(customerId, name, aadhaar, mobile, roomType, inDate, outDate
     c.drawString(
         x_coordinate,
         y_coordinate,
-        str(aadhaar[0: 4]) + " " + str(aadhaar[4: 8]) + " " + str(aadhaar[8: 12])
+        str(aadhaar)
     )
 
     y_coordinate -= line_space
