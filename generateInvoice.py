@@ -19,24 +19,23 @@ from reportlab.pdfbase import pdfmetrics
 # To Create the Directory
 import os
 
-# Create the right font
-pdfmetrics.registerFont(TTFont("robotoBlack", "Assets/Roboto/Roboto-Black.ttf"))
-pdfmetrics.registerFont(TTFont("robotoBold", "Assets/Roboto/Roboto-Bold.ttf"))
-pdfmetrics.registerFont(TTFont("robotoRegular", "Assets/Roboto/Roboto-Regular.ttf"))
-pdfmetrics.registerFont(TTFont("robotoThin", "Assets/Roboto/Roboto-Thin.ttf"))
-pdfmetrics.registerFont(TTFont("robotoItalic", "Assets/Roboto/Roboto-Italic.ttf"))
-
-
-# Page Information
-page_height = 3508
-page_width = 2000
-margin_top = 150
-margin_sides = 350
-line_space = 100
-
 
 # generate invoice
-def generateInvoice(customerId, name, aadhaar, mobile, roomType, inDate, outDate, rate, price):
+def generateInvoice(customerId, name, aadhaar, mobile, roomType, inDate, outDate, rate, price, tax):
+
+    # Create the right font
+    pdfmetrics.registerFont(TTFont("robotoBlack", "Assets/Roboto/Roboto-Black.ttf"))
+    pdfmetrics.registerFont(TTFont("robotoBold", "Assets/Roboto/Roboto-Bold.ttf"))
+    pdfmetrics.registerFont(TTFont("robotoRegular", "Assets/Roboto/Roboto-Regular.ttf"))
+    pdfmetrics.registerFont(TTFont("robotoThin", "Assets/Roboto/Roboto-Thin.ttf"))
+    pdfmetrics.registerFont(TTFont("robotoItalic", "Assets/Roboto/Roboto-Italic.ttf"))
+
+    # Page Information
+    page_height = 3508
+    page_width = 2000
+    margin_top = 150
+    margin_sides = 350
+    line_space = 100
 
     # Create the folder on desktop
     desktop_path = os.environ["HOMEPATH"] + "\\Desktop"
@@ -64,7 +63,7 @@ def generateInvoice(customerId, name, aadhaar, mobile, roomType, inDate, outDate
     y_coordinate = page_height - margin_top - img_height
     x_coordinate = margin_sides + 800
 
-    priceFinal = round(int(price) * 1.1, 2)
+    priceFinal = round(int(price) * (1 + float(tax)/100), 2)
 
     # Logo
     c.drawInlineImage(
@@ -256,7 +255,7 @@ def generateInvoice(customerId, name, aadhaar, mobile, roomType, inDate, outDate
     c.drawString(
         x_coordinate,
         y_coordinate,
-        "10%"
+        str(tax)
     )
 
     y_coordinate -= line_space
@@ -341,6 +340,5 @@ def generateInvoice(customerId, name, aadhaar, mobile, roomType, inDate, outDate
         y_coordinate,
         text
     )
-
 
     c.save()

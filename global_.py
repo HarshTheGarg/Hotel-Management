@@ -37,7 +37,6 @@ global tbAllCustomers
 global condition
 
 
-
 # Update the status Bar
 def updateStatus(text):
     statusBar.configure(text=text)

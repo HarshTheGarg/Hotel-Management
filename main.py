@@ -275,7 +275,7 @@ def checkIn():
                         # Some error
                         elif customerAdded[0] == 1:
 
-                            global_.updateStatus("Customer Added! ^_^ ^_^")
+                            global_.updateStatus("Customer Added! ^_^")
 
                             # Displaying the success message
                             successMsgBox(
@@ -543,7 +543,7 @@ def updateCustomer():
 
 # To remove a customer
 def checkOut():
-    global_.updateStatus("MONEY! YAY!!!")
+    global_.updateStatus("Someone Leaving?")
 
     # Changing the Title of the window
     root.title("Hotel Man - Check Out")
@@ -623,7 +623,7 @@ def checkOut():
                 global_.updateStatus("Removing...")
 
                 # Sending the query to remove the customer
-                cRoomId, cCheckInDate, cCheckOutDate, cRate, price = \
+                cRoomId, cCheckInDate, cCheckOutDate, cRate, price, tax = \
                     queries.removeCustomer(str(customerId.get()), getDate())
 
                 roomType = ""
@@ -639,7 +639,9 @@ def checkOut():
                     roomType = "Suite"
 
                 generateInvoice.generateInvoice(
-                    str(customerId.get()), name, aadhaar, mobile, roomType, cCheckInDate, cCheckOutDate, cRate, price
+                    str(customerId.get()), name, aadhaar,
+                    mobile, roomType, cCheckInDate, cCheckOutDate,
+                    cRate, price, tax
                 )
 
                 # Displaying the success message
@@ -1222,7 +1224,8 @@ def showCustomers():
                     customerData = []
 
                     customerData += [data[0]] + [data[1]] + ["'" + str(data[2])] + [data[3]] + \
-                                    [roomType] + [str(data[5])] + [str(data[6])] + [data[7]] + [str(data[8])]
+                                    [roomType] + [str(data[5])] + [str(data[6])] + [data[7]] + \
+                                    [str(data[8])] + [str(float(data[9]))]
 
                     finalData += [customerData]
 
@@ -1260,7 +1263,7 @@ def showCustomers():
 
 # To add a room to the database
 def addRoom():
-    global_.updateStatus("Expanding? Gud :)")
+    global_.updateStatus("Add Rooms")
 
     # Changing the Title of the window
     root.title("Hotel Man - Add Room")
@@ -1270,7 +1273,7 @@ def addRoom():
 
     # Room Id Label
     roomIdLab = Label(frame1, text="Select Room Type:")
-    roomIdLab.grid(row=0, column=0, pady=30, padx=5, sticky=E)
+    roomIdLab.grid(row=0, column=0, pady=15, padx=5, sticky=E)
 
     # Room Id Option Menu
     room = StringVar()  # Tkinter string data type
@@ -1283,16 +1286,18 @@ def addRoom():
         "Suite"
     ]
 
+    length = len(max(roomNames, key=len))
+
     # Setting default value for Room Selector
     room.set("Select")
 
     # AC Available Label
     ACLab = Label(frame1, text="AC: ")
-    ACLab.grid(row=0, column=2, pady=25, padx=15, sticky=E)
+    ACLab.grid(row=0, column=2, pady=15, padx=15, sticky=E)
 
     # AC Value Label
     ACLab2 = Label(frame1)
-    ACLab2.grid(row=0, column=3, padx=(5, 0), pady=25, sticky=W)
+    ACLab2.grid(row=0, column=3, padx=(15, 0), pady=15, sticky=W)
     ACLab2.configure(text="No Info")
 
     # To check if AC is available
@@ -1309,23 +1314,35 @@ def addRoom():
 
     # Options menu to select the room and update AC status
     roomIdSelector = OptionMenu(frame1, room, *roomNames, command=updateAC)
-    roomIdSelector.grid(row=0, column=1, padx=(15, 30), pady=25, sticky=W)
+    roomIdSelector.config(width=length)
+    roomIdSelector.grid(row=0, column=1, padx=(15, 30), pady=15, sticky=W)
 
     # Quantity of rooms Label
     qtyRoomsLab = Label(frame1, text="How many rooms are available? :")
-    qtyRoomsLab.grid(row=1, column=0, pady=25, padx=5, sticky=E)
+    qtyRoomsLab.grid(row=1, column=0, pady=15, padx=5, sticky=E)
 
     # Quantity of Rooms Scale
     qtyRooms = Scale(frame1, from_=1, to=10, orient=HORIZONTAL)
-    qtyRooms.grid(row=1, column=1, padx=(15, 30), pady=25, sticky=W)
+    qtyRooms.configure(length=127)
+    qtyRooms.grid(row=1, column=1, padx=(15, 30), pady=15, sticky=W)
 
     # Room Rate Label
     roomRateLab = Label(frame1, text="Rate({}): ".format("\u20B9"))  # u"\u20B9" -> rupees symbol
-    roomRateLab.grid(row=1, column=2, pady=25, padx=15, sticky=E)
+    roomRateLab.grid(row=1, column=2, pady=15, padx=15, sticky=E)
 
     # Room Rate Entry Box
-    roomRate = Entry(frame1, width=6, justify=CENTER)
-    roomRate.grid(row=1, column=3, padx=(15, 0), pady=25, sticky=W)
+    roomRate = Entry(frame1, justify=CENTER)
+    roomRate.configure(width=length + 6)
+    roomRate.grid(row=1, column=3, padx=(15, 0), pady=15, sticky=W)
+
+    # Tax of rooms Label
+    taxRoomsLab = Label(frame1, text="Room Tax (%):")
+    taxRoomsLab.grid(row=2, column=0, pady=15, padx=5, sticky=E)
+
+    # Tax entry box
+    taxRoom = Entry(frame1, justify=CENTER)
+    taxRoom.configure(width=length + 6)
+    taxRoom.grid(row=2, column=1, padx=(15, 30), pady=(15, 0), sticky=W)
 
     # To send query to add room to database
     def submitRoomAdd():
@@ -1344,6 +1361,12 @@ def addRoom():
 
             # Displaying the error
             errorMsgBox("Rooms", "Rate not Entered")
+
+        elif taxRoom.get() == "":
+            global_.updateStatus("Enter Tax")
+
+            # Displaying the error
+            errorMsgBox("Rooms", "Tax not Entered")
 
         # If a room is selected
         else:
@@ -1365,8 +1388,9 @@ def addRoom():
             res = queries.addRoom(
                 roomId,
                 ACLab2.cget("text"),
-                qtyRooms.get(),
-                roomRate.get()
+                int(qtyRooms.get()),
+                int(roomRate.get()),
+                float(taxRoom.get())
             )
 
             # res == 1 -> Room added
@@ -1388,8 +1412,9 @@ def addRoom():
             addRoom()
 
     # Submit Button
-    submitCustomerDetails = Button(frame1, text="Submit", width=15, command=submitRoomAdd)
-    submitCustomerDetails.grid(row=2, column=1, columnspan=2, pady=15)
+    submitCustomerDetails = Button(frame1, text="Submit", command=submitRoomAdd)
+    submitCustomerDetails.configure(width=length + 2)
+    submitCustomerDetails.grid(row=2, column=3, padx=(15, 0), pady=15, sticky=W)
 
     # Key bind to submit on pressing return
     def returnPressed(event):
@@ -1413,6 +1438,9 @@ def addRoom():
 
         roomRateLab.configure(bg="#2A2A2A", fg="#DADADA")
         roomRate.configure(bg="#505050", fg="#DADADA", relief=FLAT, borderwidth=3)
+
+        taxRoomsLab.configure(bg="#2A2A2A", fg="#DADADA")
+        taxRoom.configure(bg="#505050", fg="#DADADA", relief=FLAT, borderwidth=3)
 
         submitCustomerDetails.configure(bg="#505050", fg="#DADADA", bd=0, highlightthickness=0, pady=5, padx=8)
 
@@ -1442,11 +1470,14 @@ def updateRoom():
         "Suite"
     ]
 
+    length = len(max(roomNames, key=len))
+
     # Setting default value for Room Selector
     room.set("Select")
 
     # Options menu to select the room
     roomIdSelector = OptionMenu(frame1, room, *roomNames)
+    roomIdSelector.config(width=length)
     roomIdSelector.grid(row=0, column=1, padx=(15, 30), pady=25, sticky=W)
 
     # To search by roomId if room exists in database
@@ -1490,25 +1521,37 @@ def updateRoom():
                 global_.updateStatus("Room Found")
 
                 # Get qty and rate of selected room
-                qty, rate = queries.selectRoom(updateRoomId)
+                qty, rate, tax = queries.selectRoom(updateRoomId)
 
                 # Quantity of rooms Label
-                qtyRoomsLab = Label(frame1, text="How many rooms are available?: ")
+                qtyRoomsLab = Label(frame1, text="How many rooms are available? :")
                 qtyRoomsLab.grid(row=1, column=0, pady=30, padx=5, sticky=E)
 
                 # Quantity of Rooms Selector
                 qtyRooms = Scale(frame1, from_=1, to=10, orient=HORIZONTAL)
+                qtyRooms.configure(length=127)
                 qtyRooms.set(qty)  # Inserting the already existing value
                 qtyRooms.grid(row=1, column=1, padx=(15, 30), pady=25, sticky=W)
 
                 # Room Rate Label
                 roomRateLab = Label(frame1, text="Rate({}): ".format("\u20B9"))  # "\u20B9" -> rupees symbol
-                roomRateLab.grid(row=1, column=2, pady=25, padx=(0, 5), sticky=E)
+                roomRateLab.grid(row=1, column=2, pady=25, padx=(15, 0), sticky=W)
 
                 # Room Rate Entry Box
-                roomRate = Entry(frame1, width=6, justify=CENTER)
+                roomRate = Entry(frame1, justify=CENTER)
+                roomRate.configure(width=length + 6)
                 roomRate.insert(END, str(rate))  # Inserting the already existing value
                 roomRate.grid(row=1, column=3, padx=(15, 0), pady=25, sticky=W)
+
+                # Tax of rooms Label
+                taxRoomsLab = Label(frame1, text="Room Tax (%):")
+                taxRoomsLab.grid(row=2, column=0, pady=15, padx=5, sticky=E)
+
+                # Tax entry box
+                taxRoom = Entry(frame1, width=15, justify=CENTER)
+                taxRoom.configure(width=length + 6)
+                taxRoom.insert(END, str(tax))  # Inserting the already existing value
+                taxRoom.grid(row=2, column=1, padx=(15, 30), pady=15, sticky=W)
 
                 # To send query to update room
                 def submitRoomUpdate():
@@ -1516,8 +1559,9 @@ def updateRoom():
                     # Running query to update the room
                     queries.updateRoom(
                         updateRoomId,
-                        qtyRooms.get(),
-                        roomRate.get()
+                        int(qtyRooms.get()),
+                        int(roomRate.get()),
+                        float(taxRoom.get())
                     )
 
                     global_.updateStatus("Room Updated")
@@ -1529,8 +1573,8 @@ def updateRoom():
                     updateRoom()
 
                 # Update Button
-                submitCustomerDetails = Button(frame1, text="Submit", width=15, command=submitRoomUpdate)
-                submitCustomerDetails.grid(row=2, column=1, columnspan=2, pady=15, padx=(15, 0))
+                submitCustomerDetails = Button(frame1, text="Submit", width=length + 2, command=submitRoomUpdate)
+                submitCustomerDetails.grid(row=2, column=3, padx=(15, 0), pady=15)
 
                 # Key bind to submit on pressing return
                 def returnPressedInner(event):
@@ -1548,12 +1592,16 @@ def updateRoom():
                     roomRateLab.configure(bg="#2A2A2A", fg="#DADADA")
                     roomRate.configure(bg="#505050", fg="#DADADA", relief=FLAT, borderwidth=3)
 
+                    taxRoomsLab.configure(bg="#2A2A2A", fg="#DADADA")
+                    taxRoom.configure(bg="#505050", fg="#DADADA", relief=FLAT, borderwidth=3)
+
                     submitCustomerDetails.configure(bg="#505050", fg="#DADADA", bd=0,
                                                     highlightthickness=0, pady=5, padx=8)
 
     # Search Button
     submitButton = Button(frame1, text="Search", command=searchRoom)
-    submitButton.grid(row=0, column=2, pady=25, sticky=W)
+    submitButton.configure(width=length + 2)
+    submitButton.grid(row=0, column=3, padx=(15, 0), pady=25, sticky=W)
 
     # Key bind to submit on pressing return
     def returnPressed(event):
@@ -1865,7 +1913,6 @@ def submitted():
 
 # To display sign in screen
 def signIn():
-
     global_.updateStatus("Connecting...")
 
     # To stop getting the sign in screen everytime user presses enter(return) key
@@ -1973,7 +2020,6 @@ def signIn():
     signInScreen.bind("<Return>", returnPressed)
 
     if darkModeFlag:
-
         # Dark
         signInScreen.configure(bg="#333333")
         signInScreen.iconbitmap("./Assets/LogoColor.ico")
@@ -2005,7 +2051,6 @@ logInButton.pack(pady=(20, 0))
 
 # Enable Dark Mode
 def darkMode():
-
     global darkModeFlag
     darkModeFlag = True
 
@@ -2027,8 +2072,9 @@ darkModeButton.pack(pady=(20, 10))
 # Status Bar
 global_.statusBar = Label(root, text="Welcome", relief=SUNKEN, anchor=E, padx=10, height=2)
 
-
 global_.statusBar.pack(side=BOTTOM, fill=X)
+
+
 # To start log in process just by pressing the return(enter) key
 
 
@@ -2038,7 +2084,6 @@ def returnPressedOuter(event):
 
 
 root.bind("<Return>", returnPressedOuter)
-
 
 # Start the main screen
 root.mainloop()

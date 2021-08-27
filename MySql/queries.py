@@ -13,14 +13,17 @@ import mysql.connector as sql
 def addCustomer(name, aadhaar, mobile, roomId, inDate):
     try:
         # Checking if room is vacant
-        comm = "select qty from {} where roomId='{}'".format(global_.tbRooms, roomId)
+        comm = "select qty, tax from {} where roomId='{}'".format(global_.tbRooms, roomId)
         global_.cur.execute(comm)
+        res = global_.cur.fetchone()
+        # qty -> Number of rooms
+        qty = res[0]
 
-        # qty -> Number of rooms, tuple
-        qty = global_.cur.fetchone()
+        # tax -> Room Tax
+        tax = res[1]
 
         # If qty of rooms is zero
-        if qty == (0,) or qty is None:
+        if qty == 0 or qty is None:
 
             # Error, Message to be displayed
             return 0, "Room not Available"
@@ -66,7 +69,7 @@ def addCustomer(name, aadhaar, mobile, roomId, inDate):
             global_.conn.commit()
 
             # Add the details to allCustomers Table
-            addAllCustomers(customerId, name, aadhaar, mobile, roomId, inDate)
+            addAllCustomers(customerId, name, aadhaar, mobile, roomId, inDate, tax)
 
             # No Error, CustomerId to be displayed
             return 1, customerId
@@ -166,8 +169,10 @@ def removeCustomer(customerId, outDate):
 
     price_ = price(customerId, outDate)
 
+    print(res[9])
+
     # Returning info to generate invoice
-    return res[4], res[5], res[6], res[8], price_
+    return res[4], res[5], res[6], res[8], price_, res[9]
 
 
 # To show all the checked in customers
@@ -194,7 +199,7 @@ def showCustomers():
 
 
 # To add customer to allCustomers table
-def addAllCustomers(customerId, name, aadhaar, mobile, roomId, inDate):
+def addAllCustomers(customerId, name, aadhaar, mobile, roomId, inDate, tax):
 
     # Get rate of the room
     comm = "select rate from {} where roomId='{}'".format(global_.tbRooms, roomId)
@@ -203,9 +208,9 @@ def addAllCustomers(customerId, name, aadhaar, mobile, roomId, inDate):
 
     # To add customer to allCustomer table
     comm = "insert into {} values(" \
-           "'{}', '{}', '{}', '{}', '{}', '{}', NULL, 'y', '{}'" \
+           "'{}', '{}', '{}', '{}', '{}', '{}', NULL, 'y', {}, {}" \
            ")" \
-        .format(global_.tbAllCustomers, customerId, name, aadhaar, mobile, roomId, inDate, rate)
+        .format(global_.tbAllCustomers, customerId, name, aadhaar, mobile, roomId, inDate, int(rate), float(tax))
 
     global_.cur.execute(comm)
 
@@ -264,7 +269,7 @@ def price(customerId, outDate):
 
 
 # Function to add a room to database
-def addRoom(roomId, ac, qty, rate):
+def addRoom(roomId, ac, qty, rate, tax):
     # Converting Yes/No to a single character
     if ac.casefold() == "Yes".casefold():
         ac = "y"
@@ -274,8 +279,8 @@ def addRoom(roomId, ac, qty, rate):
     # Function to add the room to database
     def sendComm():
         comm1 = "insert into {tableName} values(" \
-                "'{}', '{}', '{}', '{}'" \
-                ")".format(roomId, ac, qty, rate, tableName=global_.tbRooms)
+                "'{}', '{}', {}, {}, {}" \
+                ")".format(roomId, ac, qty, rate, tax, tableName=global_.tbRooms)
         global_.cur.execute(comm1)
 
         # Committing the changes made
@@ -337,17 +342,22 @@ def selectRoom(roomId):
 
     qty = res[2]
     rate = res[3]
-    return qty, rate
+    tax = res[4]
+    return qty, rate, tax
 
 
 # Function to update qty and rate of room
-def updateRoom(roomId, qty, rate):
+def updateRoom(roomId, qty, rate, tax):
     # Updating the room quantity
     comm = "update {} set qty={} where roomId='{}'".format(global_.tbRooms, qty, roomId)
     global_.cur.execute(comm)
 
     # Updating the room rate
     comm = "update {} set rate={} where roomId='{}'".format(global_.tbRooms, rate, roomId)
+    global_.cur.execute(comm)
+
+    # Updating the room tax
+    comm = "update {} set tax={} where roomId='{}'".format(global_.tbRooms, tax, roomId)
     global_.cur.execute(comm)
 
     # Committing the changes made

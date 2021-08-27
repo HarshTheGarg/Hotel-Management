@@ -8,9 +8,6 @@ import MySql.mysqlConn
 # Importing the variables file
 import global_
 
-# To close the programme
-import sys
-
 
 # To create (and use) the required database
 def createDbAndTables():
@@ -86,7 +83,8 @@ def createDbAndTables():
                        "RoomId varchar(2) Primary key," \
                        "AC varchar(1)," \
                        "Qty int(2), " \
-                       "Rate int(5)" \
+                       "Rate int(5)," \
+                       "Tax decimal(4,2)" \
                        ")"\
                     .format(global_.tbRooms)
 
@@ -125,7 +123,8 @@ def createDbAndTables():
                        "checkInDate date," \
                        "checkOutDate date," \
                        "checkedIn char," \
-                       "rate int(5)" \
+                       "rate int(5)," \
+                       "tax decimal(4, 2)" \
                        ")"\
                     .format(global_.tbAllCustomers)
 

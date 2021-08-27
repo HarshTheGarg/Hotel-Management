@@ -19,7 +19,7 @@ def generateCSV(data, date):
         os.mkdir("C:" + desktop_path + "\\HotelMan")
 
     fields = ["Customer ID", "Name", "Aadhaar", "Mobile", "Room Type", "Check In Date",
-              "Check Out Date", "Check In Status", "Room Rate"]
+              "Check Out Date", "Check In Status", "Room Rate", "Tax"]
 
     with open("C:" + desktop_path + f"\\HotelMan\\HotelMan_{date.year}_{date.month}_{date.day}.csv",
               "w", newline=""
@@ -27,4 +27,3 @@ def generateCSV(data, date):
         csv_w = csv.writer(file)
         csv_w.writerow(fields)
         csv_w.writerows(data)
-
