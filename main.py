@@ -1684,6 +1684,16 @@ def showRooms():
             pady=8)
         rateHeading.grid(row=0, column=3, sticky=NSEW, pady=(100, 0))
 
+        # Tax
+        taxHeading = Label(
+            frame1,
+            text="Tax (%)",
+            bg="#C0C0C0",
+            relief=GROOVE,
+            padx=20,
+            pady=8)
+        taxHeading.grid(row=0, column=4, sticky=NSEW, pady=(100, 0))
+
         # j is row number
         j = 1
 
@@ -1714,6 +1724,9 @@ def showRooms():
 
             # Rate of room
             rate = i[3]
+
+            # Room tax
+            tax = i[4]
 
             # Room Id
             idRoom = Label(
@@ -1751,6 +1764,15 @@ def showRooms():
                 pady=8)
             rateRoom.grid(row=j, column=3, sticky=NSEW)  # "\u20B9" -> rupees symbol
 
+            # Tax of rooms
+            taxRoom = Label(
+                frame1,
+                text=str(tax),
+                relief=GROOVE,
+                padx=20,
+                pady=8)
+            taxRoom.grid(row=j, column=4, sticky=NSEW)
+
             j += 1
 
             if darkModeFlag:
@@ -1758,12 +1780,14 @@ def showRooms():
                 acRoom.configure(bg="#4F4F4F", fg="#DADADA", bd=0)
                 qtyRoom.configure(bg="#4F4F4F", fg="#DADADA", bd=0)
                 rateRoom.configure(bg="#4F4F4F", fg="#DADADA", bd=0)
+                taxRoom.configure(bg="#4F4F4F", fg="#DADADA", bd=0)
 
         if darkModeFlag:
             roomHeading.configure(bg="#404040", fg="#DADADA", bd=0)
             acHeading.configure(bg="#404040", fg="#DADADA", bd=0)
             qtyHeading.configure(bg="#404040", fg="#DADADA", bd=0)
             rateHeading.configure(bg="#404040", fg="#DADADA", bd=0)
+            taxHeading.configure(bg="#404040", fg="#DADADA", bd=0)
 
 
 # To be run when clicked submit on sign in screen
