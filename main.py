@@ -1,43 +1,45 @@
 """
-Main python file
 Hotel Management Project
+Main python file
 """
 
+# todo: send welcome and bye message
+
+import tkinter as tk
 # tkinter for gui
-from tkinter import *
 
-# pop up message box
 from tkinter import messagebox
+# pop up message box
 
-# for scrollBar
 from tkinter import ttk
+# for scrollBar
 
-# MySQL connection initializer
 import MySql.mysqlInit as sqlInit
+# MySQL connection initializer
 
-# Queries to be run
 from MySql import queries
+# Queries to be run
 
-# Variables file
 import global_
+# Variables file
 
-# To generate invoice
 import generateInvoice
+# To generate invoice
 
-# File to send SMS
 # import sendOTP  # todo
+# File to send SMS
 
-# To restart the file
 import os
+# To restart the file
 
-# To use images
 from PIL import ImageTk, Image
+# To use images
 
-# To generate OTP
 import random
+# To generate OTP
 
-# To get current date
 import datetime
+# To get current date
 
 # To generate CSV file
 import generateCSV
@@ -46,160 +48,228 @@ import generateCSV
 global frame1
 global otpEntered
 
-# Tkinter gui initialized
-root = Tk()
-
-# Window Title
-root.title("Hotel Man")
-
-# Window icon
-root.iconbitmap("./Assets/LogoBlack.ico")
-
-# Initial window size
-root.geometry("500x350")
-root.resizable(height=0, width=0)
-
 darkModeFlag = False
+# Light mode by default
+
+root = tk.Tk()
+# Tkinter gui initialized
+
+root.title("Hotel Man")
+# Window Title
+
+root.iconbitmap("./Assets/LogoBlack.ico")
+# Window icon
+
+root.geometry("500x350")
+# Initial window size
+
+root.resizable(False, False)
 
 
-# To clear a frame before populating it
-def clearFrame(frame):
-    for i in frame.winfo_children():
-        i.destroy()
+# Disable resizing of windows
 
 
-# To check if Entry is integer
-def intCheck(text):
-    # int() will return no error if it can convert the argument
+def eventErrorHandler(event):
+    """
+    To remove error in the IDE for not using argument passed by the bind function
+    :param event: event passed by bind function
+    :rtype: None
+    """
+    str(event) * 2
+
+
+def clearFrame(frame: tk.Frame) -> None:
+    """
+    Clear a frame before populating it
+    :rtype: None
+    :param frame: Tkinter Frame whose children are to be destroyed
+    """
+
+    for frame_content in frame.winfo_children():
+        frame_content.destroy()
+
+
+def intCheck(text: str) -> int:
+    """
+    Check if Mobile/Aadhaar entered is integer
+    :param text: Value Entered by user
+    :rtype: int
+    :return: 1 (Correct input) or 0 (Incorrect input)
+    """
     try:
         int(text)
-        return 1  # No error
+        return 1
     except ValueError:
-        return 0  # Error
+        return 0
 
 
-# To check if correct number of digits are entered (To be used for aadhaar and mobile number)
-def lenCheck(text, length):
+def lenCheck(text: str, length: int) -> int:
+    """
+    Check if correct number of digits are entered for aadhaar and mobile number)
+    :param text: Entered Value
+    :param length: Expected Length
+    :rtype: int
+    :return: 1 (Correct input) or 0 (Incorrect input)
+    """
     if len(text) == length:
-        return 1  # Correct length
+        return 1
     else:
-        return 0  # Wrong length
+        return 0
 
 
-# Success message pop up box using tkinter.messagebox
-def successMsgBox(title, message):
+def successMsgBox(title: str, message: str) -> None:
+    """
+    Success message pop-up box using tk.messagebox
+    :param title: Title of Success Message
+    :param message: Main Body
+    :rtype: None
+    """
     messagebox.showinfo(title, message)
 
 
-# Error message pop up box using tkinter.messagebox
-def errorMsgBox(title="Error", message="Some Error Occurred"):
+def errorMsgBox(title: str = "Error", message: str = "Some Error Occurred") -> None:
+    """
+    Error message pop-up box using tk.messagebox
+    :param title: Title of Success Message
+    :param message: Main Body
+    :rtype: None
+    """
     messagebox.showerror(title, message)
 
 
-# Confirm Message Box
-def confirmMsgBox(title, message):
+def confirmMsgBox(title: str, message: str) -> str:
+    """
+    Pop-up Message Box to ask for confirmation
+    :param title: Title of Success Message
+    :param message: Content of the pop-up
+    :rtype: str
+    :return: user's answer
+    """
     return messagebox.askquestion(title, message)
 
 
-# OTP Generator
-def genOTP():
-    otp = random.randrange(10000, 99999)
-    print(otp)
+def genOTP() -> int:
+    """
+    Generate a 6 digit random otp
+    :rtype: int
+    :return: 6 digit random number
+    """
+    otp = random.randrange(100000, 999999)
     return otp
 
 
-# Get current date in required format
-def getDate():
+def getDate() -> datetime.date:
+    """
+    Current date
+    :rtype: date
+    :return: Current Date
+    """
     return datetime.date.today()
 
 
-# Function to exit
-def exitApplication():
+def exitApplication() -> None:
+    """
+    End the connection with MySQL and exit the application
+    :rtype: None
+    """
     confirm = confirmMsgBox("Exit", "Are you sure you want to exit?")
 
     if confirm == "yes":
         global_.updateStatus("Bye!")
-        # Sign out of MySQL
-        queries.endConn()
+        # Updating the status bar
 
-        # To close the current window and the logo canvas
+        queries.endConn()
+        # Sign out of MySQL
+
         root.destroy()
-        # root.quit()
+        # Destroy the window
 
 
 # To add customer to database
-def checkIn():
+def checkIn() -> None:
+    """
+    Display the check-in options and check-in the customer
+    :rtype: None
+    """
+
     global_.updateStatus("Customers!! :-D")
+    # Update the Status Bar
 
-    # Changing the title of the window
     root.title("Hotel Man - Check In")
+    # Changing the title of the window
 
-    # Clearing the right frame, since there might be some content
     clearFrame(frame1)
+    # Clearing the right frame
 
-    # Displaying the options
+    """ 
+    Display the check-in options
+    """
 
     # Customer Name Label
-    customerNameLab = Label(frame1, text="Name of Customer:")
-    customerNameLab.grid(row=0, column=0, pady=30, padx=5, sticky=E)
+    customerNameLab = tk.Label(frame1, text="Name of Customer:")
+    customerNameLab.grid(row=0, column=0, pady=30, padx=5, sticky=tk.E)
 
     # Customer Name Entry Box
-    customerName = Entry(frame1, width=30, justify=CENTER)
-    customerName.grid(row=0, column=1, padx=(15, 30), pady=25, sticky=W)
-    customerName.focus_set()
+    customerName = tk.Entry(frame1, width=30, justify=tk.CENTER)
+    customerName.grid(row=0, column=1, padx=(15, 30), pady=25, sticky=tk.W)
+    customerName.focus_set()  # Auto focus on first entry box
 
     # Customer Aadhaar Label
-    customerAadhaarLab = Label(frame1, text="Customer's Aadhaar Number:")
-    customerAadhaarLab.grid(row=0, column=2, pady=25, padx=5, sticky=E)
+    customerAadhaarLab = tk.Label(frame1, text="Customer's Aadhaar Number:")
+    customerAadhaarLab.grid(row=0, column=2, pady=25, padx=5, sticky=tk.E)
 
     # Customer Aadhaar Entry Box
-    customerAadhaar = Entry(frame1, width=30, justify=CENTER)
-    customerAadhaar.grid(row=0, column=3, padx=(15, 0), pady=25, sticky=W)
+    customerAadhaar = tk.Entry(frame1, width=30, justify=tk.CENTER)
+    customerAadhaar.grid(row=0, column=3, padx=(15, 0), pady=25, sticky=tk.W)
 
     # Customer Mobile Number Label
-    customerMobileLab = Label(frame1, text="Mobile Number:")
-    customerMobileLab.grid(row=1, column=0, pady=25, padx=5, sticky=E)
+    customerMobileLab = tk.Label(frame1, text="Mobile Number:")
+    customerMobileLab.grid(row=1, column=0, pady=25, padx=5, sticky=tk.E)
 
     # Customer Mobile Entry Box
-    customerMobile = Entry(frame1, width=30, justify=CENTER)
-    customerMobile.grid(row=1, column=1, padx=(15, 30), pady=25, sticky=W)
+    customerMobile = tk.Entry(frame1, width=30, justify=tk.CENTER)
+    customerMobile.grid(row=1, column=1, padx=(15, 30), pady=25, sticky=tk.W)
 
     # Customer Room Id Label
-    customerRoomIdLab = Label(frame1, text="Room Type: ")
-    customerRoomIdLab.grid(row=1, column=2, pady=25, padx=5, sticky=E)
+    customerRoomIdLab = tk.Label(frame1, text="Room Type: ")
+    customerRoomIdLab.grid(row=1, column=2, pady=25, padx=5, sticky=tk.E)
 
     # Rooms Option Menu
-    room = StringVar()  # Tkinter string data type
+    room = tk.StringVar()  # Tkinter string data type
 
-    # All the options to be displayed
     roomNames = [
         "Normal (AC)",
         "Normal (No AC)",
         "Deluxe",
         "Suite"
     ]
+    # All the options to be displayed
 
-    # Set default value to be displayed
     room.set("Select")
+    # Set default value to be displayed
 
     # To display the drop down menu
-    customerRoomId = OptionMenu(frame1, room, *roomNames)
-    customerRoomId.grid(row=1, column=3, padx=(15, 0), pady=25, sticky=W)
+    customerRoomId = tk.OptionMenu(frame1, room, *roomNames)
+    customerRoomId.grid(row=1, column=3, padx=(15, 0), pady=25, sticky=tk.W)
 
-    # To send query to add customer to database
-    def addCustomer():
-
-        # To use the global variable
+    def addCustomer() -> None:
+        """
+        Validate the entries and add the customer
+        :rtype: None
+        """
         global otpEntered
+        # To use the global variable
 
         # If room is not selected
         if room.get() == "Select":
 
             global_.updateStatus("Select a room")
+            # Update the Status Bar
 
             errorMsgBox("Customer", "Please Select a room")
+            # Display error message
 
-        # If some room is selected, setting roomId to suitable value
+        # If some room is selected
         else:
             roomId = ""
 
@@ -212,130 +282,151 @@ def checkIn():
             elif room.get() == "Suite":
                 roomId = "SA"
 
-            # Removing the spaces from the customer's aadhaar number and saving it in aadhaarNumber
             aadhaarNumber = customerAadhaar.get().replace(" ", "")
+            # Remove the spaces from the customer's aadhaar number
 
-            # Removing the spaces from the customer's mobile number and saving it in mobileNumber
             mobileNumber = customerMobile.get().replace(" ", "")
+            # Remove the spaces from the customer's mobile number
 
-            # Checking if the aadhaar number is of correct length and all integers
+            # Validate Aadhaar Number
             if intCheck(aadhaarNumber) == 0 or lenCheck(aadhaarNumber, 12) == 0:
 
+                # If wrong Aadhaar number entered
                 global_.updateStatus("Aadhaar Number Doesn't Exists")
+                # Update the Status Bar
 
                 errorMsgBox("Wrong Input", "Please Input Correct Aadhaar number")
+                # Display error message
 
-            # Checking if the mobile number is of correct length and all integers
+            # Validate mobile number
             elif intCheck(mobileNumber) == 0 or lenCheck(mobileNumber, 10) == 0:
 
+                # Wrong Mobile Entered
                 global_.updateStatus("Mobile number Doesn't Exist")
+                # Update the Status Bar
 
                 errorMsgBox("Wrong Input", "Please Input Correct Mobile number")
+                # Display the error message
 
             # If both the mobile, aadhaar number are correct
             else:
 
-                # Generating the OTP
                 # otp = genOTP()  # todo
+                # Generate the OTP
 
                 # sendOTP.sendSMS(otp, mobileNumber)  # todo
+                # Send the otp to the customer
 
                 # global_.updateStatus("OTP Sent!")  # todo
+                # Update the Status Bar
 
-                def validate():
+                def validateOtp():
 
                     # todo
+                    # Wrong otp
                     # if str(otp) != otpEntered:
-
                     if False:
-
                         global_.updateStatus("Oops! Try Again")
+                        # Update the Status Bar
 
                         errorMsgBox("OTP", "Wrong OTP Entered")
+                        # Display the Error Message
 
                     else:
-                        # Running the MySQL query
-                        # customerAdded -> tuple -> (condition, message)
-                        customerAdded = queries.addCustomer(
+                        customerAdded: tuple = queries.addCustomer(
                             customerName.get().title(),
                             aadhaarNumber,
                             mobileNumber,
                             roomId,
                             str(getDate())
                         )
+                        # Running the MySQL query
 
-                        # No error
+                        # Some error occured
                         if customerAdded[0] == 0:
 
                             global_.updateStatus("Try Again...:-\\")
+                            # Update the Status Bar
 
-                            # Displaying the error
                             errorMsgBox("Customer Check In", customerAdded[1])
+                            # Displaying the error
 
-                        # Some error
+                        # No error
                         elif customerAdded[0] == 1:
 
                             global_.updateStatus("Customer Added! ^_^")
+                            # Update the Status Bar
 
-                            # Displaying the success message
                             successMsgBox(
-                                "Customer Check In", "Customer Checked In\n"
-                                                     "Customer Id is {}".format(customerAdded[1]))
+                                "Customer Check In",
+                                "Customer Checked In\nCustomer Id is {}".format(customerAdded[1])
+                            )
+                            # Displaying the success message
 
-                            # Running the function again to add another customer
                             checkIn()
+                            # Running the function again to add another customer
 
-                def showOTPScreen():
-
+                def showOTPScreen() -> None:
+                    """
+                    Show the screen to enter the otp
+                    :rtype: None
+                    """
+                    otpScreen = tk.Toplevel()
                     # Tkinter new screen
-                    otpScreen = Toplevel()
 
-                    # Title for new screen
                     otpScreen.title("One Time Password")
+                    # Title for new screen
 
-                    # Sign in screen icon
                     otpScreen.iconbitmap("./Assets/LogoBlack.ico")
+                    # Sign in screen icon
 
                     # Frame for otp
-                    otpFrame = Frame(otpScreen, pady=5)
+                    otpFrame = tk.Frame(otpScreen, pady=5)
                     otpFrame.pack()
 
                     # Enter OTP Label
-                    otpLabel = Label(otpFrame, text="Enter OTP: ")
+                    otpLabel = tk.Label(otpFrame, text="Enter OTP: ")
                     otpLabel.grid(row=0, column=0)
 
                     # OTP Entry Field
-                    otpEntry = Entry(otpFrame, justify=CENTER)
+                    otpEntry = tk.Entry(otpFrame, justify=tk.CENTER)
                     otpEntry.grid(row=0, column=1)
                     otpEntry.focus_set()
                     otpEntry.configure(show="*")
 
-                    def submit():
+                    def submit() -> None:
                         global otpEntered
-                        otpEntered = otpEntry.get()
-                        otpScreen.destroy()
-                        validate()
+                        # To use the value outside the function
 
-                    # Submit Button
-                    but = Button(otpScreen, text="Submit", command=submit)
+                        otpEntered = otpEntry.get()
+
+                        otpScreen.destroy()
+                        # Destroying the otp screen
+
+                        validateOtp()
+                        # Validate the otp and add the customer
+
+                    # Otp screen Submit Button
+                    but = tk.Button(otpScreen, text="Submit", command=submit)
                     but.pack(pady=(10, 0))
 
                     # Key bind to submit on pressing return
                     def returnPressedInner(event):
-                        print(event)
-                        addCustomer()
+                        eventErrorHandler(event)
+                        submit()
 
+                    # Binding all elements of otp screen to call submit func when Return key is pressed
                     for j in otpScreen.winfo_children():
                         j.bind("<Return>", returnPressedInner)
 
-                    # Vertical Padding of the popup screen
                     otpScreen.configure(pady=50)
+                    # Vertical Padding of the popup screen
 
-                    # Dimensions of the SignIn screen
                     otpScreen.geometry("500x230")
+                    # Dimensions of the SignIn screen
 
-                    # To automatically focus on the pop up screen
                     otpScreen.focus_force()
+                    # To automatically focus on the pop up screen
 
                     # Dark Mode
                     if darkModeFlag:
@@ -345,39 +436,40 @@ def checkIn():
                         otpFrame.configure(bg="#333333")
 
                         otpLabel.configure(bg="#333333", fg="#DADADA")
-                        otpEntry.configure(bg="#5D5D5D", fg="#DADADA", relief=FLAT, borderwidth=1)
+                        otpEntry.configure(bg="#5D5D5D", fg="#DADADA", relief=tk.FLAT, borderwidth=1)
 
                         but.configure(bd=0, bg="#555555", fg="#DADADA", padx=8, pady=5)
 
                 # showOTPScreen()  # todo
+                # Show the pop-up screen to enter the otp
 
-                validate()  # todo: remove
+                validateOtp()  # todo: remove
 
-    # Submit Button
-    submitCustomerDetails = Button(frame1, text="Submit", width=15, command=addCustomer)
+    # Check-in screen Submit Button
+    submitCustomerDetails = tk.Button(frame1, text="Submit", width=15, command=addCustomer)
     submitCustomerDetails.grid(row=2, column=1, columnspan=2, pady=15)
 
-    # Key bind to submit on pressing return
     def returnPressed(event):
-        print(event)
+        eventErrorHandler(event)
         addCustomer()
 
+    # Key bind to submit on pressing return
     for i in frame1.winfo_children():
         i.bind("<Return>", returnPressed)
 
     # Dark Mode
     if darkModeFlag:
         customerNameLab.configure(bg="#2A2A2A", fg="#DADADA")
-        customerName.configure(bg="#505050", fg="#DADADA", relief=FLAT, borderwidth=3)
+        customerName.configure(bg="#505050", fg="#DADADA", relief=tk.FLAT, borderwidth=3)
 
         customerAadhaarLab.configure(bg="#2A2A2A", fg="#DADADA")
-        customerAadhaar.configure(bg="#505050", fg="#DADADA", relief=FLAT, borderwidth=3)
+        customerAadhaar.configure(bg="#505050", fg="#DADADA", relief=tk.FLAT, borderwidth=3)
 
         customerMobileLab.configure(bg="#2A2A2A", fg="#DADADA")
-        customerMobile.configure(bg="#505050", fg="#DADADA", relief=FLAT, borderwidth=3)
+        customerMobile.configure(bg="#505050", fg="#DADADA", relief=tk.FLAT, borderwidth=3)
 
         customerRoomIdLab.configure(bg="#2A2A2A", fg="#DADADA")
-        customerRoomId.configure(bg="#505050", fg="#DADADA", highlightthickness=0, relief=FLAT, borderwidth=3)
+        customerRoomId.configure(bg="#505050", fg="#DADADA", highlightthickness=0, relief=tk.FLAT, borderwidth=3)
         customerRoomId["menu"].config(bg="#555555", fg="#DADADA", bd=0)
 
         submitCustomerDetails.configure(bg="#505050", fg="#DADADA", bd=0, highlightthickness=0, pady=5, padx=8)
@@ -394,12 +486,12 @@ def updateCustomer():
     clearFrame(frame1)
 
     # Select Customer Id Label
-    customerIdLab = Label(frame1, text="Enter Customer Id:")
-    customerIdLab.grid(row=0, column=0, pady=30, padx=5, sticky=E)
+    customerIdLab = tk.Label(frame1, text="Enter Customer Id:")
+    customerIdLab.grid(row=0, column=0, pady=30, padx=5, sticky=tk.E)
 
     # CustomerId entry Box
-    customerId = Entry(frame1, justify=CENTER)
-    customerId.grid(row=0, column=1, padx=(15, 30), pady=25, sticky=W)
+    customerId = tk.Entry(frame1, justify=tk.CENTER)
+    customerId.grid(row=0, column=1, padx=(15, 30), pady=25, sticky=tk.W)
     customerId.focus_set()
 
     # To Fetch Customer's Details
@@ -432,32 +524,32 @@ def updateCustomer():
             aadhaar = aadhaar[0:4] + " " + aadhaar[4:8] + " " + aadhaar[8:12]
 
             # Customer Name Label
-            customerNameLab = Label(frame1, text="Name of customer:")
-            customerNameLab.grid(row=1, column=0, pady=30, padx=5, sticky=E)
+            customerNameLab = tk.Label(frame1, text="Name of customer:")
+            customerNameLab.grid(row=1, column=0, pady=30, padx=5, sticky=tk.E)
 
             # Customer Name Entry Box
-            customerName = Entry(frame1, width=30, justify=CENTER)
-            customerName.insert(END, str(name))  # Inserting the already existing values
-            customerName.grid(row=1, column=1, padx=(15, 30), pady=25, sticky=W)
+            customerName = tk.Entry(frame1, width=30, justify=tk.CENTER)
+            customerName.insert(tk.END, str(name))  # Inserting the already existing values
+            customerName.grid(row=1, column=1, padx=(15, 30), pady=25, sticky=tk.W)
             customerName.focus_set()
 
             # Customer Aadhaar Label
-            customerAadhaarLab = Label(frame1, text="Customer's Aadhaar Number:")
-            customerAadhaarLab.grid(row=1, column=2, pady=25, padx=(0, 5), sticky=E)
+            customerAadhaarLab = tk.Label(frame1, text="Customer's Aadhaar Number:")
+            customerAadhaarLab.grid(row=1, column=2, pady=25, padx=(0, 5), sticky=tk.E)
 
             # Customer Aadhaar Entry Box
-            customerAadhaar = Entry(frame1, width=30, justify=CENTER)
-            customerAadhaar.insert(END, aadhaar)  # Inserting the already existing values
-            customerAadhaar.grid(row=1, column=3, padx=(15, 0), pady=25, sticky=W)
+            customerAadhaar = tk.Entry(frame1, width=30, justify=tk.CENTER)
+            customerAadhaar.insert(tk.END, aadhaar)  # Inserting the already existing values
+            customerAadhaar.grid(row=1, column=3, padx=(15, 0), pady=25, sticky=tk.W)
 
             # Customer Mobile Number Label
-            customerMobileLab = Label(frame1, text="Mobile Number: ")
-            customerMobileLab.grid(row=2, column=0, pady=25, padx=5, sticky=E)
+            customerMobileLab = tk.Label(frame1, text="Mobile Number: ")
+            customerMobileLab.grid(row=2, column=0, pady=25, padx=5, sticky=tk.E)
 
             # Customer Mobile Entry Box
-            customerMobile = Entry(frame1, width=30, justify=CENTER)
-            customerMobile.insert(END, str(mobile))  # Inserting the already existing values
-            customerMobile.grid(row=2, column=1, padx=(15, 30), pady=25, sticky=W)
+            customerMobile = tk.Entry(frame1, width=30, justify=tk.CENTER)
+            customerMobile.insert(tk.END, str(mobile))  # Inserting the already existing values
+            customerMobile.grid(row=2, column=1, padx=(15, 30), pady=25, sticky=tk.W)
 
             # To send the query to update details
             def submitUpdateCustomer():
@@ -497,8 +589,8 @@ def updateCustomer():
                     updateCustomer()
 
             # Update Customer Details Button
-            submitCustomerDetails = Button(frame1, text="Update", width=15, command=submitUpdateCustomer)
-            submitCustomerDetails.grid(row=2, column=2, columnspan=2, sticky=W)
+            submitCustomerDetails = tk.Button(frame1, text="Update", width=15, command=submitUpdateCustomer)
+            submitCustomerDetails.grid(row=2, column=2, columnspan=2, sticky=tk.W)
 
             # Key bind to submit on pressing return
             def returnPressedInner(event):
@@ -511,19 +603,19 @@ def updateCustomer():
             # Dark Mode
             if darkModeFlag:
                 customerNameLab.configure(bg="#2A2A2A", fg="#DADADA")
-                customerName.configure(bg="#505050", fg="#DADADA", relief=FLAT, borderwidth=3)
+                customerName.configure(bg="#505050", fg="#DADADA", relief=tk.FLAT, borderwidth=3)
 
                 customerAadhaarLab.configure(bg="#2A2A2A", fg="#DADADA")
-                customerAadhaar.configure(bg="#505050", fg="#DADADA", relief=FLAT, borderwidth=3)
+                customerAadhaar.configure(bg="#505050", fg="#DADADA", relief=tk.FLAT, borderwidth=3)
 
                 customerMobileLab.configure(bg="#2A2A2A", fg="#DADADA")
-                customerMobile.configure(bg="#505050", fg="#DADADA", relief=FLAT, borderwidth=3)
+                customerMobile.configure(bg="#505050", fg="#DADADA", relief=tk.FLAT, borderwidth=3)
 
                 submitCustomerDetails.configure(bg="#505050", fg="#DADADA", bd=0, highlightthickness=0, pady=5, padx=8)
 
     # Search Button
-    submitButton = Button(frame1, text="Search", command=searchCustomer)
-    submitButton.grid(row=0, column=2, columnspan=2, pady=25, sticky=W)
+    submitButton = tk.Button(frame1, text="Search", command=searchCustomer)
+    submitButton.grid(row=0, column=2, columnspan=2, pady=25, sticky=tk.W)
 
     # Key bind to submit on pressing return
     def returnPressed(event):
@@ -536,7 +628,7 @@ def updateCustomer():
     # Dark Mode
     if darkModeFlag:
         customerIdLab.configure(bg="#2A2A2A", fg="#DADADA")
-        customerId.configure(bg="#505050", fg="#DADADA", relief=FLAT, borderwidth=3)
+        customerId.configure(bg="#505050", fg="#DADADA", relief=tk.FLAT, borderwidth=3)
 
         submitButton.configure(bg="#505050", fg="#DADADA", bd=0, highlightthickness=0, pady=5, padx=8)
 
@@ -552,12 +644,12 @@ def checkOut():
     clearFrame(frame1)
 
     # Select Customer Id Label
-    customerIdLab = Label(frame1, text="Enter Customer Id:")
-    customerIdLab.grid(row=0, column=0, pady=30, padx=5, sticky=E)
+    customerIdLab = tk.Label(frame1, text="Enter Customer Id:")
+    customerIdLab.grid(row=0, column=0, pady=30, padx=5, sticky=tk.E)
 
     # Customer Id Entry Box
-    customerId = Entry(frame1, justify=CENTER)
-    customerId.grid(row=0, column=1, padx=(15, 30), pady=25, sticky=W)
+    customerId = tk.Entry(frame1, justify=tk.CENTER)
+    customerId.grid(row=0, column=1, padx=(15, 30), pady=25, sticky=tk.W)
     customerId.focus_set()
 
     # To search the customer in database
@@ -574,7 +666,7 @@ def checkOut():
             errorMsgBox("Customer", "Customer Not Found\n"
                                     "Please Try Again")
 
-            customerId.delete(0, END)
+            customerId.delete(0, tk.END)
 
         # Customer Found
         elif customerResult == 1:
@@ -588,34 +680,34 @@ def checkOut():
             aadhaar = aadhaar[0:4] + " " + aadhaar[4:8] + " " + aadhaar[8:12]
 
             # Customer Name Label
-            customerNameLab = Label(frame1, text="Name of customer: ")
-            customerNameLab.grid(row=1, column=0, pady=30, padx=5, sticky=E)
+            customerNameLab = tk.Label(frame1, text="Name of customer: ")
+            customerNameLab.grid(row=1, column=0, pady=30, padx=5, sticky=tk.E)
 
             # Customer Name Entry Box
-            customerName = Entry(frame1, width=30, justify=CENTER)
-            customerName.insert(END, str(name))  # Inserting the already existing values
-            customerName.configure(state=DISABLED)  # So that details cannot be changed
-            customerName.grid(row=1, column=1, padx=(15, 30), pady=25, sticky=W)
+            customerName = tk.Entry(frame1, width=30, justify=tk.CENTER)
+            customerName.insert(tk.END, str(name))  # Inserting the already existing values
+            customerName.configure(state=tk.DISABLED)  # So that details cannot be changed
+            customerName.grid(row=1, column=1, padx=(15, 30), pady=25, sticky=tk.W)
 
             # Customer Aadhaar Label
-            customerAadhaarLab = Label(frame1, text="Customer's Aadhaar Number: ")
-            customerAadhaarLab.grid(row=1, column=2, pady=25, padx=(0, 5), sticky=E)
+            customerAadhaarLab = tk.Label(frame1, text="Customer's Aadhaar Number: ")
+            customerAadhaarLab.grid(row=1, column=2, pady=25, padx=(0, 5), sticky=tk.E)
 
             # Customer Aadhaar Entry Box
-            customerAadhaar = Entry(frame1, width=30, justify=CENTER)
-            customerAadhaar.insert(END, aadhaar)  # Inserting the already existing values
-            customerAadhaar.configure(state=DISABLED)  # So that details cannot be changed
-            customerAadhaar.grid(row=1, column=3, padx=(15, 0), pady=25, sticky=W)
+            customerAadhaar = tk.Entry(frame1, width=30, justify=tk.CENTER)
+            customerAadhaar.insert(tk.END, aadhaar)  # Inserting the already existing values
+            customerAadhaar.configure(state=tk.DISABLED)  # So that details cannot be changed
+            customerAadhaar.grid(row=1, column=3, padx=(15, 0), pady=25, sticky=tk.W)
 
             # Customer Mobile Number Label
-            customerMobileLab = Label(frame1, text="Mobile Number: ")
-            customerMobileLab.grid(row=2, column=0, pady=25, padx=5, sticky=E)
+            customerMobileLab = tk.Label(frame1, text="Mobile Number: ")
+            customerMobileLab.grid(row=2, column=0, pady=25, padx=5, sticky=tk.E)
 
             # Customer Mobile Entry Box
-            customerMobile = Entry(frame1, width=30, justify=CENTER)
-            customerMobile.insert(END, str(mobile))  # Inserting the already existing values
-            customerMobile.configure(state=DISABLED)  # So that details cannot be changed
-            customerMobile.grid(row=2, column=1, padx=(15, 30), pady=25, sticky=W)
+            customerMobile = tk.Entry(frame1, width=30, justify=tk.CENTER)
+            customerMobile.insert(tk.END, str(mobile))  # Inserting the already existing values
+            customerMobile.configure(state=tk.DISABLED)  # So that details cannot be changed
+            customerMobile.grid(row=2, column=1, padx=(15, 30), pady=25, sticky=tk.W)
 
             # To send the query to remove details
             def removeCustomer():
@@ -651,8 +743,8 @@ def checkOut():
                 checkOut()
 
             # Remove Customer Button
-            removeCustomerButton = Button(frame1, text="Check Out", width=15, command=removeCustomer)
-            removeCustomerButton.grid(row=2, column=2, columnspan=2, sticky=W)
+            removeCustomerButton = tk.Button(frame1, text="Check Out", width=15, command=removeCustomer)
+            removeCustomerButton.grid(row=2, column=2, columnspan=2, sticky=tk.W)
 
             # Key bind to submit on pressing return
             def returnPressedInner(event):
@@ -665,22 +757,22 @@ def checkOut():
             if darkModeFlag:
                 # Dark Mode
                 customerNameLab.configure(bg="#2A2A2A", fg="#DADADA")
-                customerName.configure(disabledbackground="#505050", disabledforeground="#888888", relief=FLAT,
+                customerName.configure(disabledbackground="#505050", disabledforeground="#888888", relief=tk.FLAT,
                                        borderwidth=3)
 
                 customerAadhaarLab.configure(bg="#2A2A2A", fg="#DADADA")
-                customerAadhaar.configure(disabledbackground="#505050", disabledforeground="#888888", relief=FLAT,
+                customerAadhaar.configure(disabledbackground="#505050", disabledforeground="#888888", relief=tk.FLAT,
                                           borderwidth=3)
 
                 customerMobileLab.configure(bg="#2A2A2A", fg="#DADADA")
-                customerMobile.configure(disabledbackground="#505050", disabledforeground="#888888", relief=FLAT,
+                customerMobile.configure(disabledbackground="#505050", disabledforeground="#888888", relief=tk.FLAT,
                                          borderwidth=3)
 
                 removeCustomerButton.configure(bg="#505050", fg="#DADADA", bd=0, highlightthickness=0, pady=5, padx=8)
 
     # Search Button
-    submitButton = Button(frame1, text="Search", command=searchCustomer)
-    submitButton.grid(row=0, column=2, columnspan=2, pady=25, sticky=W)
+    submitButton = tk.Button(frame1, text="Search", command=searchCustomer)
+    submitButton.grid(row=0, column=2, columnspan=2, pady=25, sticky=tk.W)
 
     # Key bind to submit on pressing return
     def returnPressed(event):
@@ -693,7 +785,7 @@ def checkOut():
     # Dark Mode
     if darkModeFlag:
         customerIdLab.configure(bg="#2A2A2A", fg="#DADADA")
-        customerId.configure(bg="#505050", fg="#DADADA", relief=FLAT, borderwidth=3)
+        customerId.configure(bg="#505050", fg="#DADADA", relief=tk.FLAT, borderwidth=3)
 
         submitButton.configure(bg="#505050", fg="#DADADA", bd=0, highlightthickness=0, pady=5, padx=8)
 
@@ -709,12 +801,12 @@ def findCustomer():
     clearFrame(frame1)
 
     # Select Customer Id Label
-    customerIdLab = Label(frame1, text="Enter Customer Id:")
-    customerIdLab.grid(row=0, column=0, pady=30, padx=5, sticky=E)
+    customerIdLab = tk.Label(frame1, text="Enter Customer Id:")
+    customerIdLab.grid(row=0, column=0, pady=30, padx=5, sticky=tk.E)
 
     # Customer Id Entry Box
-    customerId = Entry(frame1, justify=CENTER)
-    customerId.grid(row=0, column=1, padx=(15, 30), pady=25, sticky=W)
+    customerId = tk.Entry(frame1, justify=tk.CENTER)
+    customerId.grid(row=0, column=1, padx=(15, 30), pady=25, sticky=tk.W)
     customerId.focus_set()
 
     # To search the customer in database
@@ -734,7 +826,7 @@ def findCustomer():
             errorMsgBox("Customer", "Customer Id Not Found\n"
                                     "Please Try Again")
 
-            customerId.delete(0, END)
+            customerId.delete(0, tk.END)
 
         # Customer Found
         elif customerResult == 1:
@@ -748,51 +840,51 @@ def findCustomer():
             aadhaar = aadhaar[0:4] + " " + aadhaar[4:8] + " " + aadhaar[8:12]
 
             # Customer Name Label
-            customerNameLab = Label(frame1, text="Name of customer:")
-            customerNameLab.grid(row=1, column=0, pady=30, padx=5, sticky=E)
+            customerNameLab = tk.Label(frame1, text="Name of customer:")
+            customerNameLab.grid(row=1, column=0, pady=30, padx=5, sticky=tk.E)
 
             # Customer Name Entry Box
-            customerName = Entry(frame1, width=30, justify=CENTER)
-            customerName.insert(END, str(name))  # Inserting the already existing values
-            customerName.configure(state=DISABLED)  # So that details cannot be changed
-            customerName.grid(row=1, column=1, padx=(15, 30), pady=25, sticky=W)
+            customerName = tk.Entry(frame1, width=30, justify=tk.CENTER)
+            customerName.insert(tk.END, str(name))  # Inserting the already existing values
+            customerName.configure(state=tk.DISABLED)  # So that details cannot be changed
+            customerName.grid(row=1, column=1, padx=(15, 30), pady=25, sticky=tk.W)
 
             # Customer Aadhaar Label
-            customerAadhaarLab = Label(frame1, text="Customer's Aadhaar Number:")
-            customerAadhaarLab.grid(row=1, column=2, pady=25, padx=(0, 5), sticky=E)
+            customerAadhaarLab = tk.Label(frame1, text="Customer's Aadhaar Number:")
+            customerAadhaarLab.grid(row=1, column=2, pady=25, padx=(0, 5), sticky=tk.E)
 
             # Customer Aadhaar Entry Box
-            customerAadhaar = Entry(frame1, width=30, justify=CENTER)
-            customerAadhaar.insert(END, aadhaar)  # Inserting the already existing values
-            customerAadhaar.configure(state=DISABLED)  # So that details cannot be changed
-            customerAadhaar.grid(row=1, column=3, padx=(15, 0), pady=25, sticky=W)
+            customerAadhaar = tk.Entry(frame1, width=30, justify=tk.CENTER)
+            customerAadhaar.insert(tk.END, aadhaar)  # Inserting the already existing values
+            customerAadhaar.configure(state=tk.DISABLED)  # So that details cannot be changed
+            customerAadhaar.grid(row=1, column=3, padx=(15, 0), pady=25, sticky=tk.W)
 
             # Customer Mobile Number Label
-            customerMobileLab = Label(frame1, text="Mobile Number:")
-            customerMobileLab.grid(row=2, column=0, pady=25, padx=5, sticky=E)
+            customerMobileLab = tk.Label(frame1, text="Mobile Number:")
+            customerMobileLab.grid(row=2, column=0, pady=25, padx=5, sticky=tk.E)
 
             # Customer Mobile Entry Box
-            customerMobile = Entry(frame1, width=30, justify=CENTER)
-            customerMobile.insert(END, str(mobile))  # Inserting the already existing values
-            customerMobile.configure(state=DISABLED)  # So that details cannot be changed
-            customerMobile.grid(row=2, column=1, padx=(15, 30), pady=25, sticky=W)
+            customerMobile = tk.Entry(frame1, width=30, justify=tk.CENTER)
+            customerMobile.insert(tk.END, str(mobile))  # Inserting the already existing values
+            customerMobile.configure(state=tk.DISABLED)  # So that details cannot be changed
+            customerMobile.grid(row=2, column=1, padx=(15, 30), pady=25, sticky=tk.W)
 
             if darkModeFlag:
                 # Dark Mode
                 customerNameLab.configure(bg="#2A2A2A", fg="#DADADA")
-                customerName.configure(disabledbackground="#505050", disabledforeground="#888888", relief=FLAT,
+                customerName.configure(disabledbackground="#505050", disabledforeground="#888888", relief=tk.FLAT,
                                        borderwidth=3)
 
                 customerAadhaarLab.configure(bg="#2A2A2A", fg="#DADADA")
-                customerAadhaar.configure(disabledbackground="#505050", disabledforeground="#888888", relief=FLAT,
+                customerAadhaar.configure(disabledbackground="#505050", disabledforeground="#888888", relief=tk.FLAT,
                                           borderwidth=3)
 
                 customerMobileLab.configure(bg="#2A2A2A", fg="#DADADA")
-                customerMobile.configure(disabledbackground="#505050", disabledforeground="#888888", relief=FLAT,
+                customerMobile.configure(disabledbackground="#505050", disabledforeground="#888888", relief=tk.FLAT,
                                          borderwidth=3)
 
     # Search Button
-    submitButton = Button(frame1, text="Search", command=searchCustomer)
+    submitButton = tk.Button(frame1, text="Search", command=searchCustomer)
     submitButton.grid(row=0, column=2, pady=25)
 
     # Key bind to submit on pressing return
@@ -806,7 +898,7 @@ def findCustomer():
     # Dark Mode
     if darkModeFlag:
         customerIdLab.configure(bg="#2A2A2A", fg="#DADADA")
-        customerId.configure(bg="#505050", fg="#DADADA", relief=FLAT, borderwidth=3)
+        customerId.configure(bg="#505050", fg="#DADADA", relief=tk.FLAT, borderwidth=3)
 
         submitButton.configure(bg="#505050", fg="#DADADA", bd=0, highlightthickness=0, pady=5, padx=8)
 
@@ -841,12 +933,12 @@ def showCustomers():
 
         # Adding the scrollBar
         # Create a canvas
-        myCanvas = Canvas(frame1)
-        myCanvas.pack(side=LEFT, fill=X, expand=True)
+        myCanvas = tk.Canvas(frame1)
+        myCanvas.pack(side=tk.LEFT, fill=tk.X, expand=True)
 
         # Add a scroll Bar to the Canvas
-        scrollBar = ttk.Scrollbar(frame1, orient=VERTICAL, command=myCanvas.yview)
-        scrollBar.pack(side=RIGHT, fill=Y)
+        scrollBar = ttk.Scrollbar(frame1, orient=tk.VERTICAL, command=myCanvas.yview)
+        scrollBar.pack(side=tk.RIGHT, fill=tk.Y)
 
         # Configure the canvas for scroll Bar
         myCanvas.configure(yscrollcommand=scrollBar.set)
@@ -859,7 +951,7 @@ def showCustomers():
         myCanvas.bind_all("<MouseWheel>", onMouseWheel)
 
         # Create frame inside the canvas
-        frame12 = Frame(myCanvas)
+        frame12 = tk.Frame(myCanvas)
 
         # Add frame to window in canvas
         myCanvas.create_window((0, 0), window=frame12, anchor="nw")
@@ -868,59 +960,59 @@ def showCustomers():
 
             # Headings
             # Id
-            customerIdHeading = Label(
+            customerIdHeading = tk.Label(
                 frame12,
                 text="Customer Id",
                 bg="#C0C0C0",
-                relief=GROOVE,
+                relief=tk.GROOVE,
                 padx=20,
                 pady=8,
                 font=("Ariel", 10))
-            customerIdHeading.grid(row=0, column=0, sticky=NSEW, padx=(50, 0))
+            customerIdHeading.grid(row=0, column=0, sticky=tk.NSEW, padx=(50, 0))
 
             # Name
-            customerNameHeading = Label(
+            customerNameHeading = tk.Label(
                 frame12,
                 text="Name",
                 bg="#C0C0C0",
-                relief=GROOVE,
+                relief=tk.GROOVE,
                 padx=20,
                 pady=8,
                 font=("Ariel", 10))
-            customerNameHeading.grid(row=0, column=1, stick=NSEW)
+            customerNameHeading.grid(row=0, column=1, stick=tk.NSEW)
 
             # Aadhaar
-            customerAadhaarHeading = Label(
+            customerAadhaarHeading = tk.Label(
                 frame12,
                 text="Aadhaar Number",
                 bg="#C0C0C0",
-                relief=GROOVE,
+                relief=tk.GROOVE,
                 padx=20,
                 pady=8,
                 font=("Ariel", 10))
-            customerAadhaarHeading.grid(row=0, column=2, sticky=NSEW)
+            customerAadhaarHeading.grid(row=0, column=2, sticky=tk.NSEW)
 
             # Mobile Number
-            customerMobileHeading = Label(
+            customerMobileHeading = tk.Label(
                 frame12,
                 text="Mobile",
                 bg="#C0C0C0",
-                relief=GROOVE,
+                relief=tk.GROOVE,
                 padx=20,
                 pady=8,
                 font=("Ariel", 10))
-            customerMobileHeading.grid(row=0, column=3, sticky=NSEW)
+            customerMobileHeading.grid(row=0, column=3, sticky=tk.NSEW)
 
             # Room Type
-            customerRoomHeading = Label(
+            customerRoomHeading = tk.Label(
                 frame12,
                 text="Room Type",
                 bg="#C0C0C0",
-                relief=GROOVE,
+                relief=tk.GROOVE,
                 padx=20,
                 pady=8,
                 font=("Ariel", 10))
-            customerRoomHeading.grid(row=0, column=4, sticky=NSEW)
+            customerRoomHeading.grid(row=0, column=4, sticky=tk.NSEW)
 
             # j is row number
             j = 1
@@ -945,54 +1037,54 @@ def showCustomers():
                 mobileNUmber = i[3][0:5] + " " + i[3][5:10]
 
                 # Customer Id
-                customerId = Label(
+                customerId = tk.Label(
                     frame12,
                     text=i[0],
-                    relief=GROOVE,
+                    relief=tk.GROOVE,
                     padx=20,
                     pady=8,
                     font=("Ariel", 10))
-                customerId.grid(row=j, column=0, sticky=NSEW, padx=(50, 0))
+                customerId.grid(row=j, column=0, sticky=tk.NSEW, padx=(50, 0))
 
                 # Customer Name
-                customerName = Label(
+                customerName = tk.Label(
                     frame12,
                     text=i[1],
-                    relief=GROOVE,
+                    relief=tk.GROOVE,
                     padx=20,
                     pady=8,
                     font=("Ariel", 10))
-                customerName.grid(row=j, column=1, sticky=NSEW)
+                customerName.grid(row=j, column=1, sticky=tk.NSEW)
 
                 # Customer Aadhaar
-                customerAadhaar = Label(
+                customerAadhaar = tk.Label(
                     frame12,
                     text=aadhaarNumber,
-                    relief=GROOVE,
+                    relief=tk.GROOVE,
                     padx=20,
                     pady=8,
                     font=("Ariel", 10))
-                customerAadhaar.grid(row=j, column=2, sticky=NSEW)
+                customerAadhaar.grid(row=j, column=2, sticky=tk.NSEW)
 
                 # Mobile number
-                customerMobile = Label(
+                customerMobile = tk.Label(
                     frame12,
                     text=mobileNUmber,
-                    relief=GROOVE,
+                    relief=tk.GROOVE,
                     padx=20,
                     pady=8,
                     font=("Ariel", 10))
-                customerMobile.grid(row=j, column=3, sticky=NSEW)
+                customerMobile.grid(row=j, column=3, sticky=tk.NSEW)
 
                 # Room Type
-                customerRoomLabel = Label(
+                customerRoomLabel = tk.Label(
                     frame12,
                     text=customerRoom,
-                    relief=GROOVE,
+                    relief=tk.GROOVE,
                     padx=20,
                     pady=8,
                     font=("Ariel", 10))
-                customerRoomLabel.grid(row=j, column=4, sticky=NSEW)
+                customerRoomLabel.grid(row=j, column=4, sticky=tk.NSEW)
 
                 j += 1
 
@@ -1016,81 +1108,81 @@ def showCustomers():
         elif global_.accessLevel == "Admin":
             # Headings
             # Id
-            customerIdHeading = Label(
+            customerIdHeading = tk.Label(
                 frame12,
                 text="Customer Id",
                 bg="#C0C0C0",
-                relief=GROOVE,
+                relief=tk.GROOVE,
                 padx=10,
                 pady=9,
                 font=("Ariel", 9))
-            customerIdHeading.grid(row=0, column=0, sticky=NSEW)
+            customerIdHeading.grid(row=0, column=0, sticky=tk.NSEW)
 
             # Name
-            customerNameHeading = Label(
+            customerNameHeading = tk.Label(
                 frame12,
                 text="Name",
                 bg="#C0C0C0",
-                relief=GROOVE,
+                relief=tk.GROOVE,
                 padx=10,
                 pady=9,
                 font=("Ariel", 9))
-            customerNameHeading.grid(row=0, column=1, stick=NSEW)
+            customerNameHeading.grid(row=0, column=1, stick=tk.NSEW)
 
             # Aadhaar
-            customerAadhaarHeading = Label(
+            customerAadhaarHeading = tk.Label(
                 frame12,
                 text="Aadhaar Number",
                 bg="#C0C0C0",
-                relief=GROOVE,
+                relief=tk.GROOVE,
                 padx=10,
                 pady=9,
                 font=("Ariel", 9))
-            customerAadhaarHeading.grid(row=0, column=2, sticky=NSEW)
+            customerAadhaarHeading.grid(row=0, column=2, sticky=tk.NSEW)
 
             # Mobile Number
-            customerMobileHeading = Label(
+            customerMobileHeading = tk.Label(
                 frame12,
                 text="Mobile",
                 bg="#C0C0C0",
-                relief=GROOVE,
+                relief=tk.GROOVE,
                 padx=10,
                 pady=9,
                 font=("Ariel", 9))
-            customerMobileHeading.grid(row=0, column=3, sticky=NSEW)
+            customerMobileHeading.grid(row=0, column=3, sticky=tk.NSEW)
 
             # Room Type
-            customerRoomHeading = Label(
+            customerRoomHeading = tk.Label(
                 frame12,
                 text="Room Type",
                 bg="#C0C0C0",
-                relief=GROOVE,
+                relief=tk.GROOVE,
                 padx=10,
                 pady=9,
                 font=("Ariel", 9))
-            customerRoomHeading.grid(row=0, column=4, sticky=NSEW)
+            customerRoomHeading.grid(row=0, column=4, sticky=tk.NSEW)
 
             # CheckInDate
-            CheckInDateHeading = Label(
+            CheckInDateHeading = tk.Label(
                 frame12,
                 text="Check in Date",
                 bg="#C0C0C0",
-                relief=GROOVE,
+                relief=tk.GROOVE,
                 padx=10,
                 pady=9,
                 font=("Ariel", 9))
-            CheckInDateHeading.grid(row=0, column=5, sticky=NSEW)
+            CheckInDateHeading.grid(row=0, column=5, sticky=tk.NSEW)
 
             # CheckOutDate
-            CheckOutDateHeading = Label(
+            CheckOutDateHeading = tk.Label(
                 frame12,
                 text="Check out Date",
                 bg="#C0C0C0",
-                relief=GROOVE,
+                relief=tk.GROOVE,
                 padx=10,
                 pady=9,
                 font=("Ariel", 9))
-            CheckOutDateHeading.grid(row=0, column=6, sticky=NSEW)
+            CheckOutDateHeading.grid(row=0, column=6, sticky=tk.NSEW)
 
             # j is row number
             j = 1
@@ -1121,74 +1213,74 @@ def showCustomers():
                     checkOutDate = "-"
 
                 # Customer Id
-                customerId = Label(
+                customerId = tk.Label(
                     frame12,
                     text=i[0],
-                    relief=GROOVE,
+                    relief=tk.GROOVE,
                     padx=10,
                     pady=8,
                     font=("Ariel", 8))
-                customerId.grid(row=j, column=0, sticky=NSEW)
+                customerId.grid(row=j, column=0, sticky=tk.NSEW)
 
                 # Customer Name
-                customerName = Label(
+                customerName = tk.Label(
                     frame12,
                     text=i[1],
-                    relief=GROOVE,
+                    relief=tk.GROOVE,
                     padx=10,
                     pady=8,
                     font=("Ariel", 8))
-                customerName.grid(row=j, column=1, sticky=NSEW)
+                customerName.grid(row=j, column=1, sticky=tk.NSEW)
 
                 # Customer Aadhaar
-                customerAadhaar = Label(
+                customerAadhaar = tk.Label(
                     frame12,
                     text=aadhaarNumber,
-                    relief=GROOVE,
+                    relief=tk.GROOVE,
                     padx=10,
                     pady=8,
                     font=("Ariel", 8))
-                customerAadhaar.grid(row=j, column=2, sticky=NSEW)
+                customerAadhaar.grid(row=j, column=2, sticky=tk.NSEW)
 
                 # Mobile number
-                customerMobile = Label(
+                customerMobile = tk.Label(
                     frame12,
                     text=mobileNUmber,
-                    relief=GROOVE,
+                    relief=tk.GROOVE,
                     padx=10,
                     pady=8,
                     font=("Ariel", 8))
-                customerMobile.grid(row=j, column=3, sticky=NSEW)
+                customerMobile.grid(row=j, column=3, sticky=tk.NSEW)
 
                 # Room Type
-                customerRoom = Label(
+                customerRoom = tk.Label(
                     frame12,
                     text=customerRoom,
-                    relief=GROOVE,
+                    relief=tk.GROOVE,
                     padx=10,
                     pady=8,
                     font=("Ariel", 8))
-                customerRoom.grid(row=j, column=4, sticky=NSEW)
+                customerRoom.grid(row=j, column=4, sticky=tk.NSEW)
 
                 # Check in Date
-                customerCheckInDate = Label(
+                customerCheckInDate = tk.Label(
                     frame12,
                     text=i[5],
-                    relief=GROOVE,
+                    relief=tk.GROOVE,
                     padx=10,
                     pady=8,
                     font=("Ariel", 8))
-                customerCheckInDate.grid(row=j, column=5, sticky=NSEW)
+                customerCheckInDate.grid(row=j, column=5, sticky=tk.NSEW)
 
                 # Check in Date
-                customerCheckOutDate = Label(
+                customerCheckOutDate = tk.Label(
                     frame12,
                     text=str(checkOutDate),
-                    relief=GROOVE,
+                    relief=tk.GROOVE,
                     padx=10,
                     pady=8,
                     font=("Ariel", 8))
-                customerCheckOutDate.grid(row=j, column=6, sticky=NSEW)
+                customerCheckOutDate.grid(row=j, column=6, sticky=tk.NSEW)
 
                 j += 1
 
@@ -1233,8 +1325,8 @@ def showCustomers():
                 successMsgBox("CSV", "File saved on desktop")
 
             # Save Button
-            saveCSVButton = Button(frame12, text="Save CSV", command=saveCSV)
-            saveCSVButton.grid(row=j + 1, column=3, pady=(30, 0), sticky=NSEW)
+            saveCSVButton = tk.Button(frame12, text="Save CSV", command=saveCSV)
+            saveCSVButton.grid(row=j + 1, column=3, pady=(30, 0), sticky=tk.NSEW)
 
             # Dark Mode
             if darkModeFlag:
@@ -1272,11 +1364,11 @@ def addRoom():
     clearFrame(frame1)
 
     # Room Id Label
-    roomIdLab = Label(frame1, text="Select Room Type:")
-    roomIdLab.grid(row=0, column=0, pady=15, padx=5, sticky=E)
+    roomIdLab = tk.Label(frame1, text="Select Room Type:")
+    roomIdLab.grid(row=0, column=0, pady=15, padx=5, sticky=tk.E)
 
     # Room Id Option Menu
-    room = StringVar()  # Tkinter string data type
+    room = tk.StringVar()  # Tkinter string data type
 
     # List of room options
     roomNames = [
@@ -1292,12 +1384,12 @@ def addRoom():
     room.set("Select")
 
     # AC Available Label
-    ACLab = Label(frame1, text="AC: ")
-    ACLab.grid(row=0, column=2, pady=15, padx=15, sticky=E)
+    ACLab = tk.Label(frame1, text="AC: ")
+    ACLab.grid(row=0, column=2, pady=15, padx=15, sticky=tk.E)
 
     # AC Value Label
-    ACLab2 = Label(frame1)
-    ACLab2.grid(row=0, column=3, padx=(15, 0), pady=15, sticky=W)
+    ACLab2 = tk.Label(frame1)
+    ACLab2.grid(row=0, column=3, padx=(15, 0), pady=15, sticky=tk.W)
     ACLab2.configure(text="No Info")
 
     # To check if AC is available
@@ -1313,36 +1405,36 @@ def addRoom():
         print(event)
 
     # Options menu to select the room and update AC status
-    roomIdSelector = OptionMenu(frame1, room, *roomNames, command=updateAC)
+    roomIdSelector = tk.OptionMenu(frame1, room, *roomNames, command=updateAC)
     roomIdSelector.config(width=length)
-    roomIdSelector.grid(row=0, column=1, padx=(15, 30), pady=15, sticky=W)
+    roomIdSelector.grid(row=0, column=1, padx=(15, 30), pady=15, sticky=tk.W)
 
     # Quantity of rooms Label
-    qtyRoomsLab = Label(frame1, text="How many rooms are available? :")
-    qtyRoomsLab.grid(row=1, column=0, pady=15, padx=5, sticky=E)
+    qtyRoomsLab = tk.Label(frame1, text="How many rooms are available? :")
+    qtyRoomsLab.grid(row=1, column=0, pady=15, padx=5, sticky=tk.E)
 
     # Quantity of Rooms Scale
-    qtyRooms = Scale(frame1, from_=1, to=10, orient=HORIZONTAL)
+    qtyRooms = tk.Scale(frame1, from_=1, to=10, orient=tk.HORIZONTAL)
     qtyRooms.configure(length=127)
-    qtyRooms.grid(row=1, column=1, padx=(15, 30), pady=15, sticky=W)
+    qtyRooms.grid(row=1, column=1, padx=(15, 30), pady=15, sticky=tk.W)
 
     # Room Rate Label
-    roomRateLab = Label(frame1, text="Rate({}): ".format("\u20B9"))  # u"\u20B9" -> rupees symbol
-    roomRateLab.grid(row=1, column=2, pady=15, padx=15, sticky=E)
+    roomRateLab = tk.Label(frame1, text="Rate({}): ".format("\u20B9"))  # u"\u20B9" -> rupees symbol
+    roomRateLab.grid(row=1, column=2, pady=15, padx=15, sticky=tk.E)
 
     # Room Rate Entry Box
-    roomRate = Entry(frame1, justify=CENTER)
+    roomRate = tk.Entry(frame1, justify=tk.CENTER)
     roomRate.configure(width=length + 6)
-    roomRate.grid(row=1, column=3, padx=(15, 0), pady=15, sticky=W)
+    roomRate.grid(row=1, column=3, padx=(15, 0), pady=15, sticky=tk.W)
 
     # Tax of rooms Label
-    taxRoomsLab = Label(frame1, text="Room Tax (%):")
-    taxRoomsLab.grid(row=2, column=0, pady=15, padx=5, sticky=E)
+    taxRoomsLab = tk.Label(frame1, text="Room Tax (%):")
+    taxRoomsLab.grid(row=2, column=0, pady=15, padx=5, sticky=tk.E)
 
     # Tax entry box
-    taxRoom = Entry(frame1, justify=CENTER)
+    taxRoom = tk.Entry(frame1, justify=tk.CENTER)
     taxRoom.configure(width=length + 6)
-    taxRoom.grid(row=2, column=1, padx=(15, 30), pady=(15, 0), sticky=W)
+    taxRoom.grid(row=2, column=1, padx=(15, 30), pady=(15, 0), sticky=tk.W)
 
     # To send query to add room to database
     def submitRoomAdd():
@@ -1412,9 +1504,9 @@ def addRoom():
             addRoom()
 
     # Submit Button
-    submitCustomerDetails = Button(frame1, text="Submit", command=submitRoomAdd)
+    submitCustomerDetails = tk.Button(frame1, text="Submit", command=submitRoomAdd)
     submitCustomerDetails.configure(width=length + 2)
-    submitCustomerDetails.grid(row=2, column=3, padx=(15, 0), pady=15, sticky=W)
+    submitCustomerDetails.grid(row=2, column=3, padx=(15, 0), pady=15, sticky=tk.W)
 
     # Key bind to submit on pressing return
     def returnPressed(event):
@@ -1427,7 +1519,7 @@ def addRoom():
     # Dark Mode
     if darkModeFlag:
         roomIdLab.configure(bg="#2A2A2A", fg="#DADADA")
-        roomIdSelector.configure(bg="#505050", fg="#DADADA", highlightthickness=0, relief=FLAT, borderwidth=3)
+        roomIdSelector.configure(bg="#505050", fg="#DADADA", highlightthickness=0, relief=tk.FLAT, borderwidth=3)
         roomIdSelector["menu"].config(bg="#555555", fg="#DADADA", bd=0)
 
         ACLab.configure(bg="#2A2A2A", fg="#DADADA")
@@ -1437,10 +1529,10 @@ def addRoom():
         qtyRooms.configure(bg="#2A2A2A", fg="#DADADA", highlightthickness=0, troughcolor="#505050", bd=0)
 
         roomRateLab.configure(bg="#2A2A2A", fg="#DADADA")
-        roomRate.configure(bg="#505050", fg="#DADADA", relief=FLAT, borderwidth=3)
+        roomRate.configure(bg="#505050", fg="#DADADA", relief=tk.FLAT, borderwidth=3)
 
         taxRoomsLab.configure(bg="#2A2A2A", fg="#DADADA")
-        taxRoom.configure(bg="#505050", fg="#DADADA", relief=FLAT, borderwidth=3)
+        taxRoom.configure(bg="#505050", fg="#DADADA", relief=tk.FLAT, borderwidth=3)
 
         submitCustomerDetails.configure(bg="#505050", fg="#DADADA", bd=0, highlightthickness=0, pady=5, padx=8)
 
@@ -1456,11 +1548,11 @@ def updateRoom():
     clearFrame(frame1)
 
     # Room Id Label
-    roomIdLab = Label(frame1, text="Select Room Type:")
-    roomIdLab.grid(row=0, column=0, pady=30, padx=5, sticky=E)
+    roomIdLab = tk.Label(frame1, text="Select Room Type:")
+    roomIdLab.grid(row=0, column=0, pady=30, padx=5, sticky=tk.E)
 
     # Room Id Option Menu
-    room = StringVar()  # Tkinter string data type
+    room = tk.StringVar()  # Tkinter string data type
 
     # List of room options
     roomNames = [
@@ -1476,9 +1568,9 @@ def updateRoom():
     room.set("Select")
 
     # Options menu to select the room
-    roomIdSelector = OptionMenu(frame1, room, *roomNames)
+    roomIdSelector = tk.OptionMenu(frame1, room, *roomNames)
     roomIdSelector.config(width=length)
-    roomIdSelector.grid(row=0, column=1, padx=(15, 30), pady=25, sticky=W)
+    roomIdSelector.grid(row=0, column=1, padx=(15, 30), pady=25, sticky=tk.W)
 
     # To search by roomId if room exists in database
     def searchRoom():
@@ -1524,34 +1616,34 @@ def updateRoom():
                 qty, rate, tax = queries.selectRoom(updateRoomId)
 
                 # Quantity of rooms Label
-                qtyRoomsLab = Label(frame1, text="How many rooms are available? :")
-                qtyRoomsLab.grid(row=1, column=0, pady=30, padx=5, sticky=E)
+                qtyRoomsLab = tk.Label(frame1, text="How many rooms are available? :")
+                qtyRoomsLab.grid(row=1, column=0, pady=30, padx=5, sticky=tk.E)
 
                 # Quantity of Rooms Selector
-                qtyRooms = Scale(frame1, from_=1, to=10, orient=HORIZONTAL)
+                qtyRooms = tk.Scale(frame1, from_=1, to=10, orient=tk.HORIZONTAL)
                 qtyRooms.configure(length=127)
                 qtyRooms.set(qty)  # Inserting the already existing value
-                qtyRooms.grid(row=1, column=1, padx=(15, 30), pady=25, sticky=W)
+                qtyRooms.grid(row=1, column=1, padx=(15, 30), pady=25, sticky=tk.W)
 
                 # Room Rate Label
-                roomRateLab = Label(frame1, text="Rate({}): ".format("\u20B9"))  # "\u20B9" -> rupees symbol
-                roomRateLab.grid(row=1, column=2, pady=25, padx=(15, 0), sticky=W)
+                roomRateLab = tk.Label(frame1, text="Rate({}): ".format("\u20B9"))  # "\u20B9" -> rupees symbol
+                roomRateLab.grid(row=1, column=2, pady=25, padx=(15, 0), sticky=tk.W)
 
                 # Room Rate Entry Box
-                roomRate = Entry(frame1, justify=CENTER)
+                roomRate = tk.Entry(frame1, justify=tk.CENTER)
                 roomRate.configure(width=length + 6)
-                roomRate.insert(END, str(rate))  # Inserting the already existing value
-                roomRate.grid(row=1, column=3, padx=(15, 0), pady=25, sticky=W)
+                roomRate.insert(tk.END, str(rate))  # Inserting the already existing value
+                roomRate.grid(row=1, column=3, padx=(15, 0), pady=25, sticky=tk.W)
 
                 # Tax of rooms Label
-                taxRoomsLab = Label(frame1, text="Room Tax (%):")
-                taxRoomsLab.grid(row=2, column=0, pady=15, padx=5, sticky=E)
+                taxRoomsLab = tk.Label(frame1, text="Room Tax (%):")
+                taxRoomsLab.grid(row=2, column=0, pady=15, padx=5, sticky=tk.E)
 
                 # Tax entry box
-                taxRoom = Entry(frame1, width=15, justify=CENTER)
+                taxRoom = tk.Entry(frame1, width=15, justify=tk.CENTER)
                 taxRoom.configure(width=length + 6)
-                taxRoom.insert(END, str(tax))  # Inserting the already existing value
-                taxRoom.grid(row=2, column=1, padx=(15, 30), pady=15, sticky=W)
+                taxRoom.insert(tk.END, str(tax))  # Inserting the already existing value
+                taxRoom.grid(row=2, column=1, padx=(15, 30), pady=15, sticky=tk.W)
 
                 # To send query to update room
                 def submitRoomUpdate():
@@ -1573,7 +1665,7 @@ def updateRoom():
                     updateRoom()
 
                 # Update Button
-                submitCustomerDetails = Button(frame1, text="Submit", width=length + 2, command=submitRoomUpdate)
+                submitCustomerDetails = tk.Button(frame1, text="Submit", width=length + 2, command=submitRoomUpdate)
                 submitCustomerDetails.grid(row=2, column=3, padx=(15, 0), pady=15)
 
                 # Key bind to submit on pressing return
@@ -1590,18 +1682,18 @@ def updateRoom():
                     qtyRooms.configure(bg="#2A2A2A", fg="#DADADA", highlightthickness=0, bd=0, troughcolor="#505050")
 
                     roomRateLab.configure(bg="#2A2A2A", fg="#DADADA")
-                    roomRate.configure(bg="#505050", fg="#DADADA", relief=FLAT, borderwidth=3)
+                    roomRate.configure(bg="#505050", fg="#DADADA", relief=tk.FLAT, borderwidth=3)
 
                     taxRoomsLab.configure(bg="#2A2A2A", fg="#DADADA")
-                    taxRoom.configure(bg="#505050", fg="#DADADA", relief=FLAT, borderwidth=3)
+                    taxRoom.configure(bg="#505050", fg="#DADADA", relief=tk.FLAT, borderwidth=3)
 
                     submitCustomerDetails.configure(bg="#505050", fg="#DADADA", bd=0,
                                                     highlightthickness=0, pady=5, padx=8)
 
     # Search Button
-    submitButton = Button(frame1, text="Search", command=searchRoom)
+    submitButton = tk.Button(frame1, text="Search", command=searchRoom)
     submitButton.configure(width=length + 2)
-    submitButton.grid(row=0, column=3, padx=(15, 0), pady=25, sticky=W)
+    submitButton.grid(row=0, column=3, padx=(15, 0), pady=25, sticky=tk.W)
 
     # Key bind to submit on pressing return
     def returnPressed(event):
@@ -1614,7 +1706,7 @@ def updateRoom():
     # Dark Mode
     if darkModeFlag:
         roomIdLab.configure(bg="#2A2A2A", fg="#DADADA")
-        roomIdSelector.configure(bg="#505050", fg="#DADADA", highlightthickness=0, relief=FLAT, borderwidth=3)
+        roomIdSelector.configure(bg="#505050", fg="#DADADA", highlightthickness=0, relief=tk.FLAT, borderwidth=3)
         roomIdSelector["menu"].config(bg="#555555", fg="#DADADA")
 
         submitButton.configure(bg="#505050", fg="#DADADA", bd=0, highlightthickness=0, pady=5, padx=8)
@@ -1645,54 +1737,54 @@ def showRooms():
 
         # Headings
         # Id
-        roomHeading = Label(
+        roomHeading = tk.Label(
             frame1,
             text="Room Type",
             bg="#C0C0C0",
-            relief=GROOVE,
+            relief=tk.GROOVE,
             padx=20,
             pady=8)
-        roomHeading.grid(row=0, column=0, sticky=NSEW, padx=(125, 0), pady=(100, 0))
+        roomHeading.grid(row=0, column=0, sticky=tk.NSEW, padx=(125, 0), pady=(100, 0))
 
         # AC
-        acHeading = Label(
+        acHeading = tk.Label(
             frame1,
             text="AC Room",
             bg="#C0C0C0",
-            relief=GROOVE,
+            relief=tk.GROOVE,
             padx=20,
             pady=8)
-        acHeading.grid(row=0, column=1, stick=NSEW, pady=(100, 0))
+        acHeading.grid(row=0, column=1, stick=tk.NSEW, pady=(100, 0))
 
         # Quantity
-        qtyHeading = Label(
+        qtyHeading = tk.Label(
             frame1,
             text="Vacant",
             bg="#C0C0C0",
-            relief=GROOVE,
+            relief=tk.GROOVE,
             padx=20,
             pady=8)
-        qtyHeading.grid(row=0, column=2, sticky=NSEW, pady=(100, 0))
+        qtyHeading.grid(row=0, column=2, sticky=tk.NSEW, pady=(100, 0))
 
         # Rate
-        rateHeading = Label(
+        rateHeading = tk.Label(
             frame1,
             text="Rate",
             bg="#C0C0C0",
-            relief=GROOVE,
+            relief=tk.GROOVE,
             padx=20,
             pady=8)
-        rateHeading.grid(row=0, column=3, sticky=NSEW, pady=(100, 0))
+        rateHeading.grid(row=0, column=3, sticky=tk.NSEW, pady=(100, 0))
 
         # Tax
-        taxHeading = Label(
+        taxHeading = tk.Label(
             frame1,
             text="Tax (%)",
             bg="#C0C0C0",
-            relief=GROOVE,
+            relief=tk.GROOVE,
             padx=20,
             pady=8)
-        taxHeading.grid(row=0, column=4, sticky=NSEW, pady=(100, 0))
+        taxHeading.grid(row=0, column=4, sticky=tk.NSEW, pady=(100, 0))
 
         # j is row number
         j = 1
@@ -1729,49 +1821,49 @@ def showRooms():
             tax = i[4]
 
             # Room Id
-            idRoom = Label(
+            idRoom = tk.Label(
                 frame1,
                 text=showRoomId,
-                relief=GROOVE,
+                relief=tk.GROOVE,
                 padx=20,
                 pady=8)
-            idRoom.grid(row=j, column=0, sticky=NSEW, padx=(125, 0))
+            idRoom.grid(row=j, column=0, sticky=tk.NSEW, padx=(125, 0))
 
             # AC room?
-            acRoom = Label(
+            acRoom = tk.Label(
                 frame1,
                 text=acStatus,
-                relief=GROOVE,
+                relief=tk.GROOVE,
                 padx=20,
                 pady=8)
-            acRoom.grid(row=j, column=1, sticky=NSEW)
+            acRoom.grid(row=j, column=1, sticky=tk.NSEW)
 
             # Quantity of rooms empty
-            qtyRoom = Label(
+            qtyRoom = tk.Label(
                 frame1,
                 text=str(qty),
-                relief=GROOVE,
+                relief=tk.GROOVE,
                 padx=20,
                 pady=8)
-            qtyRoom.grid(row=j, column=2, sticky=NSEW)
+            qtyRoom.grid(row=j, column=2, sticky=tk.NSEW)
 
             # Rate of each room
-            rateRoom = Label(
+            rateRoom = tk.Label(
                 frame1,
                 text="\u20B9" + str(rate),
-                relief=GROOVE,
+                relief=tk.GROOVE,
                 padx=20,
                 pady=8)
-            rateRoom.grid(row=j, column=3, sticky=NSEW)  # "\u20B9" -> rupees symbol
+            rateRoom.grid(row=j, column=3, sticky=tk.NSEW)  # "\u20B9" -> rupees symbol
 
             # Tax of rooms
-            taxRoom = Label(
+            taxRoom = tk.Label(
                 frame1,
                 text=str(tax),
-                relief=GROOVE,
+                relief=tk.GROOVE,
                 padx=20,
                 pady=8)
-            taxRoom.grid(row=j, column=4, sticky=NSEW)
+            taxRoom.grid(row=j, column=4, sticky=tk.NSEW)
 
             j += 1
 
@@ -1806,48 +1898,48 @@ def submitted():
 
         # To set the size of the main screen
         root.geometry("1050x700")
-        img = PhotoImage(file="Assets/LogoBlackNameSmall.png")
-        imgDark = PhotoImage(file="Assets/LogoWhiteNameSmall.png")
+        img = tk.PhotoImage(file="Assets/LogoBlackNameSmall.png")
+        imgDark = tk.PhotoImage(file="Assets/LogoWhiteNameSmall.png")
 
         # Placing all the options and frames
-        workingWindow = Frame(root, bd=0)
-        workingWindow.pack(fill=X, ipadx=20)
+        workingWindow = tk.Frame(root, bd=0)
+        workingWindow.pack(fill=tk.X, ipadx=20)
 
         # Left (Navigation) Pane
-        frame0 = LabelFrame(workingWindow, pady=50, bd=0)
-        frame0.pack(side=LEFT, padx=(10, 10), pady=0)
+        frame0 = tk.LabelFrame(workingWindow, pady=50, bd=0)
+        frame0.pack(side=tk.LEFT, padx=(10, 10), pady=0)
 
         # Display the logo on top
-        my_canvas = Canvas(frame0)
-        my_canvas.create_image(0, 0, anchor=NW, image=img)
+        my_canvas = tk.Canvas(frame0)
+        my_canvas.create_image(0, 0, anchor=tk.NW, image=img)
         my_canvas.place(x=15, y=0)
 
         # Customer Options Frame
-        frame01 = LabelFrame(frame0, text="Customer", pady=10, padx=10)
+        frame01 = tk.LabelFrame(frame0, text="Customer", pady=10, padx=10)
         frame01.grid(row=1, column=0, pady=(100, 30), padx=10, columnspan=2)
 
         # Button to CheckIn
-        button011 = Button(frame01, text="Check In", width=15, command=checkIn)
+        button011 = tk.Button(frame01, text="Check In", width=15, command=checkIn)
         button011.pack(pady=3)
 
         # Button to Update record
-        button012 = Button(frame01, text="Update", width=15, command=updateCustomer)
+        button012 = tk.Button(frame01, text="Update", width=15, command=updateCustomer)
         button012.pack(pady=3)
 
         # Button to Check Out
-        button013 = Button(frame01, text="Check Out", width=15, command=checkOut)
+        button013 = tk.Button(frame01, text="Check Out", width=15, command=checkOut)
         button013.pack(pady=3)
 
         # Button to Search for a Customer
-        button014 = Button(frame01, text="Find", width=15, command=findCustomer)
+        button014 = tk.Button(frame01, text="Find", width=15, command=findCustomer)
         button014.pack(pady=3)
 
         # Button to show all customers present in the hotel
-        button015 = Button(frame01, text="Show All", width=15, command=showCustomers)
+        button015 = tk.Button(frame01, text="Show All", width=15, command=showCustomers)
         button015.pack(pady=3)
 
         # Room Options
-        frame02 = LabelFrame(frame0, text="Rooms", pady=10, padx=10)
+        frame02 = tk.LabelFrame(frame0, text="Rooms", pady=10, padx=10)
 
         if global_.accessLevel == "User":
             # For better placement
@@ -1860,15 +1952,15 @@ def submitted():
             frame02.grid(row=2, column=0, pady=30, padx=10, columnspan=2)
 
             # Button to add rooms
-            button021 = Button(frame02, text="Add", width=15, command=addRoom)
+            button021 = tk.Button(frame02, text="Add", width=15, command=addRoom)
             button021.pack(pady=3)
 
             # Button to Update room details
-            button022 = Button(frame02, text="Update", width=15, command=updateRoom)
+            button022 = tk.Button(frame02, text="Update", width=15, command=updateRoom)
             button022.pack(pady=3)
 
             # Button to Show all available rooms
-            button023 = Button(frame02, text="Show All", width=15, command=showRooms)
+            button023 = tk.Button(frame02, text="Show All", width=15, command=showRooms)
             button023.pack(pady=3)
 
         # Function to sign out
@@ -1884,16 +1976,16 @@ def submitted():
             os.system("python main.py")
 
         # Display the sign out button
-        signOutButton = Button(frame0, text="Sign Out", command=signOut, width=10)
+        signOutButton = tk.Button(frame0, text="Sign Out", command=signOut, width=10)
         signOutButton.grid(row=3, column=0, padx=(10, 5))
 
         # Display the exit button
-        exitButton = Button(frame0, text="Exit", command=exitApplication, width=10)
+        exitButton = tk.Button(frame0, text="Exit", command=exitApplication, width=10)
         exitButton.grid(row=3, column=1, padx=(5, 10))
 
         # Right Pane
-        frame1 = LabelFrame(workingWindow, pady=150, padx=50, bd=0)
-        frame1.pack(padx=10, side=LEFT, fill=BOTH, expand=True)
+        frame1 = tk.LabelFrame(workingWindow, pady=150, padx=50, bd=0)
+        frame1.pack(padx=10, side=tk.LEFT, fill=tk.BOTH, expand=True)
 
         # Dark Mode
         if darkModeFlag:
@@ -1901,7 +1993,7 @@ def submitted():
             frame0.configure(bg="#2A2A2A")
 
             my_canvas.delete("all")
-            my_canvas.create_image(0, 0, anchor=NW, image=imgDark)
+            my_canvas.create_image(0, 0, anchor=tk.NW, image=imgDark)
             my_canvas.configure(bg="#2A2A2A", bd=0, highlightthickness=0)
 
             frame01.configure(bg="#2A2A2A", fg="#DADADA")
@@ -1952,7 +2044,7 @@ def signIn():
     global_.accessLevel = "User"
 
     # Tkinter new screen
-    signInScreen = Toplevel()
+    signInScreen = tk.Toplevel()
 
     # Title for new screen
     signInScreen.title("Sign in")
@@ -1961,28 +2053,28 @@ def signIn():
     signInScreen.iconbitmap("./Assets/LogoBlack.ico")
 
     # Frame for username
-    userNameFrame = Frame(signInScreen, pady=5)
+    userNameFrame = tk.Frame(signInScreen, pady=5)
     userNameFrame.pack()
 
     # Enter username Label
-    unameLabel = Label(userNameFrame, text="Enter Username: ")
+    unameLabel = tk.Label(userNameFrame, text="Enter Username: ")
     unameLabel.grid(row=0, column=0)
 
     # Username Entry Field
-    uname = Entry(userNameFrame, justify=CENTER)
+    uname = tk.Entry(userNameFrame, justify=tk.CENTER)
     uname.grid(row=0, column=1)
     uname.focus_set()
 
     # Frame for password
-    passwordFrame = Frame(signInScreen, pady=5)
+    passwordFrame = tk.Frame(signInScreen, pady=5)
     passwordFrame.pack()
 
     # Enter Password Label
-    pWordLabel = Label(passwordFrame, text="Enter Password: ")
+    pWordLabel = tk.Label(passwordFrame, text="Enter Password: ")
     pWordLabel.grid(row=0, column=0)
 
     # Password Entry Field
-    pWord = Entry(passwordFrame, show="*", justify=CENTER)
+    pWord = tk.Entry(passwordFrame, show="*", justify=tk.CENTER)
     pWord.grid(row=0, column=1)
 
     # To Toggle password View
@@ -1993,7 +2085,7 @@ def signIn():
             pWord.configure(show="*")
 
     # Toggle Password View
-    togglePassword = Button(signInScreen, text="Toggle Password View", command=togglePasswordView)
+    togglePassword = tk.Button(signInScreen, text="Toggle Password View", command=togglePasswordView)
     togglePassword.pack(pady=(10, 0))
 
     # Function for Button to sign in
@@ -2015,7 +2107,7 @@ def signIn():
         submitted()
 
     # SignIn Button
-    but = Button(signInScreen, text="Sign In", command=submit)
+    but = tk.Button(signInScreen, text="Sign In", command=submit)
     but.pack(pady=(10, 0))
 
     # Vertical Padding of the popup screen
@@ -2055,8 +2147,8 @@ def signIn():
         passwordFrame.configure(bg="#333333")
         pWordLabel.configure(bg="#333333", fg="#DADADA")
 
-        uname.configure(bg="#5D5D5D", fg="#DADADA", relief=FLAT, borderwidth=1)
-        pWord.configure(bg="#5D5D5D", fg="#DADADA", relief=FLAT, borderwidth=1)
+        uname.configure(bg="#5D5D5D", fg="#DADADA", relief=tk.FLAT, borderwidth=1)
+        pWord.configure(bg="#5D5D5D", fg="#DADADA", relief=tk.FLAT, borderwidth=1)
 
         togglePassword.configure(bd=0, bg="#555555", fg="#DADADA", padx=8, pady=5)
         but.configure(bd=0, bg="#555555", fg="#DADADA", padx=8, pady=5)
@@ -2065,11 +2157,11 @@ def signIn():
 # Logo image
 logoImgDark = ImageTk.PhotoImage(Image.open("./Assets/LogoWhiteName.png"))
 logoImg = ImageTk.PhotoImage(Image.open("./Assets/LogoBlackName.png"))
-imgLabel = Label(image=logoImg)
+imgLabel = tk.Label(image=logoImg)
 imgLabel.pack()
 
 # Button to initiate log in and display sign in screen
-logInButton = Button(root, text="Log In", command=signIn)
+logInButton = tk.Button(root, text="Log In", command=signIn)
 logInButton.pack(pady=(20, 0))
 
 
@@ -2086,17 +2178,17 @@ def darkMode():
     global_.statusBar.configure(bg="#343434", fg="#DADADA", bd=0)
 
     darkModeButton.configure(bd=0, bg="#505050", fg="#DADADA", padx=8, pady=5)
-    darkModeButton.configure(state=DISABLED)
+    darkModeButton.configure(state=tk.DISABLED)
 
 
 # Button to enable dark mode
-darkModeButton = Button(root, text="Dark Mode", command=darkMode)
+darkModeButton = tk.Button(root, text="Dark Mode", command=darkMode)
 darkModeButton.pack(pady=(20, 10))
 
 # Status Bar
-global_.statusBar = Label(root, text="Welcome", relief=SUNKEN, anchor=E, padx=10, height=2)
+global_.statusBar = tk.Label(root, text="Welcome", relief=tk.SUNKEN, anchor=tk.E, padx=10, height=2)
 
-global_.statusBar.pack(side=BOTTOM, fill=X)
+global_.statusBar.pack(side=tk.BOTTOM, fill=tk.X)
 
 
 # To start log in process just by pressing the return(enter) key
