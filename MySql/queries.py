@@ -2,36 +2,55 @@
 File to store all the queries to be run
 """
 
-# File to use global variables
 import global_
+# File to use global variables
 
-# To handle sql errors
 import mysql.connector as sql
+# To handle sql errors
+
+import datetime
+# To calculate price
+
+def eventErrorHandler(event):
+    """
+    To remove error in the IDE for not using argument passed by the bind function
+    :param event: event passed by bind function
+    :rtype: None
+    """
+    str(event) * 2
 
 
-# Function to add a customer to database
-def addCustomer(name, aadhaar, mobile, roomId, inDate):
+def addCustomer(name: str, aadhaar: str, mobile: str, roomId: str, inDate: str) -> tuple:
+    """
+    Add a customer to customers table
+    :param name: Customer's name
+    :param aadhaar: Customer's aadhaar number
+    :param mobile: Customer's mobile number
+    :param roomId: Customer's Room Id
+    :param inDate: Check-in date of customer for allCustomers table
+    :return: (0, error message) or (1, customerId)
+    :rtype: tuple
+    """
     try:
         # Checking if room is vacant
         comm = "select qty, tax from {} where roomId='{}'".format(global_.tbRooms, roomId)
         global_.cur.execute(comm)
         res = global_.cur.fetchone()
-        # qty -> Number of rooms
-        qty = res[0]
 
-        # tax -> Room Tax
-        tax = res[1]
+        qtyOfRooms = res[0]
 
-        # If qty of rooms is zero
-        if qty == 0 or qty is None:
+        roomTax = res[1]
 
-            # Error, Message to be displayed
+        # If rooms is unavailable or room doesn't exist
+        if qtyOfRooms == 0 or qtyOfRooms is None:
+
             return 0, "Room not Available"
+            # Error, Message to be displayed
 
-        # If qty is not zero
+        # If room is available
         else:
 
-            # Fetching all the customerId
+            # Fetching all customerIds to create next id
             comm = "select * from " + global_.tbAllCustomers
             global_.cur.execute(comm)
             res = global_.cur.fetchall()  # Tuple
@@ -42,17 +61,17 @@ def addCustomer(name, aadhaar, mobile, roomId, inDate):
                 customerIdNumber = 1
             else:
 
-                # Last id
+                # Last id, integer part
                 customerIdNumber = int(res[-1][0][1:]) + 1
 
             # Making sure customerId looks good
             if customerIdNumber < 10:
                 customerIdNumber = "0" + str(customerIdNumber)
 
-            # To make customer id of the format C01, C02...
+            # Make customer id of the format C01, C02...
             customerId = "C" + str(customerIdNumber)
 
-            # To add Customer to the customers table
+            # Add Customer to the customers table
             comm = "insert into {} values(" \
                    "'{}', '{}', '{}', '{}', '{}', '{}'" \
                    ")".format(global_.tbCustomers, customerId, name, aadhaar, mobile, roomId, inDate)
@@ -69,20 +88,27 @@ def addCustomer(name, aadhaar, mobile, roomId, inDate):
             global_.conn.commit()
 
             # Add the details to allCustomers Table
-            addAllCustomers(customerId, name, aadhaar, mobile, roomId, inDate, tax)
+            addAllCustomers(customerId, name, aadhaar, mobile, roomId, inDate, roomTax)
 
-            # No Error, CustomerId to be displayed
+            # (No Error, CustomerId to be displayed)
             return 1, customerId
 
     # If some error occurs
     except sql.Error as e:
-        print(e)
+        eventErrorHandler(e)
         return 0, "Some Error Occurred"
 
 
-# To check if customer exists using customerId
-def searchCustomer(customerId, caller="notFind"):
-    # Fetching all the customerIds to compare
+def searchCustomer(customerId: str, caller: str = "notFind") -> int:
+    """
+    Check if customer exists using customerId
+    :param customerId: Id of the customer to be found
+    :param caller: To check if function is called by the find method,
+    since find in admin mode checks in allCustomerTable
+    :return: 1 -> customer found, 0 -> customer not found
+    :rtype: int
+    """
+    # Fetching all the customerIds to compare from respective tables
     if global_.accessLevel == "Admin" and caller == "find":
         comm = "select CustomerId from " + global_.tbAllCustomers
     else:
@@ -92,25 +118,31 @@ def searchCustomer(customerId, caller="notFind"):
     customerRes = global_.cur.fetchall()
 
     # Checking all customerIds in a loop
-    for i in customerRes:  # i -> tuple of tuple
+    for resCustomerId in customerRes:
 
-        # Strip to remove the leading and trailing "(", ")", ","
-        if str(i).strip("'(),") == customerId:
-            # customerId found
+        if resCustomerId[0] == customerId:
+
             return 1
+            # customerId found
 
-    # customerId Not Found
     return 0
+    # customerId Not Found
 
 
-# To display details about a specific customer
-def selectCustomer(customerId, caller="notFind"):
+def selectCustomer(customerId: str, caller: str = "notFind") -> tuple:
+    """
+    Return the customer's details
+    :param customerId: Id of the customer to be found
+    :param caller: To check if function is called by the find method,
+    since find in admin mode checks in allCustomerTable
+    :rtype: tuple
+    :return: tuple of customer's name, aadhaar, and mobile number
+    """
     # Select all the details of the customer using customerId
     if global_.accessLevel == "Admin" and caller == "find":
-        comm = "select * from {} where customerId='{}'".format(global_.tbAllCustomers, customerId)
-        print("Using Admin")
+        comm = f"select * from {global_.tbAllCustomers} where customerId='{customerId}'"
     else:
-        comm = "select * from {} where customerId='{}'".format(global_.tbCustomers, customerId)
+        comm = f"select * from {global_.tbCustomers} where customerId='{customerId}'"
 
     global_.cur.execute(comm)
     customer = global_.cur.fetchone()  # customer -> tuple -> (customerId, name, aadhaar, mobile)
@@ -121,58 +153,73 @@ def selectCustomer(customerId, caller="notFind"):
     return name, aadhaar, mobile
 
 
-# To update customer details
-def updateCustomer(customerId, name, aadhaar, mobile):
-    # Dictionary of all the new details
+def updateCustomer(customerId: str, name: str, aadhaar: str, mobile: str) -> None:
+    """
+    Update customer details in customers table
+    :param customerId: Id of customer whose details have to be updated
+    :param name: New customer name
+    :param aadhaar: New Aadhaar number
+    :param mobile: New Mobile number
+    :rtype: None
+    """
     details = {"CustomerName": name, "Aadhaar": aadhaar, "Mobile": mobile}
+    # Dictionary of all the details
 
     # Updating all details using a loop
-    for i in details:
-        comm = "update {} set {}='{}' where customerId='{}'".format(global_.tbCustomers, i, details[i], customerId)
+    for detail in details:
+        comm = f"update {global_.tbCustomers} set {detail}='{details[detail]}'" \
+               f" where customerId='{customerId}'"
         global_.cur.execute(comm)
 
         global_.conn.commit()
+        # Committing the changes made
 
-        # To update in allCustomers Table also
-        updateAllCustomers(customerId, name, aadhaar, mobile)
+    updateAllCustomers(customerId, name, aadhaar, mobile)
+    # To update in allCustomers Table also
 
 
-# To remove customer
-def removeCustomer(customerId, outDate):
+def removeCustomer(customerId: str, outDate: str) -> tuple:
+    """
+    Remove customer from customers table
+    :param customerId: Id of the customer to be removed
+    :param outDate: To set the check-out date in allCustomers table
+    :return: (roomId, checkInDate, checkOutDate, roomRate, price, roomTax)
+    :rtype: tuple
+    """
     # Get customer's roomId to add qty to rooms table
-    comm = "select RoomId from {} where CustomerId='{}'".format(global_.tbCustomers, customerId)
+    comm = f"select RoomId from {global_.tbCustomers} where CustomerId='{customerId}'"
     global_.cur.execute(comm)
 
-    # To save the RoomId in customerRoom
-    # Strip to remove trailing and leading "(", ")", ","
-    customerRoom = str(global_.cur.fetchone()).strip("(),'")
+    customerRoom = global_.cur.fetchone()[0]
 
-    # Remove the customer from the database
-    comm = "delete from {} where CustomerId='{}'".format(global_.tbCustomers, customerId)
+    comm = f"delete from {global_.tbCustomers} where CustomerId='{customerId}'"
     global_.cur.execute(comm)
+    # Remove the customer from the customers table
 
-    # Committing the changes made
     global_.conn.commit()
+    # Committing the changes made
 
-    # Updating Quantity of Room
     comm = "update {} set Qty=Qty+1 where roomId='{}'".format(global_.tbRooms, customerRoom)
     global_.cur.execute(comm)
+    # Updating Quantity of Room
 
-    # Committing the changes made
     global_.conn.commit()
+    # Committing the changes made
 
     checkOutAllCustomersTable(customerId, outDate)
+    # Check out the customer from allCustomers table
 
     comm = "select * from {} where customerId='{}'".format(global_.tbAllCustomers, customerId)
     global_.cur.execute(comm)
     res = global_.cur.fetchone()
+    # Getting the customer's details for the invoice
 
     price_ = price(customerId, outDate)
+    # Generating the price of the stay without the tax
 
-    print(res[9])
-
-    # Returning info to generate invoice
     return res[4], res[5], res[6], res[8], price_, res[9]
+    # (roomId, checkInDate, checkOutDate, roomRate, price, roomTax)
+    # Returning info to generate invoice
 
 
 # To show all the checked in customers
@@ -264,7 +311,7 @@ def price(customerId, outDate):
     inDate = global_.cur.fetchone()[0]
 
     # No of days
-    days_ = (outDate - inDate).days
+    days_ = (datetime.date(outDate) - inDate).days
     return rate*days_
 
 

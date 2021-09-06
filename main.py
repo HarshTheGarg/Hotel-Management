@@ -476,7 +476,7 @@ def checkIn() -> None:
 
 
 # Update Customer Info:
-def updateCustomer():
+def updateCustomer() -> None:
     global_.updateStatus("Filled Something Wrong?")
 
     # Changing the Title of the window
@@ -716,7 +716,7 @@ def checkOut():
 
                 # Sending the query to remove the customer
                 cRoomId, cCheckInDate, cCheckOutDate, cRate, price, tax = \
-                    queries.removeCustomer(str(customerId.get()), getDate())
+                    queries.removeCustomer(str(customerId.get()), str(getDate()))
 
                 roomType = ""
 
