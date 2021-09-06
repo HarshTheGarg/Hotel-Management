@@ -2,41 +2,46 @@
 File to store global variables used in all the files
 """
 
+import tkinter as tk
+import mysql.connector as sql
+# To specify datatype
+
+
+accessLevel: str
 # User Access
-global accessLevel
 
+username: str
 # Sign In Username
-global username
 
+password: str
 # Sign In Password
-global password
 
-# For Status Bar
-global status
-
+statusBar: tk.Label
 # Status Bar
-global statusBar
 
+conn: sql.connection.MySQLConnection
 # MySQL Connection
-global conn
 
+cur: sql.connection.MySQLCursor
 # MySQL Cursor
-global cur
 
+tbRooms: str
 # Rooms Table name
-global tbRooms
 
+tbCustomers: str
 # Customers Table name
-global tbCustomers
 
+tbAllCustomers: str
 # All Customers Table name
-global tbAllCustomers
 
+condition: int
 # Condition Checker
 # 1: Ok, 0: Not Ok
-global condition
 
 
-# Update the status Bar
-def updateStatus(text):
+def updateStatus(text: str) -> None:
+    """
+    Update the status bar
+    :param text: Text to be displayed on the status bar
+    """
     statusBar.configure(text=text)

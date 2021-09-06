@@ -716,7 +716,7 @@ def checkOut():
 
                 # Sending the query to remove the customer
                 cRoomId, cCheckInDate, cCheckOutDate, cRate, price, tax = \
-                    queries.removeCustomer(str(customerId.get()), str(getDate()))
+                    queries.removeCustomer(str(customerId.get()), getDate())
 
                 roomType = ""
 

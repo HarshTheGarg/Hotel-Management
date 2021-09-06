@@ -11,6 +11,7 @@ import mysql.connector as sql
 import datetime
 # To calculate price
 
+
 def eventErrorHandler(event):
     """
     To remove error in the IDE for not using argument passed by the bind function
@@ -37,9 +38,9 @@ def addCustomer(name: str, aadhaar: str, mobile: str, roomId: str, inDate: str) 
         global_.cur.execute(comm)
         res = global_.cur.fetchone()
 
-        qtyOfRooms = res[0]
+        qtyOfRooms: int = res[0]
 
-        roomTax = res[1]
+        roomTax: float = res[1]
 
         # If rooms is unavailable or room doesn't exist
         if qtyOfRooms == 0 or qtyOfRooms is None:
@@ -140,6 +141,8 @@ def selectCustomer(customerId: str, caller: str = "notFind") -> tuple:
     """
     # Select all the details of the customer using customerId
     if global_.accessLevel == "Admin" and caller == "find":
+        # Finding the data in admin mode
+
         comm = f"select * from {global_.tbAllCustomers} where customerId='{customerId}'"
     else:
         comm = f"select * from {global_.tbCustomers} where customerId='{customerId}'"
@@ -178,7 +181,7 @@ def updateCustomer(customerId: str, name: str, aadhaar: str, mobile: str) -> Non
     # To update in allCustomers Table also
 
 
-def removeCustomer(customerId: str, outDate: str) -> tuple:
+def removeCustomer(customerId: str, outDate: datetime.date) -> tuple:
     """
     Remove customer from customers table
     :param customerId: Id of the customer to be removed
@@ -222,20 +225,24 @@ def removeCustomer(customerId: str, outDate: str) -> tuple:
     # Returning info to generate invoice
 
 
-# To show all the checked in customers
-def showCustomers():
-
+def showCustomers() -> tuple:
+    """
+    Retrieve data of all the customers
+    :return: Customer's data
+    :rtype: tuple
+    """
     res = None
+    # If there is no customer
 
     if global_.accessLevel == "User":
-
+        # If logged in as user, retrieve data only of current customers
         # Selecting all the the customers
         comm = "select * from " + global_.tbCustomers
         global_.cur.execute(comm)
         res = global_.cur.fetchall()
 
     elif global_.accessLevel == "Admin":
-
+        # Else, in admin mode, retrieve Data of all customers
         # Selecting all the the customers
         comm = "select * from " + global_.tbAllCustomers
         global_.cur.execute(comm)
@@ -245,9 +252,20 @@ def showCustomers():
     return res
 
 
-# To add customer to allCustomers table
-def addAllCustomers(customerId, name, aadhaar, mobile, roomId, inDate, tax):
-
+def addAllCustomers(
+        customerId: str, name: str, aadhaar: str, mobile: str, roomId: str, inDate: str, tax: float
+) -> None:
+    """
+    Add the customer's details in the allCustomers table
+    :param customerId: Customer's Id
+    :param name: Customer's Name
+    :param aadhaar: Customer's Aadhaar Number
+    :param mobile: Customer's Mobile Number
+    :param roomId: Customer's Room's Id
+    :param inDate: Check-in date of customer
+    :param tax: Room Tax
+    :rtype: None
+    """
     # Get rate of the room
     comm = "select rate from {} where roomId='{}'".format(global_.tbRooms, roomId)
     global_.cur.execute(comm)
@@ -311,7 +329,7 @@ def price(customerId, outDate):
     inDate = global_.cur.fetchone()[0]
 
     # No of days
-    days_ = (datetime.date(outDate) - inDate).days
+    days_ = outDate - inDate
     return rate*days_
 
 
