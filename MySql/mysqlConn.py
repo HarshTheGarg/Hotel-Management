@@ -2,35 +2,35 @@
 Initiating the connection with MySQL
 """
 
-# To connect to MySQL database
+import mysql.connector as sql  # To connect to MySQL database
 # pip install mysql-connector-python
-import mysql.connector as sql
 
-# Importing the variables file
-import global_
+import global_  # Importing the variables file
 
 
-# To establish the connection with MySQL server on 100.70.202.60 (My IP address) and store the status and
-# connection status in the vars.status and vars.condition
-def estConnect():
+def estConnect() -> None:
+    """
+    Establish the connection with the MySQL server at 100.70.202.60
+    :rtype: None
+    """
     try:
-
-        # Connecting to the MySQL server
         global_.conn = sql.connect(host="100.70.202.60", user=global_.username, password=global_.password)
+        # Connect to the MySQL server
 
-        # Checking If Connection Was Successful
+        # Check If Connection Was Successful
         if global_.conn.is_connected():
 
-            # Update the Condition variable
             global_.condition = 1
+            # Update the Condition variable
+
             global_.updateStatus("Connection Successful")
+            # Update the status bar
 
-    # To be run if there is Error in connecting to the database
-    except sql.Error as e:
-        # Print the Error
-        print(e)
+    # If there is Error in connecting to the database
+    except sql.Error:
 
-        # Update the Condition variable
         global_.condition = 0
+        # Update the Condition variable
 
         global_.updateStatus("Connection Failed. Try Again")
+        # Update the status bar
