@@ -101,8 +101,7 @@ def createDbAndTables():
                        "CustomerName varchar(30)," \
                        "Aadhaar varchar(15), " \
                        "Mobile varchar(10)," \
-                       "RoomId varchar(2)," \
-                       "checkInDate date"\
+                       "RoomId varchar(2)" \
                        ")"\
                     .format(global_.tbCustomers)
 
