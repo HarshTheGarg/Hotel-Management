@@ -2,19 +2,16 @@
 File to store all the queries to be run
 """
 
-import global_
-# File to use global variables
+import global_  # File to use global variables
 
-import mysql.connector as sql
-# To handle sql errors
+import mysql.connector as sql  # To handle sql errors
 
-import datetime
-# To calculate price
+import datetime  # To calculate price
 
 
 def eventErrorHandler(event):
     """
-    To remove error in the IDE for not using argument passed by the bind function
+    Remove error in the IDE for not using argument passed by the bind function
     :param event: event passed by bind function
     :rtype: None
     """
@@ -33,69 +30,78 @@ def addCustomer(name: str, aadhaar: str, mobile: str, roomId: str, inDate: str) 
     :rtype: tuple
     """
     try:
-        # Checking if room is vacant
-        comm = "select qty, tax from {} where roomId='{}'".format(global_.tbRooms, roomId)
+        # Check if room is vacant
+        comm = f"select qty, tax " \
+               f"from {global_.tbRooms}" \
+               f" where roomId='{roomId}'"
         global_.cur.execute(comm)
-        res = global_.cur.fetchone()
+        res: tuple = global_.cur.fetchone()
 
         qtyOfRooms: int = res[0]
 
         roomTax: float = res[1]
 
-        # If rooms is unavailable or room doesn't exist
         if qtyOfRooms == 0 or qtyOfRooms is None:
+            # If rooms is unavailable or room doesn't exist
 
             return 0, "Room not Available"
             # Error, Message to be displayed
 
-        # If room is available
         else:
+            # If room is available
 
-            # Fetching all customerIds to create next id
-            comm = "select * from " + global_.tbAllCustomers
+            # Fetch all customerIds to create next id
+            comm = f"select * from {global_.tbAllCustomers}"
             global_.cur.execute(comm)
-            res = global_.cur.fetchall()  # Tuple
+            res: tuple = global_.cur.fetchall()
 
-            # Creating next Customer Id
-            # If no customers exist, tuple will be empty
+            # Create next Customer Id
             if not res:
+                # If no customers exist, tuple will be empty
                 customerIdNumber = 1
-            else:
 
+            else:
                 # Last id, integer part
                 customerIdNumber = int(res[-1][0][1:]) + 1
 
-            # Making sure customerId looks good
+            # Make sure customerId looks good
             if customerIdNumber < 10:
                 customerIdNumber = "0" + str(customerIdNumber)
 
-            # Make customer id of the format C01, C02...
             customerId = "C" + str(customerIdNumber)
+            # Make customer id of the format C01, C02...
 
+            comm = f"insert into {global_.tbCustomers} values(" \
+                   f"'{customerId}', " \
+                   f"'{name}', " \
+                   f"'{aadhaar}', " \
+                   f"'{mobile}', " \
+                   f"'{roomId}'" \
+                   ")"
+            global_.cur.execute(comm)
             # Add Customer to the customers table
-            comm = "insert into {} values(" \
-                   "'{}', '{}', '{}', '{}', '{}', '{}'" \
-                   ")".format(global_.tbCustomers, customerId, name, aadhaar, mobile, roomId, inDate)
-            global_.cur.execute(comm)
 
-            # Committing the changes made
             global_.conn.commit()
+            # Commit the changes made
 
-            # To reduce the qty of room from rooms table
-            comm = "update {} set qty=qty-1 where roomId='{}'".format(global_.tbRooms, roomId)
+            comm = f"update {global_.tbRooms} " \
+                   f"set qty=qty-1 " \
+                   f"where roomId='{roomId}'"
             global_.cur.execute(comm)
+            # Reduce the qty of room from rooms table
 
-            # Committing the changes made
             global_.conn.commit()
+            # Commit the changes made
 
-            # Add the details to allCustomers Table
             addAllCustomers(customerId, name, aadhaar, mobile, roomId, inDate, roomTax)
+            # Add the details to allCustomers Table
 
-            # (No Error, CustomerId to be displayed)
             return 1, customerId
+            # (No Error, CustomerId to be displayed)
 
-    # If some error occurs
     except sql.Error as e:
+        # If some error occurs
+
         eventErrorHandler(e)
         return 0, "Some Error Occurred"
 
@@ -109,17 +115,18 @@ def searchCustomer(customerId: str, caller: str = "notFind") -> int:
     :return: 1 -> customer found, 0 -> customer not found
     :rtype: int
     """
-    # Fetching all the customerIds to compare from respective tables
+    # Fetch all the customerIds to compare from respective tables
     if global_.accessLevel == "Admin" and caller == "find":
-        comm = "select CustomerId from " + global_.tbAllCustomers
+        # If user in in admin mode and finding the customer(Not updating or checking out in either mode)
+        comm = f"select CustomerId from {global_.tbAllCustomers}"
     else:
-        comm = "select CustomerId from " + global_.tbCustomers
+        comm = f"select CustomerId from {global_.tbCustomers}"
 
     global_.cur.execute(comm)
-    customerRes = global_.cur.fetchall()
+    customerRes: tuple[str] = global_.cur.fetchall()
 
-    # Checking all customerIds in a loop
     for resCustomerId in customerRes:
+        # Check all customerIds in a loop
 
         if resCustomerId[0] == customerId:
 
@@ -141,14 +148,15 @@ def selectCustomer(customerId: str, caller: str = "notFind") -> tuple:
     """
     # Select all the details of the customer using customerId
     if global_.accessLevel == "Admin" and caller == "find":
-        # Finding the data in admin mode
-
-        comm = f"select * from {global_.tbAllCustomers} where customerId='{customerId}'"
+        # Find the data in admin mode (Not updating or checking out in either mode)
+        comm = f"select * from {global_.tbAllCustomers} " \
+               f"where customerId='{customerId}'"
     else:
-        comm = f"select * from {global_.tbCustomers} where customerId='{customerId}'"
+        comm = f"select * from {global_.tbCustomers} " \
+               f"where customerId='{customerId}'"
 
     global_.cur.execute(comm)
-    customer = global_.cur.fetchone()  # customer -> tuple -> (customerId, name, aadhaar, mobile)
+    customer: tuple = global_.cur.fetchone()
 
     name = customer[1]
     aadhaar = customer[2]
@@ -165,20 +173,25 @@ def updateCustomer(customerId: str, name: str, aadhaar: str, mobile: str) -> Non
     :param mobile: New Mobile number
     :rtype: None
     """
-    details = {"CustomerName": name, "Aadhaar": aadhaar, "Mobile": mobile}
+    details = {
+        "CustomerName": name,
+        "Aadhaar": aadhaar,
+        "Mobile": mobile
+    }
     # Dictionary of all the details
 
-    # Updating all details using a loop
+    # Update all details using a loop
     for detail in details:
-        comm = f"update {global_.tbCustomers} set {detail}='{details[detail]}'" \
-               f" where customerId='{customerId}'"
+        comm = f"update {global_.tbCustomers} " \
+               f"set {detail}='{details[detail]}' " \
+               f"where customerId='{customerId}'"
         global_.cur.execute(comm)
 
         global_.conn.commit()
-        # Committing the changes made
+        # Commit the changes made
 
     updateAllCustomers(customerId, name, aadhaar, mobile)
-    # To update in allCustomers Table also
+    # Update in allCustomers Table also
 
 
 def removeCustomer(customerId: str, outDate: datetime.date) -> tuple:
@@ -189,40 +202,42 @@ def removeCustomer(customerId: str, outDate: datetime.date) -> tuple:
     :return: (roomId, checkInDate, checkOutDate, roomRate, price, roomTax)
     :rtype: tuple
     """
-    # Get customer's roomId to add qty to rooms table
-    comm = f"select RoomId from {global_.tbCustomers} where CustomerId='{customerId}'"
+    comm = f"select RoomId from {global_.tbCustomers} " \
+           f"where CustomerId='{customerId}'"
     global_.cur.execute(comm)
-
     customerRoom = global_.cur.fetchone()[0]
+    # Get customer's roomId to add qty to rooms table
 
-    comm = f"delete from {global_.tbCustomers} where CustomerId='{customerId}'"
+    comm = f"update {global_.tbRooms} " \
+           f"set Qty=Q ty+1 " \
+           f"where roomId='{customerRoom}'"
+    global_.cur.execute(comm)
+    # Update Quantity of Room
+    global_.conn.commit()
+    # Commit the changes made
+
+    comm = f"delete from {global_.tbCustomers} " \
+           f"where CustomerId='{customerId}'"
     global_.cur.execute(comm)
     # Remove the customer from the customers table
-
     global_.conn.commit()
-    # Committing the changes made
+    # Commit the changes made
 
-    comm = "update {} set Qty=Qty+1 where roomId='{}'".format(global_.tbRooms, customerRoom)
-    global_.cur.execute(comm)
-    # Updating Quantity of Room
-
-    global_.conn.commit()
-    # Committing the changes made
-
-    checkOutAllCustomersTable(customerId, outDate)
+    checkOutAllCustomersTable(customerId, str(outDate))
     # Check out the customer from allCustomers table
 
-    comm = "select * from {} where customerId='{}'".format(global_.tbAllCustomers, customerId)
+    comm = f"select * from {global_.tbAllCustomers} " \
+           f"where customerId='{customerId}'"
     global_.cur.execute(comm)
-    res = global_.cur.fetchone()
-    # Getting the customer's details for the invoice
+    res: tuple = global_.cur.fetchone()
+    # Get the customer's details for the invoice
 
-    price_ = price(customerId, outDate)
-    # Generating the price of the stay without the tax
+    price = calcPrice(customerId, outDate)
+    # Generate the price of the stay without the tax
 
-    return res[4], res[5], res[6], res[8], price_, res[9]
+    return res[4], res[5], res[6], res[8], price, res[9]
     # (roomId, checkInDate, checkOutDate, roomRate, price, roomTax)
-    # Returning info to generate invoice
+    # Return info to generate invoice
 
 
 def showCustomers() -> tuple:
@@ -231,30 +246,28 @@ def showCustomers() -> tuple:
     :return: Customer's data
     :rtype: tuple
     """
-    res = None
-    # If there is no customer
+    res: tuple = ()
 
     if global_.accessLevel == "User":
         # If logged in as user, retrieve data only of current customers
-        # Selecting all the the customers
-        comm = "select * from " + global_.tbCustomers
+        # Select all the the checked-in customers
+        comm = f"select * from {global_.tbCustomers}"
         global_.cur.execute(comm)
         res = global_.cur.fetchall()
 
     elif global_.accessLevel == "Admin":
         # Else, in admin mode, retrieve Data of all customers
-        # Selecting all the the customers
-        comm = "select * from " + global_.tbAllCustomers
+        # Select all the the customers
+        comm = f"select * from {global_.tbAllCustomers}"
         global_.cur.execute(comm)
         res = global_.cur.fetchall()
 
-    # Returning tuple of customer's information
     return res
 
 
 def addAllCustomers(
-        customerId: str, name: str, aadhaar: str, mobile: str, roomId: str, inDate: str, tax: float
-) -> None:
+        customerId: str, name: str, aadhaar: str, mobile: str,
+        roomId: str, inDate: str, tax: float) -> None:
     """
     Add the customer's details in the allCustomers table
     :param customerId: Customer's Id
@@ -266,144 +279,195 @@ def addAllCustomers(
     :param tax: Room Tax
     :rtype: None
     """
+    comm = f"select rate from {global_.tbRooms} " \
+           f"where roomId='{roomId}'"
+    global_.cur.execute(comm)
+    rate = global_.cur.fetchone()[0]
     # Get rate of the room
-    comm = "select rate from {} where roomId='{}'".format(global_.tbRooms, roomId)
+
+    comm = f"insert into {global_.tbAllCustomers} values(" \
+           f"'{customerId}', " \
+           f"'{name}', " \
+           f"'{aadhaar}', " \
+           f"'{mobile}'," \
+           f" '{roomId}', " \
+           f"'{inDate}'," \
+           f" NULL, " \
+           f"'y', " \
+           f"{int(rate)}, " \
+           f"{float(tax)}" \
+           ")"
     global_.cur.execute(comm)
-    rate = global_.cur.fetchone()[0]
-
-    # To add customer to allCustomer table
-    comm = "insert into {} values(" \
-           "'{}', '{}', '{}', '{}', '{}', '{}', NULL, 'y', {}, {}" \
-           ")" \
-        .format(global_.tbAllCustomers, customerId, name, aadhaar, mobile, roomId, inDate, int(rate), float(tax))
-
-    global_.cur.execute(comm)
-
-    # Committing the changes made
+    # Add customer to allCustomer table
     global_.conn.commit()
+    # Commit the changes made
 
 
-# To update status in allCustomers Table
-def updateAllCustomers(customerId, name, aadhaar, mobile):
+def updateAllCustomers(customerId: str, name: str, aadhaar: str, mobile: str) -> None:
+    """
+    Update the customer's details in the allCustomers table
+    :param customerId: Id of the customer whose details are to be updated
+    :param name: Customer's new Name
+    :param aadhaar: Customer's new Aadhaar Number
+    :param mobile: Customer's new Mobile Number
+    :rtype: None
+    """
+    details = {
+        "CustomerName": name,
+        "Aadhaar": aadhaar,
+        "Mobile": mobile
+    }
     # Dictionary of all the new details
-    details = {"CustomerName": name, "Aadhaar": aadhaar, "Mobile": mobile}
 
-    # Updating all details using a loop
-    for i in details:
-        comm = "update {} set {}='{}' where customerId='{}'".format(global_.tbAllCustomers, i, details[i], customerId)
+    # Update all details using a loop
+    for detail in details:
+        comm = f"update {global_.tbAllCustomers}" \
+               f" set {detail}='{details[detail]}' " \
+               f"where customerId='{customerId}'"
         global_.cur.execute(comm)
-
-        # Committing the changes made
         global_.conn.commit()
+        # Commit the changes made
 
 
-# To check out customer from allCustomers Table
-def checkOutAllCustomersTable(customerId, outDate):
-    # Updating the checkOut date
-    comm = "update {} set checkOutDate='{}' where customerId='{}'" \
-        .format(global_.tbAllCustomers, outDate, customerId)
-
+def checkOutAllCustomersTable(customerId: str, outDate: str) -> None:
+    """
+    Check-Out the customer from the allCustomers table
+    :param customerId: Id of customer to be checked-out
+    :param outDate: Date when customer checks out
+    :rtype: None
+    """
+    comm = f"update {global_.tbAllCustomers} " \
+           f"set checkOutDate='{outDate}' " \
+           f"where customerId='{customerId}'"
     global_.cur.execute(comm)
+    # Update the checkOut date
 
-    # Updating the checkedIn value
-    comm = "update {} set checkedIn='n' where customerId='{}'" \
-        .format(global_.tbAllCustomers, customerId)
-
+    comm = f"update {global_.tbAllCustomers} " \
+           f"set checkedIn='n' " \
+           f"where customerId='{customerId}'"
     global_.cur.execute(comm)
-
-    # Committing the changes made
+    # Update the checkedIn value
     global_.conn.commit()
+    # Commit the changes made
 
 
-# Calculate the price to be paid
-def price(customerId, outDate):
-
-    # Getting the rate of the room
-    comm = "select rate from {} where customerId='{}'".format(global_.tbAllCustomers, customerId)
+def calcPrice(customerId: str, outDate: datetime.date) -> float:
+    """
+    Calculate the price without the tax to be paid by the customer
+    :param customerId: Customer Id to fetch the rate of room and check-in date from allCustomers table
+    :param outDate: To calculate the number of days
+    :rtype: float
+    :return: Number of days times rate of room
+    """
+    comm = f"select rate from {global_.tbAllCustomers} " \
+           f"where customerId='{customerId}'"
     global_.cur.execute(comm)
     rate = global_.cur.fetchone()[0]
+    # Get the rate of the room
 
-    # Getting the checkInDate
-    comm = "select checkInDate from {} where customerId='{}'".format(global_.tbAllCustomers, customerId)
+    comm = f"select checkInDate from {global_.tbAllCustomers} " \
+           f"where customerId='{customerId}'"
     global_.cur.execute(comm)
     inDate = global_.cur.fetchone()[0]
+    # Get the checkInDate
 
+    noOfDays = outDate - inDate
     # No of days
-    days_ = outDate - inDate
-    return rate*days_
+
+    return rate*noOfDays
 
 
-# Function to add a room to database
-def addRoom(roomId, ac, qty, rate, tax):
-    # Converting Yes/No to a single character
+def addRoom(roomId: str, ac: str, qty: int, rate: int, tax: float) -> int:
+    """
+    Add room to rooms table
+    :param roomId: Unique room id depending on the type of room
+    :param ac: y or n, AC room or not
+    :param qty: Quantity of rooms vacant
+    :param rate: Rate of the room
+    :param tax: Tax to be paid for the room
+    :return: 1 (No error) or 0 (Room already exists)
+    :rtype: int
+    """
+    # Convert Yes/No to a single character
     if ac.casefold() == "Yes".casefold():
         ac = "y"
     elif ac.casefold() == "No".casefold():
         ac = "n"
 
-    # Function to add the room to database
-    def sendComm():
-        comm1 = "insert into {tableName} values(" \
-                "'{}', '{}', {}, {}, {}" \
-                ")".format(roomId, ac, qty, rate, tax, tableName=global_.tbRooms)
+    def sendComm() -> None:
+        """
+        Add room to the table
+        :rtype: None
+        """
+        comm1 = f"insert into {global_.tbRooms} values(" \
+                f"'{roomId}', " \
+                f"'{ac}', " \
+                f"{qty}, " \
+                f"{rate}, " \
+                f"{tax}" \
+                ")"
         global_.cur.execute(comm1)
-
-        # Committing the changes made
         global_.conn.commit()
+        # Commit the changes made
 
-    # Checking if room already exists
-    comm = "select * from " + global_.tbRooms
+    comm = f"select * from {global_.tbRooms}"
     global_.cur.execute(comm)
-    res = global_.cur.fetchall()
+    res: tuple = global_.cur.fetchall()
+    # Check if room already exists
 
-    # If no room exists, res will be empty
     if len(res) == 0:
+        # If no room exists, res will be empty
 
-        # Creating the room
         sendComm()
+        # Create the room
 
-        # No error
         return 1
 
     else:
-
-        # Checking if required room exists
-        for i in res:
-            if i[0] == roomId:
+        # Check if required room exists
+        for room in res:
+            if room[0] == roomId:
                 # Room Exists
+
                 return 0
 
-        # Creating the room
         sendComm()
+        # Create the room
 
-        # No error
         return 1
 
 
-# To check if room exists using roomId
-def searchRoom(roomId):
-    # selecting the roomId
-    comm = "select RoomId from " + global_.tbRooms
+def searchRoom(roomId: str) -> int:
+    """
+    Check if room exists to be able to update it
+    :param roomId: To check if room with this id exists
+    :return: 1(Room exists) or 0 (Room doesn't exist)
+    :rtype: int
+    """
+    comm = f"select RoomId from {global_.tbRooms}"
     global_.cur.execute(comm)
+    # Select all the roomIds
 
-    # Tuple of Tuple of RoomId
-    res = global_.cur.fetchall()
+    res: tuple[tuple[str]] = global_.cur.fetchall()
 
-    for i in res:
-        if str(i).strip("'(),") == roomId:
-            # Room exists
+    for existingId in res:
+        if existingId[0] == roomId:
             return 1
 
-    # Room doesn't exist
     return 0
 
 
-# Function to display a specific room
-def selectRoom(roomId):
-    # Selecting all the info of the room
+def selectRoom(roomId: str) -> tuple:
+    """
+    Fetch info about a particular room
+    :param roomId: Id of Room of which details are to be displayed
+    :return: (Quantity of vacant rooms, room rate, room tax)
+    :rtype: tuple
+    """
     comm = "select * from {} where roomId='{}'".format(global_.tbRooms, roomId)
     global_.cur.execute(comm)
-    res = global_.cur.fetchone()  # Tuple
+    res: tuple = global_.cur.fetchone()
+    # Select all the info of the room
 
     qty = res[2]
     rate = res[3]
@@ -411,44 +475,65 @@ def selectRoom(roomId):
     return qty, rate, tax
 
 
-# Function to update qty and rate of room
-def updateRoom(roomId, qty, rate, tax):
-    # Updating the room quantity
-    comm = "update {} set qty={} where roomId='{}'".format(global_.tbRooms, qty, roomId)
+def updateRoom(roomId: str, qty: int, rate: int, tax: float) -> None:
+    """
+    Update the room details
+    :param roomId: Id of room whose details are to be updated
+    :param qty: New Quantity of room
+    :param rate: New Rate of room
+    :param tax: New Tax of room
+    :rtype: None
+    """
+    comm = f"update {global_.tbRooms} set qty={qty} where roomId='{roomId}'"
     global_.cur.execute(comm)
+    # Update the room quantity
 
-    # Updating the room rate
-    comm = "update {} set rate={} where roomId='{}'".format(global_.tbRooms, rate, roomId)
+    comm = f"update {global_.tbRooms} set rate={rate} where roomId='{roomId}'"
     global_.cur.execute(comm)
+    # Update the room rate
 
-    # Updating the room tax
-    comm = "update {} set tax={} where roomId='{}'".format(global_.tbRooms, tax, roomId)
+    comm = f"update {global_.tbRooms} set tax={tax} where roomId='{roomId}'"
     global_.cur.execute(comm)
+    # Update the room tax
 
-    # Committing the changes made
     global_.conn.commit()
+    # Commit the changes made
 
 
-# Function to display all the rooms
-def showRooms():
-    # Selecting all the rooms
-    comm = "select * from " + global_.tbRooms
+def showRooms() -> tuple:
+    """
+    Return the details of all the rooms
+    :rtype: tuple
+    """
+    comm = f"select * from {global_.tbRooms}"
     global_.cur.execute(comm)
-    res = global_.cur.fetchall()  # Tuple
+    res: tuple[tuple] = global_.cur.fetchall()
+    # Select all the rooms
+
     return res
 
 
-# To form CSV
-def retrieveAllData():
+def retrieveAllData() -> tuple:
+    """
+    Return all the customer's data to form csv file
+    :rtype: tuple
+    :return:
+    """
     comm = f"select * from {global_.tbAllCustomers}"
     global_.cur.execute(comm)
-
-    allCustomers = global_.cur.fetchall()
+    allCustomers: tuple[tuple] = global_.cur.fetchall()
+    # Select all the customers from the allCustomers table
 
     return allCustomers
 
 
-# To close the cursor and connection before sign out
-def endConn():
+def endConn() -> None:
+    """
+    Close the MySQL connection before exiting
+    :rtype: None
+    """
     global_.cur.close()
+    # Close the cursor
+
     global_.conn.close()
+    # Close the connection
