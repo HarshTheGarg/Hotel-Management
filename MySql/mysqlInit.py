@@ -2,37 +2,34 @@
 Creating the database and required tables(if they don't exist) and using them
 """
 
-# establishing connection
-import MySql.mysqlConn
+import MySql.mysqlConn  # Establish the connection with MySQL
 
-# Importing the variables file
-import global_
+import global_  # Import the variables file
 
 
-# To create (and use) the required database
-def createDbAndTables():
-
-    # Establishes the connection with MySQL server and store the status and connection status
-    # in the vars.status and vars.condition
+def createDbAndTables() -> None:
+    """
+    Create the required database and tables
+    :rtype: None
+    """
     MySql.mysqlConn.estConnect()
+    # Establish the connection with MySQL server
 
     # If Connection was successful
     if global_.condition == 1:
 
-        # Creating the MySQL cursor
         global_.cur = global_.conn.cursor()
+        # Create the MySQL cursor
 
         global_.updateStatus("Connecting to Database")
+        # Update the status bar
 
-        # Creating database if it doesn't exist
+        # Create database if it doesn't exist
         dbname = "HotelMan"
-
-        # To see all available databases and compare if required database exists
         comm = "Show databases"
         global_.cur.execute(comm)
-
-        # databases -> list of all the databases on the server
-        databases = global_.cur.fetchall()
+        databases: tuple = global_.cur.fetchall()
+        # See all available databases and compare if required database exists
 
         try:
 
@@ -40,80 +37,70 @@ def createDbAndTables():
             # flag == False -> database doesn't exist
             flag = False
 
-            for i in databases:
-                # .casefold() for case insensitive checking
-                # if database exists
-                if i[0].casefold() == dbname.casefold():
+            for database in databases:
+                # If database exists
+                if database[0].casefold() == dbname.casefold():
                     flag = True
                     break
 
-            # if flag == False, database doesn't exist
+            # If database doesn't exist
             if not flag:
-
-                # Creating the database
                 comm = "create database " + dbname
                 global_.cur.execute(comm)
+                # Create the database
 
-            # Using the database
             comm = "use " + dbname
             global_.cur.execute(comm)
+            # Use the database
 
         # If any error in creating/using the database
-        except MySql.mysqlConn.sql.Error as e:
+        except MySql.mysqlConn.sql.Error:
 
-            # Printing the error
-            print(e)
             global_.condition = 0
 
             global_.updateStatus("Error using the database")
+            # Update the status bar
 
-            """# Exiting the Programme
-            sys.exit()"""
-
+        # Create required tables
         if global_.condition == 1:
 
-            # Creating required tables
             global_.tbRooms = "rooms"
             global_.tbCustomers = "customers"
             global_.tbAllCustomers = "allCustomers"
 
-            # Creating Rooms Table
+            # Create Rooms Table
             try:
-                comm = "create table {} (" \
+                comm = f"create table {global_.tbRooms} (" \
                        "RoomId varchar(2) Primary key," \
                        "AC varchar(1)," \
                        "Qty int(2), " \
                        "Rate int(5)," \
                        "Tax decimal(4,2)" \
-                       ")"\
-                    .format(global_.tbRooms)
-
+                       ")"
                 global_.cur.execute(comm)
 
             # If the table exists
             except MySql.mysqlConn.sql.Error:
                 pass
 
-            # Customers Table
+            # Create Customers Table
             try:
-                comm = "create table {} (" \
+                comm = f"create table {global_.tbCustomers} (" \
                        "CustomerId varchar(3) Primary key, " \
                        "CustomerName varchar(30)," \
                        "Aadhaar varchar(15), " \
                        "Mobile varchar(10)," \
                        "RoomId varchar(2)" \
-                       ")"\
-                    .format(global_.tbCustomers)
-
+                       ")"
                 global_.cur.execute(comm)
 
             # If the table exists
             except MySql.mysqlConn.sql.Error:
                 pass
 
-            # All Customers Table
+            # Create All Customers Table
             try:
-                comm = "create table {} (" \
+                comm = f"create table {global_.tbAllCustomers} (" \
                        "CustomerId varchar(3) Primary key, " \
                        "CustomerName varchar(30)," \
                        "Aadhaar varchar(15), " \
@@ -124,9 +111,7 @@ def createDbAndTables():
                        "checkedIn char," \
                        "rate int(5)," \
                        "tax decimal(4, 2)" \
-                       ")"\
-                    .format(global_.tbAllCustomers)
-
+                       ")"
                 global_.cur.execute(comm)
 
             # If the table exists
