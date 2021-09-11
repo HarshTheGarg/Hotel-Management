@@ -18,17 +18,17 @@ def generateCSV(data: list[list], date: datetime.date) -> None:
     :rtype: None
     """
     # Create the folder on desktop
-    desktop_path: str = os.environ["HOMEPATH"] + "\\Desktop"
+    directory_path: str = os.environ["USERPROFILE"] + "\\Desktop\\HotelMan"
     # Path to the desktop
 
     # Check if the directory already exists
-    if os.path.exists("C:" + desktop_path + "\\HotelMan"):
+    if os.path.exists(directory_path):
         # Directory exists
         pass
 
     else:
         # Directory doesn't exist
-        os.mkdir("C:" + desktop_path + "\\HotelMan")
+        os.mkdir(directory_path)
         # Make the directory
 
     # Create the file
@@ -36,7 +36,7 @@ def generateCSV(data: list[list], date: datetime.date) -> None:
                     "Check Out Date", "Check In Status", "Room Rate", "Tax"]
     # All the headers to be added to the file
 
-    with open("C:" + desktop_path + f"\\HotelMan\\HotelMan_{date.year}_{date.month}_{date.day}.csv",
+    with open(directory_path + f"\\HotelMan_{date.year}_{date.month}_{date.day}.csv",
               "w", newline=""
               ) as file:
         csv_w = csv.writer(file)
