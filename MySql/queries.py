@@ -18,7 +18,7 @@ def eventErrorHandler(event):
     str(event) * 2
 
 
-def addCustomer(name: str, aadhaar: str, mobile: str, roomId: str, inDate: str) -> tuple:
+def addCustomer(name: str, aadhaar: str, mobile: str, roomId: str, inDate: str) -> tuple[int, str]:
     """
     Add a customer to customers table
     :param name: Customer's name
@@ -27,7 +27,7 @@ def addCustomer(name: str, aadhaar: str, mobile: str, roomId: str, inDate: str) 
     :param roomId: Customer's Room Id
     :param inDate: Check-in date of customer for allCustomers table
     :return: (0, error message) or (1, customerId)
-    :rtype: tuple
+    :rtype: tuple[int, str]
     """
     try:
         # Check if room is vacant
@@ -37,18 +37,23 @@ def addCustomer(name: str, aadhaar: str, mobile: str, roomId: str, inDate: str) 
         global_.cur.execute(comm)
         res: tuple = global_.cur.fetchone()
 
-        qtyOfRooms: int = res[0]
-
-        roomTax: float = res[1]
-
-        if qtyOfRooms == 0 or qtyOfRooms is None:
-            # If rooms is unavailable or room doesn't exist
+        if res is None:
+            # If room doesn't exist
 
             return 0, "Room not Available"
             # Error, Message to be displayed
 
+        elif res[0] == 0:
+            # res[0] : Quantity of room
+            # If rooms is unavailable
+
+            return 0, "Room not Vacant"
+            # Error, Message to be displayed
+
         else:
             # If room is available
+
+            roomTax: float = res[1]
 
             # Fetch all customerIds to create next id
             comm = f"select * from {global_.tbAllCustomers}"
@@ -137,13 +142,13 @@ def searchCustomer(customerId: str, caller: str = "notFind") -> int:
     # customerId Not Found
 
 
-def selectCustomer(customerId: str, caller: str = "notFind") -> tuple:
+def selectCustomer(customerId: str, caller: str = "notFind") -> tuple[str, str, str]:
     """
     Return the customer's details
     :param customerId: Id of the customer to be found
     :param caller: To check if function is called by the find method,
     since find in admin mode checks in allCustomerTable
-    :rtype: tuple
+    :rtype: tuple[str, str, str]
     :return: tuple of customer's name, aadhaar, and mobile number
     """
     # Select all the details of the customer using customerId
@@ -194,13 +199,15 @@ def updateCustomer(customerId: str, name: str, aadhaar: str, mobile: str) -> Non
     # Update in allCustomers Table also
 
 
-def removeCustomer(customerId: str, outDate: datetime.date) -> tuple:
+def removeCustomer(
+        customerId: str, outDate: datetime.date
+) -> tuple[str, datetime.date, datetime.date, int, int, float]:
     """
     Remove customer from customers table
     :param customerId: Id of the customer to be removed
     :param outDate: To set the check-out date in allCustomers table
     :return: (roomId, checkInDate, checkOutDate, roomRate, price, roomTax)
-    :rtype: tuple
+    :rtype: tuple[str, datetime.date, datetime.date, int, int, float]
     """
     comm = f"select RoomId from {global_.tbCustomers} " \
            f"where CustomerId='{customerId}'"
@@ -209,7 +216,7 @@ def removeCustomer(customerId: str, outDate: datetime.date) -> tuple:
     # Get customer's roomId to add qty to rooms table
 
     comm = f"update {global_.tbRooms} " \
-           f"set Qty=Q ty+1 " \
+           f"set Qty=Qty+1 " \
            f"where roomId='{customerRoom}'"
     global_.cur.execute(comm)
     # Update Quantity of Room
@@ -240,7 +247,7 @@ def removeCustomer(customerId: str, outDate: datetime.date) -> tuple:
     # Return info to generate invoice
 
 
-def showCustomers() -> tuple:
+def showCustomers() -> tuple[tuple]:
     """
     Retrieve data of all the customers
     :return: Customer's data
@@ -351,12 +358,12 @@ def checkOutAllCustomersTable(customerId: str, outDate: str) -> None:
     # Commit the changes made
 
 
-def calcPrice(customerId: str, outDate: datetime.date) -> float:
+def calcPrice(customerId: str, outDate: datetime.date) -> int:
     """
     Calculate the price without the tax to be paid by the customer
     :param customerId: Customer Id to fetch the rate of room and check-in date from allCustomers table
     :param outDate: To calculate the number of days
-    :rtype: float
+    :rtype: int
     :return: Number of days times rate of room
     """
     comm = f"select rate from {global_.tbAllCustomers} " \
@@ -457,21 +464,21 @@ def searchRoom(roomId: str) -> int:
     return 0
 
 
-def selectRoom(roomId: str) -> tuple:
+def selectRoom(roomId: str) -> tuple[int, int, float]:
     """
     Fetch info about a particular room
     :param roomId: Id of Room of which details are to be displayed
     :return: (Quantity of vacant rooms, room rate, room tax)
-    :rtype: tuple
+    :rtype: tuple[int, int, float]
     """
     comm = "select * from {} where roomId='{}'".format(global_.tbRooms, roomId)
     global_.cur.execute(comm)
     res: tuple = global_.cur.fetchone()
     # Select all the info of the room
 
-    qty = res[2]
-    rate = res[3]
-    tax = res[4]
+    qty: int = res[2]
+    rate: int = res[3]
+    tax: float = res[4]
     return qty, rate, tax
 
 
@@ -500,10 +507,10 @@ def updateRoom(roomId: str, qty: int, rate: int, tax: float) -> None:
     # Commit the changes made
 
 
-def showRooms() -> tuple:
+def showRooms() -> tuple[tuple]:
     """
     Return the details of all the rooms
-    :rtype: tuple
+    :rtype: tuple[tuple]
     """
     comm = f"select * from {global_.tbRooms}"
     global_.cur.execute(comm)
@@ -513,10 +520,10 @@ def showRooms() -> tuple:
     return res
 
 
-def retrieveAllData() -> tuple:
+def retrieveAllData() -> tuple[tuple]:
     """
     Return all the customer's data to form csv file
-    :rtype: tuple
+    :rtype: tuple[tuple]
     :return:
     """
     comm = f"select * from {global_.tbAllCustomers}"
