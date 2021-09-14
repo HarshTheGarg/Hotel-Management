@@ -342,7 +342,7 @@ def checkIn() -> None:
                         )
                         # Running the MySQL query
 
-                        # Some error occured
+                        # Some error occurred
                         if customerAdded[0] == 0:
 
                             global_.updateStatus("Try Again...:-\\")

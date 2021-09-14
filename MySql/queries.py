@@ -369,7 +369,7 @@ def calcPrice(customerId: str, outDate: datetime.date) -> int:
     comm = f"select rate from {global_.tbAllCustomers} " \
            f"where customerId='{customerId}'"
     global_.cur.execute(comm)
-    rate = global_.cur.fetchone()[0]
+    rate: int = global_.cur.fetchone()[0]
     # Get the rate of the room
 
     comm = f"select checkInDate from {global_.tbAllCustomers} " \
@@ -378,7 +378,8 @@ def calcPrice(customerId: str, outDate: datetime.date) -> int:
     inDate = global_.cur.fetchone()[0]
     # Get the checkInDate
 
-    noOfDays = outDate - inDate
+    noOfDays = (outDate - inDate).days
+    # .days() to get as int
     # No of days
 
     return rate*noOfDays

@@ -1,28 +1,30 @@
 """
-Generates and stores a invoice on the desktop
+Generate and store invoice on the desktop
 """
 
-# To get the dimensions of the image
-from PIL import Image
+import datetime  # To specify datatype
 
+from PIL import Image  # To get the dimensions of the logo
+
+from reportlab.pdfgen import canvas  # Creates a blank pdf
 # pip install reportlab
-# Creates a blank pdf
-from reportlab.pdfgen import canvas
 
-# To get the length of a string to center it
-from reportlab.pdfbase.pdfmetrics import stringWidth
+from reportlab.pdfbase.pdfmetrics import stringWidth  # To get the length of a string to center it
 
-# Makes font compatible with our code
-from reportlab.pdfbase.ttfonts import TTFont
-from reportlab.pdfbase import pdfmetrics
+from reportlab.pdfbase.ttfonts import TTFont  # To use fonts
+from reportlab.pdfbase import pdfmetrics  # Makes font compatible with our code
 
-# To Create the Directory
-import os
+import os  # To Create the Directory
 
 
 # generate invoice
-def generateInvoice(customerId, name, aadhaar, mobile, roomType, inDate, outDate, rate, price, tax):
-
+def generateInvoice(customerId: str, name: str, aadhaar: str, mobile: str, roomType: str,
+                    inDate: datetime.date, outDate: datetime.date, rate: int, price: int, tax: float
+                    ) -> None:
+    """
+    Generate the invoice with respective customer's info
+    :rtype: None
+    """
     # Create the right font
     pdfmetrics.registerFont(TTFont("robotoBlack", "Assets/Roboto/Roboto-Black.ttf"))
     pdfmetrics.registerFont(TTFont("robotoBold", "Assets/Roboto/Roboto-Bold.ttf"))
@@ -38,11 +40,11 @@ def generateInvoice(customerId, name, aadhaar, mobile, roomType, inDate, outDate
     line_space = 100
 
     # Create the folder on desktop
-    desktop_path = os.environ["HOMEPATH"] + "\\Desktop"
-    if os.path.exists("C:" + desktop_path + "\\HotelMan"):
+    directory_path = os.environ["USERPROFILE"] + "\\Desktop\\HotelMan"
+    if os.path.exists(directory_path):
         pass
     else:
-        os.mkdir("C:" + desktop_path + "\\HotelMan")
+        os.mkdir(directory_path)
 
     # Resize the image
     img = Image.open("Assets/LogoBlackNameLarge.png")
@@ -52,7 +54,7 @@ def generateInvoice(customerId, name, aadhaar, mobile, roomType, inDate, outDate
     img_width = 700
     img_height = img_width / img_ratio
 
-    c = canvas.Canvas("C:" + desktop_path + "\\HotelMan\\{}_{}_{}{}{}_{}{}{}.pdf".format(
+    c = canvas.Canvas(directory_path + "\\{}_{}_{}{}{}_{}{}{}.pdf".format(
         customerId, name.replace(" ", "_"),
         str(inDate.year), str(inDate.month), str(inDate.day),
         str(outDate.year), str(outDate.month), str(outDate.day)
