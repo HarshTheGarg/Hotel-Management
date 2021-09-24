@@ -6,8 +6,8 @@ import datetime  # To specify datatype
 
 from PIL import Image  # To get the dimensions of the logo
 
-from reportlab.pdfgen import canvas  # Creates a blank pdf
 # pip install reportlab
+from reportlab.pdfgen import canvas  # Creates a blank pdf
 
 from reportlab.pdfbase.pdfmetrics import stringWidth  # To get the length of a string to center it
 
@@ -17,7 +17,6 @@ from reportlab.pdfbase import pdfmetrics  # Makes font compatible with our code
 import os  # To Create the Directory
 
 
-# generate invoice
 def generateInvoice(customerId: str, name: str, aadhaar: str, mobile: str, roomType: str,
                     inDate: datetime.date, outDate: datetime.date, rate: int, price: int, tax: float
                     ) -> None:
@@ -25,7 +24,8 @@ def generateInvoice(customerId: str, name: str, aadhaar: str, mobile: str, roomT
     Generate the invoice with respective customer's info
     :rtype: None
     """
-    # Create the right font
+
+    # Create the font compatible for pdf
     pdfmetrics.registerFont(TTFont("robotoBlack", "Assets/Roboto/Roboto-Black.ttf"))
     pdfmetrics.registerFont(TTFont("robotoBold", "Assets/Roboto/Roboto-Bold.ttf"))
     pdfmetrics.registerFont(TTFont("robotoRegular", "Assets/Roboto/Roboto-Regular.ttf"))
@@ -54,21 +54,24 @@ def generateInvoice(customerId: str, name: str, aadhaar: str, mobile: str, roomT
     img_width = 700
     img_height = img_width / img_ratio
 
-    c = canvas.Canvas(directory_path + "\\{}_{}_{}{}{}_{}{}{}.pdf".format(
-        customerId, name.replace(" ", "_"),
-        str(inDate.year), str(inDate.month), str(inDate.day),
-        str(outDate.year), str(outDate.month), str(outDate.day)
-    ))
+    page = canvas.Canvas(
+        directory_path +
+        f"\\{customerId}_{name.replace(' ', '_')}_"
+        f"{str(inDate.year)}{inDate.month}{inDate.day}_"
+        f"{outDate.year}{outDate.month}{outDate.day}.pdf"
+    )
 
-    c.setPageSize((page_width, page_height))
+    page.setPageSize((page_width, page_height))
 
+    # To draw the elements at the required location, coordinates start from lower left side of page
     y_coordinate = page_height - margin_top - img_height
     x_coordinate = margin_sides + 800
 
+    # Price including the tax
     priceFinal = round(int(price) * (1 + float(tax)/100), 2)
 
     # Logo
-    c.drawInlineImage(
+    page.drawInlineImage(
         "Assets\\LogoBlackNameLarge.png",
         (page_width - img_width)/2,
         y_coordinate,
@@ -76,22 +79,23 @@ def generateInvoice(customerId: str, name: str, aadhaar: str, mobile: str, roomT
         img_height
     )
 
+    # Reducing the y coordinate as we have to go down for every element
     y_coordinate -= line_space * 3
 
     # Invoice Heading
-    c.setFont("robotoBlack", 90)
+    page.setFont("robotoBlack", 90)
     text = "INVOICE"
     text_width = stringWidth(text, "robotoBlack", 90)
-    c.drawString(
+    page.drawString(
         (page_width-text_width)/2,
         y_coordinate,
         text
     )
 
     # Underline
-    c.setStrokeColorRGB(0, 0, 0)
-    c.setLineWidth(5)
-    c.line(
+    page.setStrokeColorRGB(0, 0, 0)
+    page.setLineWidth(5)
+    page.line(
         ((page_width - text_width) / 2) - 3,
         y_coordinate - 8,
         ((page_width + text_width) / 2) + 3,
@@ -101,16 +105,16 @@ def generateInvoice(customerId: str, name: str, aadhaar: str, mobile: str, roomT
     y_coordinate -= line_space * 2
 
     # Customer name
-    c.setFont("robotoBold", 50)
+    page.setFont("robotoBold", 50)
     text = "Customer's Name: "
-    c.drawString(
+    page.drawString(
         margin_sides,
         y_coordinate,
         text
     )
 
-    c.setFont("robotoItalic", 50)
-    c.drawString(
+    page.setFont("robotoItalic", 50)
+    page.drawString(
         x_coordinate,
         y_coordinate,
         str(name)
@@ -119,16 +123,16 @@ def generateInvoice(customerId: str, name: str, aadhaar: str, mobile: str, roomT
     y_coordinate -= line_space
 
     # Customer aadhaar
-    c.setFont("robotoBold", 50)
+    page.setFont("robotoBold", 50)
     text = "Customer's Aadhaar Number: "
-    c.drawString(
+    page.drawString(
         margin_sides,
         y_coordinate,
         text
     )
 
-    c.setFont("robotoItalic", 50)
-    c.drawString(
+    page.setFont("robotoItalic", 50)
+    page.drawString(
         x_coordinate,
         y_coordinate,
         str(aadhaar)
@@ -137,16 +141,16 @@ def generateInvoice(customerId: str, name: str, aadhaar: str, mobile: str, roomT
     y_coordinate -= line_space
 
     # Customer mobile
-    c.setFont("robotoBold", 50)
+    page.setFont("robotoBold", 50)
     text = "Customer's Contact Number: "
-    c.drawString(
+    page.drawString(
         margin_sides,
         y_coordinate,
         text
     )
 
-    c.setFont("robotoItalic", 50)
-    c.drawString(
+    page.setFont("robotoItalic", 50)
+    page.drawString(
         x_coordinate,
         y_coordinate,
         "+91 " + str(mobile[0:5]) + "-" + str(mobile[5:10])
@@ -155,16 +159,16 @@ def generateInvoice(customerId: str, name: str, aadhaar: str, mobile: str, roomT
     y_coordinate -= line_space*2
 
     # Customer check In Date
-    c.setFont("robotoBold", 50)
+    page.setFont("robotoBold", 50)
     text = "Check In Date: "
-    c.drawString(
+    page.drawString(
         margin_sides,
         y_coordinate,
         text
     )
 
-    c.setFont("robotoItalic", 50)
-    c.drawString(
+    page.setFont("robotoItalic", 50)
+    page.drawString(
         x_coordinate,
         y_coordinate,
         str(inDate.day) + "-" + str(inDate.month) + "-" + str(inDate.year)
@@ -173,16 +177,16 @@ def generateInvoice(customerId: str, name: str, aadhaar: str, mobile: str, roomT
     y_coordinate -= line_space
 
     # Customer check Out date
-    c.setFont("robotoBold", 50)
+    page.setFont("robotoBold", 50)
     text = "Check Out Date: "
-    c.drawString(
+    page.drawString(
         margin_sides,
         y_coordinate,
         text
     )
 
-    c.setFont("robotoItalic", 50)
-    c.drawString(
+    page.setFont("robotoItalic", 50)
+    page.drawString(
         x_coordinate,
         y_coordinate,
         str(outDate.day) + "-" + str(outDate.month) + "-" + str(outDate.year)
@@ -191,16 +195,16 @@ def generateInvoice(customerId: str, name: str, aadhaar: str, mobile: str, roomT
     y_coordinate -= line_space*2
 
     # Customer roomType
-    c.setFont("robotoBold", 50)
+    page.setFont("robotoBold", 50)
     text = "Room: "
-    c.drawString(
+    page.drawString(
         margin_sides,
         y_coordinate,
         text
     )
 
-    c.setFont("robotoItalic", 50)
-    c.drawString(
+    page.setFont("robotoItalic", 50)
+    page.drawString(
         x_coordinate,
         y_coordinate,
         str(roomType)
@@ -209,16 +213,16 @@ def generateInvoice(customerId: str, name: str, aadhaar: str, mobile: str, roomT
     y_coordinate -= line_space
 
     # Rate
-    c.setFont("robotoBold", 50)
+    page.setFont("robotoBold", 50)
     text = "Room Rate: "
-    c.drawString(
+    page.drawString(
         margin_sides,
         y_coordinate,
         text
     )
 
-    c.setFont("robotoItalic", 50)
-    c.drawString(
+    page.setFont("robotoItalic", 50)
+    page.drawString(
         x_coordinate,
         y_coordinate,
         "\u20B9" + str(rate)
@@ -227,16 +231,16 @@ def generateInvoice(customerId: str, name: str, aadhaar: str, mobile: str, roomT
     y_coordinate -= line_space
 
     # Price excl. tax
-    c.setFont("robotoBold", 50)
+    page.setFont("robotoBold", 50)
     text = "Price (Tax Excl.): "
-    c.drawString(
+    page.drawString(
         margin_sides,
         y_coordinate,
         text
     )
 
-    c.setFont("robotoItalic", 50)
-    c.drawString(
+    page.setFont("robotoItalic", 50)
+    page.drawString(
         x_coordinate,
         y_coordinate,
         "\u20B9" + str(price)
@@ -245,16 +249,16 @@ def generateInvoice(customerId: str, name: str, aadhaar: str, mobile: str, roomT
     y_coordinate -= line_space
 
     # Tax
-    c.setFont("robotoBold", 50)
+    page.setFont("robotoBold", 50)
     text = "Tax: "
-    c.drawString(
+    page.drawString(
         margin_sides,
         y_coordinate,
         text
     )
 
-    c.setFont("robotoItalic", 50)
-    c.drawString(
+    page.setFont("robotoItalic", 50)
+    page.drawString(
         x_coordinate,
         y_coordinate,
         str(tax)
@@ -263,16 +267,16 @@ def generateInvoice(customerId: str, name: str, aadhaar: str, mobile: str, roomT
     y_coordinate -= line_space
 
     # Total Price
-    c.setFont("robotoBold", 50)
+    page.setFont("robotoBold", 50)
     text = "Net Price :"
-    c.drawString(
+    page.drawString(
         margin_sides,
         y_coordinate,
         text
     )
 
-    c.setFont("robotoItalic", 50)
-    c.drawString(
+    page.setFont("robotoItalic", 50)
+    page.drawString(
         x_coordinate,
         y_coordinate,
         "\u20B9" + str(priceFinal)
@@ -281,16 +285,16 @@ def generateInvoice(customerId: str, name: str, aadhaar: str, mobile: str, roomT
     y_coordinate -= line_space
 
     # Round off
-    c.setFont("robotoBold", 50)
+    page.setFont("robotoBold", 50)
     text = "Round off:"
-    c.drawString(
+    page.drawString(
         margin_sides,
         y_coordinate,
         text
     )
 
-    c.setFont("robotoItalic", 50)
-    c.drawString(
+    page.setFont("robotoItalic", 50)
+    page.drawString(
         x_coordinate,
         y_coordinate,
         "\u20B9" + str(
@@ -301,16 +305,16 @@ def generateInvoice(customerId: str, name: str, aadhaar: str, mobile: str, roomT
     y_coordinate -= line_space*2
 
     # Final Value
-    c.setFont("robotoBold", 50)
+    page.setFont("robotoBold", 50)
     text = "Total Amount:"
-    c.drawString(
+    page.drawString(
         margin_sides,
         y_coordinate,
         text
     )
 
-    c.setFont("robotoItalic", 50)
-    c.drawString(
+    page.setFont("robotoItalic", 50)
+    page.drawString(
         x_coordinate,
         y_coordinate,
         "\u20B9" + str(
@@ -320,12 +324,12 @@ def generateInvoice(customerId: str, name: str, aadhaar: str, mobile: str, roomT
 
     y_coordinate -= line_space * 4.5
 
-    # Notes
-    c.setFont("robotoThin", 25)
+    # Footnotes
+    page.setFont("robotoThin", 25)
     text = "Hotel Man: By: Harsh G, Reeshan J, Aditya M"
     text_width = stringWidth(text, "robotoThin", 25)
 
-    c.drawString(
+    page.drawString(
         page_width - text_width - margin_sides,
         y_coordinate,
         text
@@ -333,14 +337,15 @@ def generateInvoice(customerId: str, name: str, aadhaar: str, mobile: str, roomT
 
     y_coordinate -= line_space/2
 
-    c.setFont("robotoThin", 25)
+    page.setFont("robotoThin", 25)
     text = "Contact: 9XXXX-XXXXX"
     text_width = stringWidth(text, "robotoThin", 25)
 
-    c.drawString(
+    page.drawString(
         page_width - text_width - margin_sides,
         y_coordinate,
         text
     )
 
-    c.save()
+    # Saving the page
+    page.save()
