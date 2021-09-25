@@ -521,7 +521,7 @@ def showRooms() -> tuple[tuple]:
     return res
 
 
-def retrieveAllData() -> tuple[tuple]:
+def retrieveAllData() -> tuple[tuple[str, str, str, str, str, datetime.date, datetime.date, str, int, float]]:
     """
     Return all the customer's data to form csv file
     :rtype: tuple[tuple]

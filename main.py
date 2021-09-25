@@ -69,7 +69,7 @@ root.resizable(False, False)
 # Disable resizing of windows
 
 
-def eventErrorHandler(event):
+def eventErrorHandler(event: tk.Event) -> None:
     """
     To remove error in the IDE for not using argument passed by the bind function
     :param event: event passed by bind function
@@ -154,7 +154,7 @@ def genOTP() -> int:
     :rtype: int
     :return: 6 digit random number
     """
-    otp = random.randrange(100000, 999999)
+    otp: int = random.randrange(100000, 999999)
     return otp
 
 
@@ -172,7 +172,7 @@ def exitApplication() -> None:
     End the connection with MySQL and exit the application
     :rtype: None
     """
-    confirm = confirmMsgBox("Exit", "Are you sure you want to exit?")
+    confirm: str = confirmMsgBox("Exit", "Are you sure you want to exit?")
 
     if confirm == "yes":
         global_.updateStatus("Bye!")
@@ -185,7 +185,6 @@ def exitApplication() -> None:
         # Destroy the window
 
 
-# To add customer to database
 def checkIn() -> None:
     """
     Display the check-in options and check-in the customer
@@ -320,12 +319,17 @@ def checkIn() -> None:
                 # global_.updateStatus("OTP Sent!")  # todo
                 # Update the Status Bar
 
-                def validateOtp():
-
+                def validateOtp() -> None:
+                    """
+                    Check whether the otp entered is correct and then add the customer to the database
+                    with appropriate messages
+                    :rtype: None
+                    """
                     # todo
-                    # Wrong otp
                     # if str(otp) != otpEntered:
                     if False:
+                        # Wrong otp
+
                         global_.updateStatus("Oops! Try Again")
                         # Update the Status Bar
 
@@ -333,7 +337,7 @@ def checkIn() -> None:
                         # Display the Error Message
 
                     else:
-                        customerAdded: tuple = queries.addCustomer(
+                        customerAdded = queries.addCustomer(
                             customerName.get().title(),
                             aadhaarNumber,
                             mobileNumber,
@@ -395,6 +399,10 @@ def checkIn() -> None:
                     otpEntry.configure(show="*")
 
                     def submit() -> None:
+                        """
+                        Destroy the pop-up and call the function to add the customer
+                        :rtype: None
+                        """
                         global otpEntered
                         # To use the value outside the function
 
@@ -411,13 +419,18 @@ def checkIn() -> None:
                     but.pack(pady=(10, 0))
 
                     # Key bind to submit on pressing return
-                    def returnPressedInner(event):
+                    def returnPressedInner(event: tk.Event) -> None:
+                        """
+                        Action to perform when return is pressed on the otp screen
+                        :param event: Automatically passed by the bind function
+                        :rtype: None
+                        """
                         eventErrorHandler(event)
                         submit()
 
                     # Binding all elements of otp screen to call submit func when Return key is pressed
-                    for j in otpScreen.winfo_children():
-                        j.bind("<Return>", returnPressedInner)
+                    for otpScreen_children in otpScreen.winfo_children():
+                        otpScreen_children.bind("<Return>", returnPressedInner)
 
                     otpScreen.configure(pady=50)
                     # Vertical Padding of the popup screen
@@ -449,13 +462,18 @@ def checkIn() -> None:
     submitCustomerDetails = tk.Button(frame1, text="Submit", width=15, command=addCustomer)
     submitCustomerDetails.grid(row=2, column=1, columnspan=2, pady=15)
 
-    def returnPressed(event):
+    def returnPressed(event: tk.Event) -> None:
+        """
+        Action to perform when return is pressed on the check-in customer screen
+        :param event: Automatically passed by the bind function
+        :rtype: None
+        """
         eventErrorHandler(event)
         addCustomer()
 
     # Key bind to submit on pressing return
-    for i in frame1.winfo_children():
-        i.bind("<Return>", returnPressed)
+    for frame1_children in frame1.winfo_children():
+        frame1_children.bind("<Return>", returnPressed)
 
     # Dark Mode
     if darkModeFlag:
@@ -475,15 +493,19 @@ def checkIn() -> None:
         submitCustomerDetails.configure(bg="#505050", fg="#DADADA", bd=0, highlightthickness=0, pady=5, padx=8)
 
 
-# Update Customer Info:
 def updateCustomer() -> None:
+    """
+    Update the customer's information
+    :rtype: None
+    """
     global_.updateStatus("Filled Something Wrong?")
+    # Update status bar
 
-    # Changing the Title of the window
     root.title("Hotel Man - Update Customer details")
+    # Changing the Title of the window
 
-    # Clearing the frame
     clearFrame(frame1)
+    # Clearing the frame
 
     # Select Customer Id Label
     customerIdLab = tk.Label(frame1, text="Enter Customer Id:")
@@ -492,36 +514,40 @@ def updateCustomer() -> None:
     # CustomerId entry Box
     customerId = tk.Entry(frame1, justify=tk.CENTER)
     customerId.grid(row=0, column=1, padx=(15, 30), pady=25, sticky=tk.W)
-    customerId.focus_set()
+    customerId.focus_set()  # Auto focus
 
     # To Fetch Customer's Details
-    def searchCustomer():
-
-        # Running the MySQL query to see if customerId exists
+    def searchCustomer() -> None:
+        """
+        Fetch the customer's details and update the database with the correct details
+        :rtype: None
+        """
         customerResult = queries.searchCustomer(str(customerId.get()))
+        # Run the MySQL query to see if customerId exists
 
-        # Customer Not found
         if customerResult == 0:
+            # Customer Not found
 
             global_.updateStatus("Couldn't Find Him/Her")
+            # Update the status bar
 
-            # Displaying the error
-            errorMsgBox("Customer", "Customer Not Found\n"
-                                    "Please Try Again")
+            errorMsgBox("Customer", "Customer Not Found\nPlease Try Again")
+            # Display the error
 
-            # Running the main update function again
             updateCustomer()
+            # Run the main update function again
 
-        # Customer Found
         elif customerResult == 1:
+            # Customer Found
 
             global_.updateStatus("Correct Your Mistakes")
+            # Update the status bar
 
-            # Getting the customer's details to display
             name, aadhaar, mobile = queries.selectCustomer(customerId.get())
+            # Get the customer's details to display
 
-            # Adding spaces in aadhaar number for better readability
             aadhaar = aadhaar[0:4] + " " + aadhaar[4:8] + " " + aadhaar[8:12]
+            # Add spaces in aadhaar number for better readability
 
             # Customer Name Label
             customerNameLab = tk.Label(frame1, text="Name of customer:")
@@ -551,54 +577,66 @@ def updateCustomer() -> None:
             customerMobile.insert(tk.END, str(mobile))  # Inserting the already existing values
             customerMobile.grid(row=2, column=1, padx=(15, 30), pady=25, sticky=tk.W)
 
-            # To send the query to update details
-            def submitUpdateCustomer():
-
-                # Removing spaces from aadhaar number entered and saving it in aadhaarNumber
+            def submitUpdateCustomer() -> None:
+                """
+                Send the query to the database
+                :rtype: None
+                """
                 aadhaarNumber = customerAadhaar.get().replace(" ", "")
+                # Remove spaces from aadhaar number entered
 
-                # Removing spaces from mobile number entered and saving it in mobileNumber
                 mobileNumber = customerMobile.get().replace(" ", "")
+                # Remove spaces from mobile number entered
 
-                # Checking if the aadhaar number is of correct length and all integers
                 if intCheck(aadhaarNumber) == 0 or lenCheck(aadhaarNumber, 12) == 0:
+                    # Check if the aadhaar number is of correct length and all integers
 
                     global_.updateStatus("Aadhaar Doesn't Exist")
+                    # Update the status bar
 
                     errorMsgBox("Wrong Input", "Please Input Correct Aadhaar number")
+                    # Display the error message
 
-                # Checking if the mobile number is of correct length and all integers
                 elif intCheck(mobileNumber) == 0 or lenCheck(mobileNumber, 10) == 0:
+                    # Check if the mobile number is of correct length and all integers
 
                     global_.updateStatus("Mobile Number Doesn't Exist")
+                    # Update the status bar
 
                     errorMsgBox("Wrong Input", "Please Input Correct Mobile number")
+                    # Display the error message
 
-                # If both the mobile, aadhaar number are correct
                 else:
+                    # If both the mobile, aadhaar number are correct
 
                     global_.updateStatus("Updating...")
+                    # Update the status bar
 
-                    # Running the query
                     queries.updateCustomer(customerId.get(), customerName.get(), aadhaarNumber, mobileNumber)
+                    # Run the query
 
-                    # Display the success message
                     successMsgBox("Customer", "Record Updated Successfully")
+                    # Display the success message
 
-                    # Running the update function again
                     updateCustomer()
+                    # Run the update function again
 
             # Update Customer Details Button
             submitCustomerDetails = tk.Button(frame1, text="Update", width=15, command=submitUpdateCustomer)
             submitCustomerDetails.grid(row=2, column=2, columnspan=2, sticky=tk.W)
 
             # Key bind to submit on pressing return
-            def returnPressedInner(event):
+            def returnPressedInner(event: tk.Event) -> None:
+                """
+                Action to perform when return is pressed on the update customer's screen when details are displayed
+                :param event: Automatically passed by the bind function
+                :rtype: None
+                """
                 submitUpdateCustomer()
-                print(event)
+                eventErrorHandler(event)
 
-            for j in frame1.winfo_children():
-                j.bind("<Return>", returnPressedInner)
+            for frame1_children_inner in frame1.winfo_children():
+                frame1_children_inner.bind("<Return>", returnPressedInner)
 
             # Dark Mode
             if darkModeFlag:
@@ -618,12 +656,17 @@ def updateCustomer() -> None:
     submitButton.grid(row=0, column=2, columnspan=2, pady=25, sticky=tk.W)
 
     # Key bind to submit on pressing return
-    def returnPressed(event):
+    def returnPressed(event: tk.Event) -> None:
+        """
+        Action to perform when return is pressed on the update screen when details are not displayed
+        :param event: Automatically passed by the bind function
+        :rtype: None
+        """
         searchCustomer()
-        print(event)
+        eventErrorHandler(event)
 
-    for i in frame1.winfo_children():
-        i.bind("<Return>", returnPressed)
+    for frame1_children in frame1.winfo_children():
+        frame1_children.bind("<Return>", returnPressed)
 
     # Dark Mode
     if darkModeFlag:
@@ -633,15 +676,19 @@ def updateCustomer() -> None:
         submitButton.configure(bg="#505050", fg="#DADADA", bd=0, highlightthickness=0, pady=5, padx=8)
 
 
-# To remove a customer
-def checkOut():
+def checkOut() -> None:
+    """
+    Remove a customer from the database and generate the invoice
+    :rtype: None
+    """
     global_.updateStatus("Someone Leaving?")
+    # Update status bar
 
-    # Changing the Title of the window
     root.title("Hotel Man - Check Out")
+    # Change the Title of the window
 
-    # Clearing the frame
     clearFrame(frame1)
+    # Clear the frame
 
     # Select Customer Id Label
     customerIdLab = tk.Label(frame1, text="Enter Customer Id:")
@@ -652,32 +699,38 @@ def checkOut():
     customerId.grid(row=0, column=1, padx=(15, 30), pady=25, sticky=tk.W)
     customerId.focus_set()
 
-    # To search the customer in database
-    def searchCustomer():
-        # Running the MySQL query to see if customerId exists
+    # search the customer in database
+    def searchCustomer() -> None:
+        """
+        Search if customer exists in the database. If present display the details and ask to remove from database
+        :rtype: None
+        """
         customerResult = queries.searchCustomer(str(customerId.get()))
+        # Run the MySQL query to see if customerId exists
 
-        # Customer Not found
         if customerResult == 0:
+            # Customer Not found
 
             global_.updateStatus("Couldn't Find the Customer")
+            # Update status bar
 
-            # Displaying the error
-            errorMsgBox("Customer", "Customer Not Found\n"
-                                    "Please Try Again")
+            errorMsgBox("Customer", "Customer Not Found\nPlease Try Again")
+            # Display the error
 
             customerId.delete(0, tk.END)
+            # Emptying the entry box
 
-        # Customer Found
         elif customerResult == 1:
+            # Customer Found
 
             global_.updateStatus("Sure this is the one?")
+            # Update status bar
 
-            # Getting the customer's details to display
             name, aadhaar, mobile = queries.selectCustomer(customerId.get())
+            # Get the customer's details to display
 
-            # Adding spaces in aadhaar number for better readability
             aadhaar = aadhaar[0:4] + " " + aadhaar[4:8] + " " + aadhaar[8:12]
+            # Add spaces in aadhaar number for better readability
 
             # Customer Name Label
             customerNameLab = tk.Label(frame1, text="Name of customer: ")
@@ -709,18 +762,21 @@ def checkOut():
             customerMobile.configure(state=tk.DISABLED)  # So that details cannot be changed
             customerMobile.grid(row=2, column=1, padx=(15, 30), pady=25, sticky=tk.W)
 
-            # To send the query to remove details
-            def removeCustomer():
-
+            def removeCustomer() -> None:
+                """
+                Send the query to remove the customer from the database and generate the invoice
+                :rtype: None
+                """
                 global_.updateStatus("Removing...")
+                # Update status bar
 
-                # Sending the query to remove the customer
                 cRoomId, cCheckInDate, cCheckOutDate, cRate, price, tax = \
                     queries.removeCustomer(str(customerId.get()), getDate())
+                # Send the query to remove the customer
 
-                roomType = ""
+                roomType: str = ""
 
-                # Retrieving room name using roomId
+                # Retrieve room name using roomId
                 if cRoomId == "DA":
                     roomType = "Deluxe"
                 elif cRoomId == "NA":
@@ -735,27 +791,33 @@ def checkOut():
                     mobile, roomType, cCheckInDate, cCheckOutDate,
                     cRate, price, tax
                 )
+                # Generate the invoice and save on desktop
 
-                # Displaying the success message
                 successMsgBox("Check Out", "Customer has checked out\nInvoice saved on Desktop")
+                # Display the success message
 
-                # Running the checkout function again
                 checkOut()
+                # Run the checkout function again
 
             # Remove Customer Button
             removeCustomerButton = tk.Button(frame1, text="Check Out", width=15, command=removeCustomer)
             removeCustomerButton.grid(row=2, column=2, columnspan=2, sticky=tk.W)
 
-            # Key bind to submit on pressing return
-            def returnPressedInner(event):
+            def returnPressedInner(event: tk.Event) -> None:
+                """
+                Action to perform when return key is pressed when details are displayed
+                :param event: Automatically passed by the bind function
+                :rtype: None
+                """
+                eventErrorHandler(event)
                 removeCustomer()
-                print(event)
 
-            for j in frame1.winfo_children():
-                j.bind("<Return>", returnPressedInner)
+            for frame1_children_inner in frame1.winfo_children():
+                frame1_children_inner.bind("<Return>", returnPressedInner)
 
             if darkModeFlag:
                 # Dark Mode
+
                 customerNameLab.configure(bg="#2A2A2A", fg="#DADADA")
                 customerName.configure(disabledbackground="#505050", disabledforeground="#888888", relief=tk.FLAT,
                                        borderwidth=3)
@@ -774,31 +836,40 @@ def checkOut():
     submitButton = tk.Button(frame1, text="Search", command=searchCustomer)
     submitButton.grid(row=0, column=2, columnspan=2, pady=25, sticky=tk.W)
 
-    # Key bind to submit on pressing return
-    def returnPressed(event):
+    def returnPressed(event: tk.Event) -> None:
+        """
+        Action to perform when return key is pressed when Details are not displayed
+        :param event: Automatically passed by the bind function
+        :rtype: None
+        """
+        eventErrorHandler(event)
         searchCustomer()
-        print(event)
 
-    for i in frame1.winfo_children():
-        i.bind("<Return>", returnPressed)
+    for frame1_children in frame1.winfo_children():
+        frame1_children.bind("<Return>", returnPressed)
 
-    # Dark Mode
     if darkModeFlag:
+        # Dark Mode
+
         customerIdLab.configure(bg="#2A2A2A", fg="#DADADA")
         customerId.configure(bg="#505050", fg="#DADADA", relief=tk.FLAT, borderwidth=3)
 
         submitButton.configure(bg="#505050", fg="#DADADA", bd=0, highlightthickness=0, pady=5, padx=8)
 
 
-# To fetch customer's details
-def findCustomer():
+def findCustomer() -> None:
+    """
+    Display the details of a particular the customer
+    :rtype: None
+    """
     global_.updateStatus("Who Do You Wanna Find?")
+    # Update the status bar
 
-    # Changing the Title of the window
     root.title("Hotel Man - Find Customer")
+    # Change the title of the window
 
-    # Clearing the frame
     clearFrame(frame1)
+    # Clear the frame
 
     # Select Customer Id Label
     customerIdLab = tk.Label(frame1, text="Enter Customer Id:")
@@ -809,35 +880,41 @@ def findCustomer():
     customerId.grid(row=0, column=1, padx=(15, 30), pady=25, sticky=tk.W)
     customerId.focus_set()
 
-    # To search the customer in database
-    def searchCustomer():
+    def searchCustomer() -> None:
+        """
+        Search whether customer exists in the database and if exists, display all the information
+        :rtype: None
+        """
 
         global_.updateStatus("Finding...")
+        # Update the status bar
 
-        # Running the MySQL query to see if customerId exists
         customerResult = queries.searchCustomer(str(customerId.get()), "find")
+        # Run the MySQL query to see if customerId exists
 
-        # Customer Not found
         if customerResult == 0:
+            # Customer Not found
 
             global_.updateStatus("Couldn't Find Anyone with that ID :(")
+            # Update the status bar
 
-            # Displaying the error
-            errorMsgBox("Customer", "Customer Id Not Found\n"
-                                    "Please Try Again")
+            errorMsgBox("Customer", "Customer Id Not Found\nPlease Try Again")
+            # Display the error
 
             customerId.delete(0, tk.END)
+            # Clear the entry box
 
-        # Customer Found
         elif customerResult == 1:
+            # Customer Found
 
             global_.updateStatus("Found Him/Her ;)")
+            # Update the status bar
 
-            # Getting the customer's details to display
             name, aadhaar, mobile = queries.selectCustomer(customerId.get(), "find")
+            # Get the customer's details to display
 
-            # Adding spaces in aadhaar number for better readability
             aadhaar = aadhaar[0:4] + " " + aadhaar[4:8] + " " + aadhaar[8:12]
+            # Add spaces in aadhaar number for better readability
 
             # Customer Name Label
             customerNameLab = tk.Label(frame1, text="Name of customer:")
@@ -888,55 +965,66 @@ def findCustomer():
     submitButton.grid(row=0, column=2, pady=25)
 
     # Key bind to submit on pressing return
-    def returnPressed(event):
+    def returnPressed(event: tk.Event) -> None:
+        """
+        Action to perform when return key is pressed
+        :param event:  Automatically passed by the bind function
+        :rtype: None
+        """
+        eventErrorHandler(event)
         searchCustomer()
-        print(event)
 
-    for i in frame1.winfo_children():
-        i.bind("<Return>", returnPressed)
+    for frame1_children in frame1.winfo_children():
+        frame1_children.bind("<Return>", returnPressed)
 
-    # Dark Mode
     if darkModeFlag:
+        # Dark Mode
+
         customerIdLab.configure(bg="#2A2A2A", fg="#DADADA")
         customerId.configure(bg="#505050", fg="#DADADA", relief=tk.FLAT, borderwidth=3)
 
         submitButton.configure(bg="#505050", fg="#DADADA", bd=0, highlightthickness=0, pady=5, padx=8)
 
 
-# To see all checked in Customers
-def showCustomers():
+def showCustomers() -> None:
+    """
+    Display the details of the customers depending upon the sign-in mode
+    :rtype: None
+    """
     global_.updateStatus("All Customers")
+    # Update the status bar
 
-    # Changing the Title of the window
     root.title("Hotel Man - Show All Customers")
+    # Change the Title of the window
 
-    # Clearing the frame
     clearFrame(frame1)
+    # Clear the frame
 
-    # to use throughout the function
-    customerRoom = ""
-
-    # A tuple of tuples of customer's information
     customers = queries.showCustomers()
+    # Contains the details of all the customers (if any)
 
-    # If no customers are there
     if not customers:
+        # If no customers are found in the database
 
         global_.updateStatus("Try Better Advertisements Maybe? :(")
+        # Update status bar
 
-        # Show error
         errorMsgBox("Search", "No Customers Found")
+        # Show error
 
-    # If Customers Found
     else:
+        # If Customers Found
         global_.updateStatus("All the Customers")
+        # Update status bar
 
-        # Adding the scrollBar
+        """Add the scrollBar
+        We are adding a canvas and displaying all the details on the canvas, the scrollbar controls the canvas"""
+
         # Create a canvas
         myCanvas = tk.Canvas(frame1)
         myCanvas.pack(side=tk.LEFT, fill=tk.X, expand=True)
 
-        # Add a scroll Bar to the Canvas
+        # Add a scroll Bar for the Canvas
         scrollBar = ttk.Scrollbar(frame1, orient=tk.VERTICAL, command=myCanvas.yview)
         scrollBar.pack(side=tk.RIGHT, fill=tk.Y)
 
@@ -950,15 +1038,16 @@ def showCustomers():
 
         myCanvas.bind_all("<MouseWheel>", onMouseWheel)
 
-        # Create frame inside the canvas
         frame12 = tk.Frame(myCanvas)
+        # Create frame inside the canvas on which details are displayed
 
-        # Add frame to window in canvas
         myCanvas.create_window((0, 0), window=frame12, anchor="nw")
+        # Add frame in canvas
 
         if global_.accessLevel == "User":
+            # Display the data of only the checked in customers
 
-            # Headings
+            """Headings"""
             # Id
             customerIdHeading = tk.Label(
                 frame12,
@@ -1014,87 +1103,89 @@ def showCustomers():
                 font=("Ariel", 10))
             customerRoomHeading.grid(row=0, column=4, sticky=tk.NSEW)
 
-            # j is row number
-            j = 1
+            row_num = 1
 
             # Loop to display all the customer's information
-            for i in customers:
+            for customer in customers:
 
                 # Retrieving room name using roomId
-                if i[4] == "DA":
+                if customer[4] == "DA":
                     customerRoom = "Deluxe"
-                elif i[4] == "NA":
+                elif customer[4] == "NA":
                     customerRoom = "Normal (AC)"
-                elif i[4] == "NN":
+                elif customer[4] == "NN":
                     customerRoom = "Normal"
-                elif i[4] == "SA":
+                elif customer[4] == "SA":
                     customerRoom = "Suite"
+                else:
+                    customerRoom = ""
 
-                # Adding spaces in aadhaar number for better readability
-                aadhaarNumber = i[2][0:4] + " " + i[2][4:8] + " " + i[2][8:12]
+                aadhaarNumber = customer[2][0:4] + " " + customer[2][4:8] + " " + customer[2][8:12]
+                # Add spaces in aadhaar number for better readability
 
-                # Adding spaces in mobile number for better readability
-                mobileNUmber = i[3][0:5] + " " + i[3][5:10]
+                mobileNUmber = customer[3][0:5] + " " + customer[3][5:10]
+                # Add spaces in mobile number for better readability
 
+                """Contents"""
                 # Customer Id
-                customerId = tk.Label(
+                customerIdContentLabel = tk.Label(
                     frame12,
-                    text=i[0],
+                    text=customer[0],
                     relief=tk.GROOVE,
                     padx=20,
                     pady=8,
                     font=("Ariel", 10))
-                customerId.grid(row=j, column=0, sticky=tk.NSEW, padx=(50, 0))
+                customerIdContentLabel.grid(row=row_num, column=0, sticky=tk.NSEW, padx=(50, 0))
 
                 # Customer Name
-                customerName = tk.Label(
+                customerNameContentLabel = tk.Label(
                     frame12,
-                    text=i[1],
+                    text=customer[1],
                     relief=tk.GROOVE,
                     padx=20,
                     pady=8,
                     font=("Ariel", 10))
-                customerName.grid(row=j, column=1, sticky=tk.NSEW)
+                customerNameContentLabel.grid(row=row_num, column=1, sticky=tk.NSEW)
 
                 # Customer Aadhaar
-                customerAadhaar = tk.Label(
+                customerAadhaarContentLabel = tk.Label(
                     frame12,
                     text=aadhaarNumber,
                     relief=tk.GROOVE,
                     padx=20,
                     pady=8,
                     font=("Ariel", 10))
-                customerAadhaar.grid(row=j, column=2, sticky=tk.NSEW)
+                customerAadhaarContentLabel.grid(row=row_num, column=2, sticky=tk.NSEW)
 
                 # Mobile number
-                customerMobile = tk.Label(
+                customerMobileContentLabel = tk.Label(
                     frame12,
                     text=mobileNUmber,
                     relief=tk.GROOVE,
                     padx=20,
                     pady=8,
                     font=("Ariel", 10))
-                customerMobile.grid(row=j, column=3, sticky=tk.NSEW)
+                customerMobileContentLabel.grid(row=row_num, column=3, sticky=tk.NSEW)
 
                 # Room Type
-                customerRoomLabel = tk.Label(
+                customerRoomContentLabel = tk.Label(
                     frame12,
                     text=customerRoom,
                     relief=tk.GROOVE,
                     padx=20,
                     pady=8,
                     font=("Ariel", 10))
-                customerRoomLabel.grid(row=j, column=4, sticky=tk.NSEW)
+                customerRoomContentLabel.grid(row=row_num, column=4, sticky=tk.NSEW)
 
-                j += 1
+                row_num += 1
 
                 # Dark Mode
                 if darkModeFlag:
-                    customerId.configure(bg="#4F4F4F", fg="#DADADA", bd=0)
-                    customerName.configure(bg="#4F4F4F", fg="#DADADA", bd=0)
-                    customerAadhaar.configure(bg="#4F4F4F", fg="#DADADA", bd=0)
-                    customerMobile.configure(bg="#4F4F4F", fg="#DADADA", bd=0)
-                    customerRoomLabel.configure(bg="#4F4F4F", fg="#DADADA", bd=0)
+                    customerIdContentLabel.configure(bg="#4F4F4F", fg="#DADADA", bd=0)
+                    customerNameContentLabel.configure(bg="#4F4F4F", fg="#DADADA", bd=0)
+                    customerAadhaarContentLabel.configure(bg="#4F4F4F", fg="#DADADA", bd=0)
+                    customerMobileContentLabel.configure(bg="#4F4F4F", fg="#DADADA", bd=0)
+                    customerRoomContentLabel.configure(bg="#4F4F4F", fg="#DADADA", bd=0)
 
             # Dark Mode
             if darkModeFlag:
@@ -1106,7 +1197,9 @@ def showCustomers():
                 customerRoomHeading.configure(bg="#404040", fg="#DADADA", bd=0)
 
         elif global_.accessLevel == "Admin":
-            # Headings
+            # Display the data of all customers even if the have checked out
+
+            """Headings"""
             # Id
             customerIdHeading = tk.Label(
                 frame12,
@@ -1184,126 +1277,130 @@ def showCustomers():
                 font=("Ariel", 9))
             CheckOutDateHeading.grid(row=0, column=6, sticky=tk.NSEW)
 
-            # j is row number
-            j = 1
+            row_number = 1
 
             # Loop to display all the customer's information
-            for i in customers:
+            for customer in customers:
 
-                # Retrieving room name using roomId
-                if i[4] == "DA":
+                # Retrieve room name using roomId
+                if customer[4] == "DA":
                     customerRoom = "Deluxe"
-                elif i[4] == "NA":
+                elif customer[4] == "NA":
                     customerRoom = "Normal (AC)"
-                elif i[4] == "NN":
+                elif customer[4] == "NN":
                     customerRoom = "Normal"
-                elif i[4] == "SA":
+                elif customer[4] == "SA":
                     customerRoom = "Suite"
+                else:
+                    customerRoom = ""
 
-                # Adding spaces in aadhaar number for better readability
-                aadhaarNumber = i[2][0:4] + " " + i[2][4:8] + " " + i[2][8:12]
+                aadhaarNumber = customer[2][0:4] + " " + customer[2][4:8] + " " + customer[2][8:12]
+                # Add spaces in aadhaar number for better readability
 
-                # Adding spaces in mobile number for better readability
-                mobileNUmber = i[3][0:5] + " " + i[3][5:10]
+                mobileNUmber = customer[3][0:5] + " " + customer[3][5:10]
+                # Add spaces in mobile number for better readability
 
+                checkOutDate = customer[6]
                 # Check out date value
-                checkOutDate = i[6]
 
                 if checkOutDate is None:
                     checkOutDate = "-"
 
                 # Customer Id
-                customerId = tk.Label(
+                customerIdContentLabel = tk.Label(
                     frame12,
-                    text=i[0],
+                    text=customer[0],
                     relief=tk.GROOVE,
                     padx=10,
                     pady=8,
                     font=("Ariel", 8))
-                customerId.grid(row=j, column=0, sticky=tk.NSEW)
+                customerIdContentLabel.grid(row=row_number, column=0, sticky=tk.NSEW)
 
                 # Customer Name
-                customerName = tk.Label(
+                customerNameContentLabel = tk.Label(
                     frame12,
-                    text=i[1],
+                    text=customer[1],
                     relief=tk.GROOVE,
                     padx=10,
                     pady=8,
                     font=("Ariel", 8))
-                customerName.grid(row=j, column=1, sticky=tk.NSEW)
+                customerNameContentLabel.grid(row=row_number, column=1, sticky=tk.NSEW)
 
                 # Customer Aadhaar
-                customerAadhaar = tk.Label(
+                customerAadhaarContentLabel = tk.Label(
                     frame12,
                     text=aadhaarNumber,
                     relief=tk.GROOVE,
                     padx=10,
                     pady=8,
                     font=("Ariel", 8))
-                customerAadhaar.grid(row=j, column=2, sticky=tk.NSEW)
+                customerAadhaarContentLabel.grid(row=row_number, column=2, sticky=tk.NSEW)
 
                 # Mobile number
-                customerMobile = tk.Label(
+                customerMobileContentLabel = tk.Label(
                     frame12,
                     text=mobileNUmber,
                     relief=tk.GROOVE,
                     padx=10,
                     pady=8,
                     font=("Ariel", 8))
-                customerMobile.grid(row=j, column=3, sticky=tk.NSEW)
+                customerMobileContentLabel.grid(row=row_number, column=3, sticky=tk.NSEW)
 
                 # Room Type
-                customerRoom = tk.Label(
+                customerRoomContentLabel = tk.Label(
                     frame12,
                     text=customerRoom,
                     relief=tk.GROOVE,
                     padx=10,
                     pady=8,
                     font=("Ariel", 8))
-                customerRoom.grid(row=j, column=4, sticky=tk.NSEW)
+                customerRoomContentLabel.grid(row=row_number, column=4, sticky=tk.NSEW)
 
                 # Check in Date
-                customerCheckInDate = tk.Label(
+                customerCheckInDateContentLabel = tk.Label(
                     frame12,
-                    text=i[5],
+                    text=customer[5],
                     relief=tk.GROOVE,
                     padx=10,
                     pady=8,
                     font=("Ariel", 8))
-                customerCheckInDate.grid(row=j, column=5, sticky=tk.NSEW)
+                customerCheckInDateContentLabel.grid(row=row_number, column=5, sticky=tk.NSEW)
 
                 # Check in Date
-                customerCheckOutDate = tk.Label(
+                customerCheckOutDateContentLabel = tk.Label(
                     frame12,
                     text=str(checkOutDate),
                     relief=tk.GROOVE,
                     padx=10,
                     pady=8,
                     font=("Ariel", 8))
-                customerCheckOutDate.grid(row=j, column=6, sticky=tk.NSEW)
+                customerCheckOutDateContentLabel.grid(row=row_number, column=6, sticky=tk.NSEW)
 
-                j += 1
+                row_number += 1
 
                 # Dark Mode
                 if darkModeFlag:
-                    customerId.configure(bg="#4F4F4F", fg="#DADADA", bd=0)
-                    customerName.configure(bg="#4F4F4F", fg="#DADADA", bd=0)
-                    customerAadhaar.configure(bg="#4F4F4F", fg="#DADADA", bd=0)
-                    customerMobile.configure(bg="#4F4F4F", fg="#DADADA", bd=0)
-                    customerRoom.configure(bg="#4F4F4F", fg="#DADADA", bd=0)
-                    customerCheckInDate.configure(bg="#4F4F4F", fg="#DADADA", bd=0)
-                    customerCheckOutDate.configure(bg="#4F4F4F", fg="#DADADA", bd=0)
+                    customerIdContentLabel.configure(bg="#4F4F4F", fg="#DADADA", bd=0)
+                    customerNameContentLabel.configure(bg="#4F4F4F", fg="#DADADA", bd=0)
+                    customerAadhaarContentLabel.configure(bg="#4F4F4F", fg="#DADADA", bd=0)
+                    customerMobileContentLabel.configure(bg="#4F4F4F", fg="#DADADA", bd=0)
+                    customerRoomContentLabel.configure(bg="#4F4F4F", fg="#DADADA", bd=0)
+                    customerCheckInDateContentLabel.configure(bg="#4F4F4F", fg="#DADADA", bd=0)
+                    customerCheckOutDateContentLabel.configure(bg="#4F4F4F", fg="#DADADA", bd=0)
 
-            # Save CSV File on desktop
-            def saveCSV():
+            def saveCSV() -> None:
+                """
+                Save a csv file containing the data of all the customers who have ever checked-in
+                :rtype: None
+                """
                 rawData = queries.retrieveAllData()
-                finalData = []
+                finalData: list[list] = []
 
                 for data in rawData:
 
                     roomType = ""
 
-                    # Retrieving room name using roomId
+                    # Retrieve room name using roomId
                     if data[4] == "DA":
                         roomType = "Deluxe"
                     elif data[4] == "NA":
@@ -1313,20 +1410,24 @@ def showCustomers():
                     elif data[4] == "SA":
                         roomType = "Suite"
 
-                    customerData = []
+                    customerData: list[str, str, str, str, str, datetime.date, datetime.date, str, int, float]
 
-                    customerData += [data[0]] + [data[1]] + ["'" + str(data[2])] + [data[3]] + \
-                                    [roomType] + [str(data[5])] + [str(data[6])] + [data[7]] + \
-                                    [str(data[8])] + [str(float(data[9]))]
+                    customerData = [data[0]] + [data[1]] + ["'" + str(data[2])] + [data[3]] + \
+                                   [roomType] + [str(data[5])] + [str(data[6])] + [data[7]] + \
+                                   [str(data[8])] + [str(float(data[9]))]
+                    # ' is added before aadhaar number so that all the digits are displayed in excel
 
                     finalData += [customerData]
 
                 generateCSV.generateCSV(finalData, getDate())
+                # Generate the csv and saving it on the desktop
+
                 successMsgBox("CSV", "File saved on desktop")
+                # Show the success message
 
             # Save Button
             saveCSVButton = tk.Button(frame12, text="Save CSV", command=saveCSV)
-            saveCSVButton.grid(row=j + 1, column=3, pady=(30, 0), sticky=tk.NSEW)
+            saveCSVButton.grid(row=row_number + 1, column=3, pady=(30, 0), sticky=tk.NSEW)
 
             # Dark Mode
             if darkModeFlag:
