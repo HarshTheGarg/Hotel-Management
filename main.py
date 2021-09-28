@@ -3,44 +3,31 @@ Hotel Management Project
 Main python file
 """
 
-import tkinter as tk
-# tkinter for gui
+import tkinter as tk  # tkinter for gui
 
-from tkinter import messagebox
-# pop up message box
+from tkinter import messagebox  # pop up message box
 
-from tkinter import ttk
-# for scrollBar
+from tkinter import ttk  # for scrollBar
 
-import MySql.mysqlInit as sqlInit
-# MySQL connection initializer
+import MySql.mysqlInit as sqlInit  # MySQL connection initialize
 
-from MySql import queries
-# Queries to be run
+from MySql import queries  # Queries to be run
 
-import global_
-# Variables file
+import global_  # Variables file
 
-import generateInvoice
-# To generate invoice
+import generateInvoice  # To generate invoice
 
-import sendSMS
-# File to send SMS
+import sendSMS  # File to send SMS
 
-import os
-# To restart the file
+import os  # To restart the file
 
-from PIL import ImageTk, Image
-# To use images
+from PIL import ImageTk, Image  # To use images
 
-import random
-# To generate OTP
+import random  # To generate OTP
 
-import datetime
-# To get current date
+import datetime  # To get current date
 
-# To generate CSV file
-import generateCSV
+import generateCSV  # To generate CSV file
 
 # global variables to use throughout the file
 global frame1
