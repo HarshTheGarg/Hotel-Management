@@ -8,6 +8,8 @@ import mysql.connector as sql  # To handle sql errors
 
 import datetime  # To calculate price
 
+import sendSMS  # To send the welcome and bye SMS
+
 
 def eventErrorHandler(event):
     """
@@ -307,6 +309,8 @@ def addAllCustomers(
     # Add customer to allCustomer table
     global_.conn.commit()
     # Commit the changes made
+
+    sendSMS.sendWelcomeSMS(name, customerId, roomId, rate, tax, mobile)
 
 
 def updateAllCustomers(customerId: str, name: str, aadhaar: str, mobile: str) -> None:

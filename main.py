@@ -16,6 +16,7 @@ from tkinter import ttk
 
 import MySql.mysqlInit as sqlInit
 # MySQL connection initializer
+import sendSMS
 
 from MySql import queries
 # Queries to be run
@@ -310,13 +311,13 @@ def checkIn() -> None:
             # If both the mobile, aadhaar number are correct
             else:
 
-                # otp = genOTP()  # todo
+                otp = genOTP()
                 # Generate the OTP
 
-                # sendOTP.sendSMS(otp, mobileNumber)  # todo
+                sendSMS.sendOTP(otp, mobileNumber)
                 # Send the otp to the customer
 
-                # global_.updateStatus("OTP Sent!")  # todo
+                global_.updateStatus("OTP Sent!")
                 # Update the Status Bar
 
                 def validateOtp() -> None:
@@ -325,9 +326,8 @@ def checkIn() -> None:
                     with appropriate messages
                     :rtype: None
                     """
-                    # todo
-                    # if str(otp) != otpEntered:
-                    if False:
+
+                    if str(otp) != otpEntered:
                         # Wrong otp
 
                         global_.updateStatus("Oops! Try Again")
@@ -454,10 +454,8 @@ def checkIn() -> None:
 
                         but.configure(bd=0, bg="#555555", fg="#DADADA", padx=8, pady=5)
 
-                # showOTPScreen()  # todo
+                showOTPScreen()
                 # Show the pop-up screen to enter the otp
-
-                validateOtp()  # todo: remove
 
     # Check-in screen Submit Button
     submitCustomerDetails = tk.Button(frame1, text="Submit", width=15, command=addCustomer)
@@ -784,9 +782,9 @@ def checkOut() -> None:
                 if cRoomId == "DA":
                     roomType = "Deluxe"
                 elif cRoomId == "NA":
-                    roomType = "Normal"
+                    roomType = "Normal (AC)"
                 elif cRoomId == "NN":
-                    roomType = "Normal"
+                    roomType = "Normal (No AC)"
                 elif cRoomId == "SA":
                     roomType = "Suite"
 
@@ -796,6 +794,9 @@ def checkOut() -> None:
                     cRate, price, tax
                 )
                 # Generate the invoice and save on desktop
+
+                sendSMS.sendByeSMS(name, price, tax, mobile)
+                # Send the goodbye sms to the customer with thr price to be paid
 
                 successMsgBox("Check Out", "Customer has checked out\nInvoice saved on Desktop")
                 # Display the success message
