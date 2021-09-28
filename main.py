@@ -3,8 +3,6 @@ Hotel Management Project
 Main python file
 """
 
-# todo: send welcome and bye message
-
 import tkinter as tk
 # tkinter for gui
 
@@ -16,7 +14,6 @@ from tkinter import ttk
 
 import MySql.mysqlInit as sqlInit
 # MySQL connection initializer
-import sendSMS
 
 from MySql import queries
 # Queries to be run
@@ -27,7 +24,7 @@ import global_
 import generateInvoice
 # To generate invoice
 
-# import sendOTP  # todo
+import sendSMS
 # File to send SMS
 
 import os
@@ -65,8 +62,6 @@ root.geometry("500x350")
 # Initial window size
 
 root.resizable(False, False)
-
-
 # Disable resizing of windows
 
 
