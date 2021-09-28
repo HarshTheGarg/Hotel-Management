@@ -441,8 +441,9 @@ def checkIn() -> None:
                     otpScreen.focus_force()
                     # To automatically focus on the pop up screen
 
-                    # Dark Mode
                     if darkModeFlag:
+                        # Dark Mode
+
                         otpScreen.configure(bg="#333333")
                         otpScreen.iconbitmap("./Assets/LogoColor.ico")
 
@@ -475,8 +476,9 @@ def checkIn() -> None:
     for frame1_children in frame1.winfo_children():
         frame1_children.bind("<Return>", returnPressed)
 
-    # Dark Mode
     if darkModeFlag:
+        # Dark Mode
+
         customerNameLab.configure(bg="#2A2A2A", fg="#DADADA")
         customerName.configure(bg="#505050", fg="#DADADA", relief=tk.FLAT, borderwidth=3)
 
@@ -638,8 +640,9 @@ def updateCustomer() -> None:
             for frame1_children_inner in frame1.winfo_children():
                 frame1_children_inner.bind("<Return>", returnPressedInner)
 
-            # Dark Mode
             if darkModeFlag:
+                # Dark Mode
+
                 customerNameLab.configure(bg="#2A2A2A", fg="#DADADA")
                 customerName.configure(bg="#505050", fg="#DADADA", relief=tk.FLAT, borderwidth=3)
 
@@ -668,8 +671,9 @@ def updateCustomer() -> None:
     for frame1_children in frame1.winfo_children():
         frame1_children.bind("<Return>", returnPressed)
 
-    # Dark Mode
     if darkModeFlag:
+        # Dark Mode
+
         customerIdLab.configure(bg="#2A2A2A", fg="#DADADA")
         customerId.configure(bg="#505050", fg="#DADADA", relief=tk.FLAT, borderwidth=3)
 
@@ -948,6 +952,7 @@ def findCustomer() -> None:
 
             if darkModeFlag:
                 # Dark Mode
+
                 customerNameLab.configure(bg="#2A2A2A", fg="#DADADA")
                 customerName.configure(disabledbackground="#505050", disabledforeground="#888888", relief=tk.FLAT,
                                        borderwidth=3)
@@ -1106,31 +1111,31 @@ def showCustomers() -> None:
             row_num = 1
 
             # Loop to display all the customer's information
-            for customer in customers:
+            for customer_data in customers:
 
                 # Retrieving room name using roomId
-                if customer[4] == "DA":
+                if customer_data[4] == "DA":
                     customerRoom = "Deluxe"
-                elif customer[4] == "NA":
+                elif customer_data[4] == "NA":
                     customerRoom = "Normal (AC)"
-                elif customer[4] == "NN":
+                elif customer_data[4] == "NN":
                     customerRoom = "Normal"
-                elif customer[4] == "SA":
+                elif customer_data[4] == "SA":
                     customerRoom = "Suite"
                 else:
                     customerRoom = ""
 
-                aadhaarNumber = customer[2][0:4] + " " + customer[2][4:8] + " " + customer[2][8:12]
+                aadhaarNumber = customer_data[2][0:4] + " " + customer_data[2][4:8] + " " + customer_data[2][8:12]
                 # Add spaces in aadhaar number for better readability
 
-                mobileNUmber = customer[3][0:5] + " " + customer[3][5:10]
+                mobileNUmber = customer_data[3][0:5] + " " + customer_data[3][5:10]
                 # Add spaces in mobile number for better readability
 
                 """Contents"""
                 # Customer Id
                 customerIdContentLabel = tk.Label(
                     frame12,
-                    text=customer[0],
+                    text=customer_data[0],
                     relief=tk.GROOVE,
                     padx=20,
                     pady=8,
@@ -1140,7 +1145,7 @@ def showCustomers() -> None:
                 # Customer Name
                 customerNameContentLabel = tk.Label(
                     frame12,
-                    text=customer[1],
+                    text=customer_data[1],
                     relief=tk.GROOVE,
                     padx=20,
                     pady=8,
@@ -1179,16 +1184,18 @@ def showCustomers() -> None:
 
                 row_num += 1
 
-                # Dark Mode
                 if darkModeFlag:
+                    # Dark Mode
+
                     customerIdContentLabel.configure(bg="#4F4F4F", fg="#DADADA", bd=0)
                     customerNameContentLabel.configure(bg="#4F4F4F", fg="#DADADA", bd=0)
                     customerAadhaarContentLabel.configure(bg="#4F4F4F", fg="#DADADA", bd=0)
                     customerMobileContentLabel.configure(bg="#4F4F4F", fg="#DADADA", bd=0)
                     customerRoomContentLabel.configure(bg="#4F4F4F", fg="#DADADA", bd=0)
 
-            # Dark Mode
             if darkModeFlag:
+                # Dark Mode
+
                 customerIdHeading.configure(bg="#404040", fg="#DADADA", bd=0)
                 customerNameHeading.configure(bg="#404040", fg="#DADADA", bd=0)
                 customerAadhaarHeading.configure(bg="#404040", fg="#DADADA", bd=0)
@@ -1378,8 +1385,9 @@ def showCustomers() -> None:
 
                 row_number += 1
 
-                # Dark Mode
                 if darkModeFlag:
+                    # Dark Mode
+
                     customerIdContentLabel.configure(bg="#4F4F4F", fg="#DADADA", bd=0)
                     customerNameContentLabel.configure(bg="#4F4F4F", fg="#DADADA", bd=0)
                     customerAadhaarContentLabel.configure(bg="#4F4F4F", fg="#DADADA", bd=0)
@@ -1429,8 +1437,9 @@ def showCustomers() -> None:
             saveCSVButton = tk.Button(frame12, text="Save CSV", command=saveCSV)
             saveCSVButton.grid(row=row_number + 1, column=3, pady=(30, 0), sticky=tk.NSEW)
 
-            # Dark Mode
             if darkModeFlag:
+                # Dark Mode
+
                 customerIdHeading.configure(bg="#404040", fg="#DADADA", bd=0)
                 customerNameHeading.configure(bg="#404040", fg="#DADADA", bd=0)
                 customerAadhaarHeading.configure(bg="#404040", fg="#DADADA", bd=0)
@@ -1442,8 +1451,9 @@ def showCustomers() -> None:
 
                 saveCSVButton.configure(bg="#505050", fg="#DADADA", bd=0, highlightthickness=0, pady=5, padx=8)
 
-        # Dark Mode
         if darkModeFlag:
+            # Dark Mode
+
             myCanvas.configure(bg="#2A2A2A", bd=0, highlightthickness=0)
             frame12.configure(bg="#2A2A2A", bd=0, padx=5)
 
@@ -1454,15 +1464,19 @@ def showCustomers() -> None:
             style.configure("Vertical.TScrollbar", troughcolor="#505050")"""
 
 
-# To add a room to the database
-def addRoom():
+def addRoom() -> None:
+    """
+    Show the options to add a room to the database
+    :rtype: None
+    """
     global_.updateStatus("Add Rooms")
+    # Update status bar
 
-    # Changing the Title of the window
     root.title("Hotel Man - Add Room")
+    # Change the Title of the window
 
-    # Clearing the frame
     clearFrame(frame1)
+    # Clear the frame
 
     # Room Id Label
     roomIdLab = tk.Label(frame1, text="Select Room Type:")
@@ -1480,9 +1494,10 @@ def addRoom():
     ]
 
     length = len(max(roomNames, key=len))
+    # Length of the word with max length
 
-    # Setting default value for Room Selector
     room.set("Select")
+    # Set default value for Room Selector
 
     # AC Available Label
     ACLab = tk.Label(frame1, text="AC: ")
@@ -1493,8 +1508,12 @@ def addRoom():
     ACLab2.grid(row=0, column=3, padx=(15, 0), pady=15, sticky=tk.W)
     ACLab2.configure(text="No Info")
 
-    # To check if AC is available
-    def updateAC(event):
+    def updateAC(event: tk.Event) -> None:
+        """
+        Check if the room selected has AC
+        :rtype: None
+        """
+        eventErrorHandler(event)
         if room.get() == "Normal (No AC)":
             ac = "No"
         elif room.get() == "Select":
@@ -1502,8 +1521,6 @@ def addRoom():
         else:
             ac = "Yes"
         ACLab2.configure(text=ac)
-
-        print(event)
 
     # Options menu to select the room and update AC status
     roomIdSelector = tk.OptionMenu(frame1, room, *roomNames, command=updateAC)
@@ -1515,12 +1532,12 @@ def addRoom():
     qtyRoomsLab.grid(row=1, column=0, pady=15, padx=5, sticky=tk.E)
 
     # Quantity of Rooms Scale
-    qtyRooms = tk.Scale(frame1, from_=1, to=10, orient=tk.HORIZONTAL)
+    qtyRooms = tk.Scale(frame1, from_=0, to=10, orient=tk.HORIZONTAL)
     qtyRooms.configure(length=127)
     qtyRooms.grid(row=1, column=1, padx=(15, 30), pady=15, sticky=tk.W)
 
     # Room Rate Label
-    roomRateLab = tk.Label(frame1, text="Rate({}): ".format("\u20B9"))  # u"\u20B9" -> rupees symbol
+    roomRateLab = tk.Label(frame1, text="Rate(\u20B9): ")  # u"\u20B9" -> rupees symbol
     roomRateLab.grid(row=1, column=2, pady=15, padx=15, sticky=tk.E)
 
     # Room Rate Entry Box
@@ -1537,35 +1554,44 @@ def addRoom():
     taxRoom.configure(width=length + 6)
     taxRoom.grid(row=2, column=1, padx=(15, 30), pady=(15, 0), sticky=tk.W)
 
-    # To send query to add room to database
-    def submitRoomAdd():
+    def submitRoomAdd() -> None:
+        """
+        Send the query to the database to add the room after validating the information entered
+        :rtype: None
+        """
 
-        # If a room is not selected
         if room.get() == "Select":
+            # If a room is not selected
 
             global_.updateStatus("Select A Room Type")
+            # Update the status bar
 
-            # Displaying the error
             errorMsgBox("Rooms", "Please Select a Room Type")
+            # Display the error
 
         elif roomRate.get() == "":
+            # If room rate is not entered
 
             global_.updateStatus("Enter Rate")
+            # Update the status bar
 
-            # Displaying the error
             errorMsgBox("Rooms", "Rate not Entered")
+            # Display the error
 
         elif taxRoom.get() == "":
+            # If room tax is not entered
+
             global_.updateStatus("Enter Tax")
+            # Update the status bar
 
-            # Displaying the error
             errorMsgBox("Rooms", "Tax not Entered")
+            # Display the error
 
-        # If a room is selected
         else:
+            # Everything is entered
             roomId = ""
 
-            # Converting room type to appropriate RoomId
+            # Convert room type to appropriate RoomId
             if room.get() == "Normal (AC)":
                 roomId = "NA"
             elif room.get() == "Normal (No AC)":
@@ -1576,8 +1602,8 @@ def addRoom():
                 roomId = "SA"
 
             global_.updateStatus("Adding...")
+            # Update status bar
 
-            # Running the MySQL query
             res = queries.addRoom(
                 roomId,
                 ACLab2.cget("text"),
@@ -1585,40 +1611,48 @@ def addRoom():
                 int(roomRate.get()),
                 float(taxRoom.get())
             )
+            # Run the MySQL query
 
-            # res == 1 -> Room added
             if res == 1:
+                # If room was added
 
                 global_.updateStatus("Room Added")
+                # Update status bar
 
-                # Displaying the success message
                 successMsgBox("Room Added", "Room Added Successfully")
+                # Display the success message
 
-            # res == 0 -> Error
             elif res == 0:
+                # If some error occurred
 
                 global_.updateStatus("Room Exists, Try Updating it")
+                # Update status bar
 
-                # Displaying the error message
                 errorMsgBox("Failed", "Room Already Exists")
+                # Display the error message
 
             addRoom()
+            # Run the function again to add more rooms
 
     # Submit Button
     submitCustomerDetails = tk.Button(frame1, text="Submit", command=submitRoomAdd)
     submitCustomerDetails.configure(width=length + 2)
     submitCustomerDetails.grid(row=2, column=3, padx=(15, 0), pady=15, sticky=tk.W)
 
-    # Key bind to submit on pressing return
-    def returnPressed(event):
+    def returnPressed(event: tk.Event) -> None:
+        """
+        Action to perform when the return key is pressed
+        :rtype: None
+        """
+        eventErrorHandler(event)
         submitRoomAdd()
-        print(event)
 
-    for i in frame1.winfo_children():
-        i.bind("<Return>", returnPressed)
+    for frame1_children in frame1.winfo_children():
+        frame1_children.bind("<Return>", returnPressed)
 
-    # Dark Mode
     if darkModeFlag:
+        # Dark Mode
+
         roomIdLab.configure(bg="#2A2A2A", fg="#DADADA")
         roomIdSelector.configure(bg="#505050", fg="#DADADA", highlightthickness=0, relief=tk.FLAT, borderwidth=3)
         roomIdSelector["menu"].config(bg="#555555", fg="#DADADA", bd=0)
@@ -1638,22 +1672,23 @@ def addRoom():
         submitCustomerDetails.configure(bg="#505050", fg="#DADADA", bd=0, highlightthickness=0, pady=5, padx=8)
 
 
-# To update room qty/rate
-def updateRoom():
+def updateRoom() -> None:
+    """
+    Update the details of a room that exists
+    :rtype:
+    """
     global_.updateStatus("Update Room")
+    # Update status bar
 
-    # Changing the Title of the window
     root.title("Hotel Man - Update Room Details")
+    # Change the Title of the window
 
-    # Clearing the frame
     clearFrame(frame1)
+    # Clear the frame
 
     # Room Id Label
     roomIdLab = tk.Label(frame1, text="Select Room Type:")
     roomIdLab.grid(row=0, column=0, pady=30, padx=5, sticky=tk.E)
-
-    # Room Id Option Menu
-    room = tk.StringVar()  # Tkinter string data type
 
     # List of room options
     roomNames = [
@@ -1664,30 +1699,38 @@ def updateRoom():
     ]
 
     length = len(max(roomNames, key=len))
+    # Length of the word with max length
 
-    # Setting default value for Room Selector
+    room = tk.StringVar()  # Tkinter string data type
+    # Room Id Option Menu
+
     room.set("Select")
+    # Set default value for Room Selector
 
     # Options menu to select the room
     roomIdSelector = tk.OptionMenu(frame1, room, *roomNames)
     roomIdSelector.config(width=length)
     roomIdSelector.grid(row=0, column=1, padx=(15, 30), pady=25, sticky=tk.W)
 
-    # To search by roomId if room exists in database
-    def searchRoom():
+    def searchRoom() -> None:
+        """
+        Search by roomId if room exists in database
+        :rtype: None
+        """
 
-        # Checking if room is not selected
         if room.get() == "Select":
+            # If room is not selected
 
             global_.updateStatus("Please Select a room from the Drop-Down")
+            # Update the status bar
 
-            # Displaying the error
             errorMsgBox("Room Update", "Please Select a Room Type")
+            # Display the error
 
-        # If a room is selected
         else:
+            # If room is selected
 
-            # Setting the RoomId from room name
+            # Set the RoomId from room name
             if room.get() == "Normal (AC)":
                 updateRoomId = "NA"
             elif room.get() == "Normal (No AC)":
@@ -1697,37 +1740,39 @@ def updateRoom():
             else:
                 updateRoomId = "SA"
 
-            # Running the query to update
             res = queries.searchRoom(updateRoomId)
+            # Run the query to update
 
-            # If there was some error
             if res == 0:
+                # If there was some error
 
                 global_.updateStatus("Room Doesn't Exist. Try Adding it First")
+                # Update the status bar
 
-                # Displaying error message
                 errorMsgBox("Room", "Room Not Found")
+                # Display error message
 
-            # No Error
             elif res == 1:
+                # No Error
 
                 global_.updateStatus("Room Found")
+                # Update the status bar
 
-                # Get qty and rate of selected room
                 qty, rate, tax = queries.selectRoom(updateRoomId)
+                # Get qty, rate and tax of selected room
 
                 # Quantity of rooms Label
                 qtyRoomsLab = tk.Label(frame1, text="How many rooms are available? :")
                 qtyRoomsLab.grid(row=1, column=0, pady=30, padx=5, sticky=tk.E)
 
                 # Quantity of Rooms Selector
-                qtyRooms = tk.Scale(frame1, from_=1, to=10, orient=tk.HORIZONTAL)
+                qtyRooms = tk.Scale(frame1, from_=0, to=10, orient=tk.HORIZONTAL)
                 qtyRooms.configure(length=127)
                 qtyRooms.set(qty)  # Inserting the already existing value
                 qtyRooms.grid(row=1, column=1, padx=(15, 30), pady=25, sticky=tk.W)
 
                 # Room Rate Label
-                roomRateLab = tk.Label(frame1, text="Rate({}): ".format("\u20B9"))  # "\u20B9" -> rupees symbol
+                roomRateLab = tk.Label(frame1, text="Rate(\u20B9): ")  # "\u20B9" -> rupees symbol
                 roomRateLab.grid(row=1, column=2, pady=25, padx=(15, 0), sticky=tk.W)
 
                 # Room Rate Entry Box
@@ -1746,10 +1791,13 @@ def updateRoom():
                 taxRoom.insert(tk.END, str(tax))  # Inserting the already existing value
                 taxRoom.grid(row=2, column=1, padx=(15, 30), pady=15, sticky=tk.W)
 
-                # To send query to update room
-                def submitRoomUpdate():
+                def submitRoomUpdate() -> None:
+                    """
+                    Send the query to update the room details to the database
+                    :rtype: Nome
+                    """
 
-                    # Running query to update the room
+                    # Run query to update the room
                     queries.updateRoom(
                         updateRoomId,
                         int(qtyRooms.get()),
@@ -1758,27 +1806,32 @@ def updateRoom():
                     )
 
                     global_.updateStatus("Room Updated")
+                    # Update the status bar
 
-                    # Showing the success message
                     successMsgBox("Room Update", "Room Updated Successfully")
+                    # Show the success message
 
-                    # Running the function again
                     updateRoom()
+                    # Run the function again to update more rooms
 
                 # Update Button
                 submitCustomerDetails = tk.Button(frame1, text="Submit", width=length + 2, command=submitRoomUpdate)
                 submitCustomerDetails.grid(row=2, column=3, padx=(15, 0), pady=15)
 
-                # Key bind to submit on pressing return
-                def returnPressedInner(event):
+                def returnPressedInner(event: tk.Event) -> None:
+                    """
+                    Action to perform when return key is pressed when details are displayed
+                    :rtype: None
+                    """
+                    eventErrorHandler(event)
                     submitRoomUpdate()
-                    print(event)
 
-                for j in frame1.winfo_children():
-                    j.bind("<Return>", returnPressedInner)
+                for frame1_Children_inner in frame1.winfo_children():
+                    frame1_Children_inner.bind("<Return>", returnPressedInner)
 
-                # Dark Mode
                 if darkModeFlag:
+                    # Dark Mode
+
                     qtyRoomsLab.configure(bg="#2A2A2A", fg="#DADADA", padx=5)
                     qtyRooms.configure(bg="#2A2A2A", fg="#DADADA", highlightthickness=0, bd=0, troughcolor="#505050")
 
@@ -1796,16 +1849,20 @@ def updateRoom():
     submitButton.configure(width=length + 2)
     submitButton.grid(row=0, column=3, padx=(15, 0), pady=25, sticky=tk.W)
 
-    # Key bind to submit on pressing return
-    def returnPressed(event):
+    def returnPressed(event: tk.Event) -> None:
+        """
+        Action to perform when return key is pressed when details are not displayed
+        :rtype: None
+        """
+        eventErrorHandler(event)
         searchRoom()
-        print(event)
 
-    for i in frame1.winfo_children():
-        i.bind("<Return>", returnPressed)
+    for frame1_children in frame1.winfo_children():
+        frame1_children.bind("<Return>", returnPressed)
 
-    # Dark Mode
     if darkModeFlag:
+        # Dark Mode
+
         roomIdLab.configure(bg="#2A2A2A", fg="#DADADA")
         roomIdSelector.configure(bg="#505050", fg="#DADADA", highlightthickness=0, relief=tk.FLAT, borderwidth=3)
         roomIdSelector["menu"].config(bg="#555555", fg="#DADADA")
@@ -1813,30 +1870,35 @@ def updateRoom():
         submitButton.configure(bg="#505050", fg="#DADADA", bd=0, highlightthickness=0, pady=5, padx=8)
 
 
-# To display all the rooms
-def showRooms():
+def showRooms() -> None:
+    """
+    Display the details of all the rooms available
+    :rtype: None
+    """
     global_.updateStatus("Showing All Rooms")
+    # Update the status bar
 
-    # Changing the Title of the window
     root.title("Hotel Man - Show All Rooms")
+    # Change the Title of the window
 
-    # Clearing the frame
     clearFrame(frame1)
+    # Clear the frame
 
-    # Tuple of tuples containing info of all rooms
     rooms = queries.showRooms()
 
-    # If tuple is empty, no rooms found
     if not rooms:
+        # If tuple is empty, no rooms found
 
-        # Displaying the error
         errorMsgBox("Search", "No Rooms Found")
+        # Display the error
+
         addRoom()
+        # Run the addRoom function so that rooms can be added
 
-    # Rooms Found, Displaying the table
     else:
+        # Rooms Found, Display the table
 
-        # Headings
+        """Headings"""
         # Id
         roomHeading = tk.Label(
             frame1,
@@ -1887,95 +1949,89 @@ def showRooms():
             pady=8)
         taxHeading.grid(row=0, column=4, sticky=tk.NSEW, pady=(100, 0))
 
-        # j is row number
-        j = 1
-
         # Loop to display all the room's information
-        for i in rooms:
 
+        row_number = 1
+        for room_data in rooms:
+
+            # Retrieve room name using roomId
             showRoomId = ""
-            # Retrieving room name using roomId
-            if i[0] == "DA":
+            if room_data[0] == "DA":
                 showRoomId = "Deluxe"
-            elif i[0] == "NA":
+            elif room_data[0] == "NA":
                 showRoomId = "Normal"
-            elif i[0] == "NN":
+            elif room_data[0] == "NN":
                 showRoomId = "Normal"
-            elif i[0] == "SA":
+            elif room_data[0] == "SA":
                 showRoomId = "Suite"
 
             acStatus = ""
 
-            # Retrieving AC Status
-            if i[1] == "y":
+            # Retrieve AC Status
+            if room_data[1] == "y":
                 acStatus = "Yes"
-            elif i[1] == "n":
+            elif room_data[1] == "n":
                 acStatus = "No"
 
-            # Quantity of room vacant
-            qty = i[2]
-
-            # Rate of room
-            rate = i[3]
-
-            # Room tax
-            tax = i[4]
-
             # Room Id
-            idRoom = tk.Label(
+            idRoomContentLabel = tk.Label(
                 frame1,
                 text=showRoomId,
                 relief=tk.GROOVE,
                 padx=20,
                 pady=8)
-            idRoom.grid(row=j, column=0, sticky=tk.NSEW, padx=(125, 0))
+            idRoomContentLabel.grid(row=row_number, column=0, sticky=tk.NSEW, padx=(125, 0))
 
             # AC room?
-            acRoom = tk.Label(
+            acRoomContentLabel = tk.Label(
                 frame1,
                 text=acStatus,
                 relief=tk.GROOVE,
                 padx=20,
                 pady=8)
-            acRoom.grid(row=j, column=1, sticky=tk.NSEW)
+            acRoomContentLabel.grid(row=row_number, column=1, sticky=tk.NSEW)
 
             # Quantity of rooms empty
-            qtyRoom = tk.Label(
+            qtyRoomContentLabel = tk.Label(
                 frame1,
-                text=str(qty),
+                text=str(room_data[2]),
                 relief=tk.GROOVE,
                 padx=20,
                 pady=8)
-            qtyRoom.grid(row=j, column=2, sticky=tk.NSEW)
+            qtyRoomContentLabel.grid(row=row_number, column=2, sticky=tk.NSEW)
 
             # Rate of each room
-            rateRoom = tk.Label(
+            rateRoomContentLabel = tk.Label(
                 frame1,
-                text="\u20B9" + str(rate),
+                text="\u20B9" + str(room_data[3]),
                 relief=tk.GROOVE,
                 padx=20,
                 pady=8)
-            rateRoom.grid(row=j, column=3, sticky=tk.NSEW)  # "\u20B9" -> rupees symbol
+            rateRoomContentLabel.grid(row=row_number, column=3, sticky=tk.NSEW)  # "\u20B9" -> rupees symbol
 
             # Tax of rooms
-            taxRoom = tk.Label(
+            taxRoomContentLabel = tk.Label(
                 frame1,
-                text=str(tax),
+                text=str(room_data[4]),
                 relief=tk.GROOVE,
                 padx=20,
                 pady=8)
-            taxRoom.grid(row=j, column=4, sticky=tk.NSEW)
+            taxRoomContentLabel.grid(row=row_number, column=4, sticky=tk.NSEW)
 
-            j += 1
+            row_number += 1
 
             if darkModeFlag:
-                idRoom.configure(bg="#4F4F4F", fg="#DADADA", bd=0)
-                acRoom.configure(bg="#4F4F4F", fg="#DADADA", bd=0)
-                qtyRoom.configure(bg="#4F4F4F", fg="#DADADA", bd=0)
-                rateRoom.configure(bg="#4F4F4F", fg="#DADADA", bd=0)
-                taxRoom.configure(bg="#4F4F4F", fg="#DADADA", bd=0)
+                # Dark Mode
+
+                idRoomContentLabel.configure(bg="#4F4F4F", fg="#DADADA", bd=0)
+                acRoomContentLabel.configure(bg="#4F4F4F", fg="#DADADA", bd=0)
+                qtyRoomContentLabel.configure(bg="#4F4F4F", fg="#DADADA", bd=0)
+                rateRoomContentLabel.configure(bg="#4F4F4F", fg="#DADADA", bd=0)
+                taxRoomContentLabel.configure(bg="#4F4F4F", fg="#DADADA", bd=0)
 
         if darkModeFlag:
+            # Dark Mode
+
             roomHeading.configure(bg="#404040", fg="#DADADA", bd=0)
             acHeading.configure(bg="#404040", fg="#DADADA", bd=0)
             qtyHeading.configure(bg="#404040", fg="#DADADA", bd=0)
@@ -1983,26 +2039,33 @@ def showRooms():
             taxHeading.configure(bg="#404040", fg="#DADADA", bd=0)
 
 
-# To be run when clicked submit on sign in screen
-def submitted():
-    # To use throughout the function
+def submitted() -> None:
+    """
+    Display the main screen with all the options available for the access mode in which the user enters
+    :rtype: None
+    """
     global frame1
 
-    # If sign in successful
     if global_.condition == 1:
+        # If sign in was successful
 
         global_.updateStatus("Connection Successful")
+        # Update the status bar
 
         imgLabel.destroy()
+        # Destroy the logo displayed on the welcome screen
+
         logInButton.destroy()
+        # Destroy the log-in button displayed on the welcome screen
+
         darkModeButton.destroy()
+        # Destroy the dark mode button on the welcome screen
 
-        # To set the size of the main screen
         root.geometry("1050x700")
-        img = tk.PhotoImage(file="Assets/LogoBlackNameSmall.png")
-        imgDark = tk.PhotoImage(file="Assets/LogoWhiteNameSmall.png")
+        # Set the size of the main screen
 
-        # Placing all the options and frames
+        """Place all the options and frames"""
+        # The main window inside which all the content is placed
         workingWindow = tk.Frame(root, bd=0)
         workingWindow.pack(fill=tk.X, ipadx=20)
 
@@ -2010,14 +2073,19 @@ def submitted():
         frame0 = tk.LabelFrame(workingWindow, pady=50, bd=0)
         frame0.pack(side=tk.LEFT, padx=(10, 10), pady=0)
 
-        # Display the logo on top
+        imgLight = tk.PhotoImage(file="Assets/LogoBlackNameSmall.png")
+        # Load the logo image which will be displayed on the main screen when in light mode
+
+        # Display the logo on top-right corner
         my_canvas = tk.Canvas(frame0)
-        my_canvas.create_image(0, 0, anchor=tk.NW, image=img)
+        my_canvas.create_image(0, 0, anchor=tk.NW, image=imgLight)
         my_canvas.place(x=15, y=0)
 
-        # Customer Options Frame
+        # Customer Options Frame, contains buttons related to the customers
         frame01 = tk.LabelFrame(frame0, text="Customer", pady=10, padx=10)
         frame01.grid(row=1, column=0, pady=(100, 30), padx=10, columnspan=2)
+
+        """Place customer option buttons on frame01"""
 
         # Button to CheckIn
         button011 = tk.Button(frame01, text="Check In", width=15, command=checkIn)
@@ -2039,19 +2107,21 @@ def submitted():
         button015 = tk.Button(frame01, text="Show All", width=15, command=showCustomers)
         button015.pack(pady=3)
 
-        # Room Options
+        # Room Options frame, contains buttons related to the rooms
         frame02 = tk.LabelFrame(frame0, text="Rooms", pady=10, padx=10)
 
         if global_.accessLevel == "User":
-            # For better placement
+            # Rooms option will not be displayed
+            # Change the placement of the customer frame to be centered
             frame01.grid(row=0, column=0, pady=130, padx=10, columnspan=2)
 
-        # To display the rooms options
         elif global_.accessLevel == "Admin":
+            # Rooms option will be displayed
 
-            # Room Options
+            # Place the room options frame
             frame02.grid(row=2, column=0, pady=30, padx=10, columnspan=2)
 
+            """Place the room option buttons on frame02"""
             # Button to add rooms
             button021 = tk.Button(frame02, text="Add", width=15, command=addRoom)
             button021.pack(pady=3)
@@ -2064,17 +2134,20 @@ def submitted():
             button023 = tk.Button(frame02, text="Show All", width=15, command=showRooms)
             button023.pack(pady=3)
 
-        # Function to sign out
-        def signOut():
+        def signOut() -> None:
+            """
+            End the connection with the database and close the window and then start the application again
+            :rtype: None
+            """
 
-            # Sign out of MySQL
             queries.endConn()
+            # Sign out of MySQL
 
-            # To close the current window and the logo canvas
             root.destroy()
+            # Close the window
 
-            # To start the file again
-            os.system("python main.py")
+            os.system("HotelMan.exe")
+            # Start the file again
 
         # Display the sign out button
         signOutButton = tk.Button(frame0, text="Sign Out", command=signOut, width=10)
@@ -2084,26 +2157,40 @@ def submitted():
         exitButton = tk.Button(frame0, text="Exit", command=exitApplication, width=10)
         exitButton.grid(row=3, column=1, padx=(5, 10))
 
-        # Right Pane
+        # Right Pane, will display the options when a button is clicked
         frame1 = tk.LabelFrame(workingWindow, pady=150, padx=50, bd=0)
         frame1.pack(padx=10, side=tk.LEFT, fill=tk.BOTH, expand=True)
 
-        # Dark Mode
         if darkModeFlag:
+            # Dark Mode
+
             workingWindow.configure(bg="#2A2A2A")
             frame0.configure(bg="#2A2A2A")
+            # Background color of the bottom-most elements
 
             my_canvas.delete("all")
+            # Delete the already existing logo image
+
+            imgDark = tk.PhotoImage(file="Assets/LogoWhiteNameSmall.png")
+            # Load the logo image for dark mode
+
             my_canvas.create_image(0, 0, anchor=tk.NW, image=imgDark)
             my_canvas.configure(bg="#2A2A2A", bd=0, highlightthickness=0)
+            # Add the image for dark mode
 
             frame01.configure(bg="#2A2A2A", fg="#DADADA")
-            for i in frame01.winfo_children():
-                i.configure(bg="#505050", fg="#DADADA", bd=0, pady=3)
+            # Background of the customer options frame
+
+            # Background for the buttons of frame01 (customer information buttons)
+            for frame01_buttons in frame01.winfo_children():
+                frame01_buttons.configure(bg="#505050", fg="#DADADA", bd=0, pady=3)
 
             frame02.configure(bg="#2A2A2A", fg="#DADADA")
-            for i in frame02.winfo_children():
-                i.configure(bg="#505050", fg="#DADADA", bd=0, pady=3)
+            # Background of the rooms options frame
+
+            # Background for the buttons of frame02 (rooms information buttons)
+            for frame02_buttons in frame02.winfo_children():
+                frame02_buttons.configure(bg="#505050", fg="#DADADA", bd=0, pady=3)
 
             signOutButton.configure(bg="#505050", fg="#DADADA", bd=0, pady=5)
             exitButton.configure(bg="#505050", fg="#DADADA", bd=0, pady=5)
@@ -2112,46 +2199,48 @@ def submitted():
 
         root.mainloop()  # Canvas wont work without mainloop
 
-    # If connection to database was failed
     else:
+        # If connection to database was failed
 
         global_.updateStatus("Cannot Connect, Try Again")
+        # Update the status bar
 
-        # Display the error Message
         errorMsgBox("SignIn Error", "Failed to log in, try again")
-
-        # To start log in process just by pressing the return(enter) key
-        def returnPressedOuter_(event):
-            signIn()
-            print(event)
-
-        root.bind("<Return>", returnPressedOuter_)
+        # Display the error Message
 
 
-# To display sign in screen
-def signIn():
+def signIn() -> None:
+    """
+    Display the sign-in screen
+    :rtype: None
+    """
     global_.updateStatus("Connecting...")
+    # Update the status bar
 
-    # To stop getting the sign in screen everytime user presses enter(return) key
     root.unbind("<Return>")
+    # Stop getting the sign in screen everytime user presses enter(return) key
 
-    # To quit the program when escape key is pressed
-    def escapePressed(event):
+    def escapePressed(event: tk.Event) -> None:
+        """
+        Escape the program if the esc key is pressed
+        :rtype: None
+        """
         exitApplication()
         print(event)
 
     root.bind("<Escape>", escapePressed)
 
     global_.accessLevel = "User"
+    # Default access level mode
 
-    # Tkinter new screen
     signInScreen = tk.Toplevel()
+    # Tkinter new pop-up screen
 
-    # Title for new screen
     signInScreen.title("Sign in")
+    # Title for new screen
 
-    # Sign in screen icon
     signInScreen.iconbitmap("./Assets/LogoBlack.ico")
+    # Sign in screen icon
 
     # Frame for username
     userNameFrame = tk.Frame(signInScreen, pady=5)
@@ -2178,8 +2267,11 @@ def signIn():
     pWord = tk.Entry(passwordFrame, show="*", justify=tk.CENTER)
     pWord.grid(row=0, column=1)
 
-    # To Toggle password View
-    def togglePasswordView():
+    def togglePasswordView() -> None:
+        """
+        Toggle the content of the password entry box from text to * and vice versa
+        :rtype: None
+        """
         if pWord.cget("show") == "*":
             pWord.configure(show="")
         else:
@@ -2189,57 +2281,69 @@ def signIn():
     togglePassword = tk.Button(signInScreen, text="Toggle Password View", command=togglePasswordView)
     togglePassword.pack(pady=(10, 0))
 
-    # Function for Button to sign in
-    def submit():
+    def submit() -> None:
+        """
+        Try and Sign-in the user
+        """
 
-        # Get and store the username the user entered
         global_.username = uname.get()
+        # Username that the user entered
 
-        # Get and store the password the user entered
         global_.password = pWord.get()
+        # Password that the user entered
 
-        # Initialize the database
         sqlInit.createDbAndTables()
+        # Initialize the database
 
-        # Closing the sign in screen automatically
         signInScreen.destroy()
+        # Close the sign in screen
 
-        # Displaying all the options(checkIn, checkOut...)
         submitted()
+        # Displaying all the options(checkIn, checkOut...)
 
     # SignIn Button
     but = tk.Button(signInScreen, text="Sign In", command=submit)
     but.pack(pady=(10, 0))
 
-    # Vertical Padding of the popup screen
     signInScreen.configure(pady=50)
+    # Vertical Padding of the Sign-in screen
 
-    # Dimensions of the SignIn screen
     signInScreen.geometry("500x230")
+    # Dimensions of the Sign-in screen
 
-    # To automatically focus on the pop up screen
     signInScreen.focus_force()
+    # Automatically focus on the pop up screen
 
-    # To change the mode to admin mode
-    def enterAdmin(event):
+    def enterAdmin(event: tk.Event) -> None:
+        """
+        Change the access level if the user clicks the key combination
+        :rtype: None
+        """
+        eventErrorHandler(event)
         global_.accessLevel = "Admin"
-        print(event.char)
         signInScreen.title("Sign in (Admin)")
 
-    # To enter the admin log in mode when user presses alt+8
     signInScreen.bind("<Alt-KeyPress-8>", enterAdmin)
+    # To enter the admin log in mode when user presses alt+8
 
-    # Key bind to submit on pressing return
-    def returnPressed(event):
+    def returnPressed(event: tk.Event) -> None:
+        """
+        Run submit() when return key is pressed
+        """
+        eventErrorHandler(event)
         submit()
-        print(event)
 
     signInScreen.bind("<Return>", returnPressed)
 
     if darkModeFlag:
-        # Dark
+        # Dark Mode
+
         signInScreen.configure(bg="#333333")
+        # Change background color of the sign-in screen pop-up
+
         signInScreen.iconbitmap("./Assets/LogoColor.ico")
+        # Change the icon color
+
         signInScreen.geometry("500x250")
 
         userNameFrame.configure(bg="#333333")
@@ -2255,8 +2359,7 @@ def signIn():
         but.configure(bd=0, bg="#555555", fg="#DADADA", padx=8, pady=5)
 
 
-# Logo image
-logoImgDark = ImageTk.PhotoImage(Image.open("./Assets/LogoWhiteName.png"))
+# Logo image to be displayed on the welcome screen
 logoImg = ImageTk.PhotoImage(Image.open("./Assets/LogoBlackName.png"))
 imgLabel = tk.Label(image=logoImg)
 imgLabel.pack()
@@ -2266,20 +2369,25 @@ logInButton = tk.Button(root, text="Log In", command=signIn)
 logInButton.pack(pady=(20, 0))
 
 
-# Enable Dark Mode
-def darkMode():
+def darkMode() -> None:
+    """
+    Start the dark mode
+    """
     global darkModeFlag
     darkModeFlag = True
 
     root.configure(bg="#2A2A2A")
     root.iconbitmap("./Assets/LogoColor.ico")
+    # Change the icon
 
+    logoImgDark = ImageTk.PhotoImage(Image.open("./Assets/LogoWhiteName.png"))
     imgLabel.configure(bg="#2A2A2A", image=logoImgDark)
     logInButton.configure(bd=0, bg="#505050", fg="#DADADA", padx=8, pady=5)
     global_.statusBar.configure(bg="#343434", fg="#DADADA", bd=0)
 
     darkModeButton.configure(bd=0, bg="#505050", fg="#DADADA", padx=8, pady=5)
     darkModeButton.configure(state=tk.DISABLED)
+    # Cannot turn the dark mode on again
 
 
 # Button to enable dark mode
@@ -2288,19 +2396,19 @@ darkModeButton.pack(pady=(20, 10))
 
 # Status Bar
 global_.statusBar = tk.Label(root, text="Welcome", relief=tk.SUNKEN, anchor=tk.E, padx=10, height=2)
-
 global_.statusBar.pack(side=tk.BOTTOM, fill=tk.X)
 
 
-# To start log in process just by pressing the return(enter) key
-
-
-def returnPressedOuter(event):
+def returnPressedOuter(event: tk.Event) -> None:
+    """
+    Start the sign in when return is pressed on the welcome screen
+    :rtype: None
+    """
+    eventErrorHandler(event)
     signIn()
-    print(event)
 
 
 root.bind("<Return>", returnPressedOuter)
 
-# Start the main screen
 root.mainloop()
+# Start the main screen

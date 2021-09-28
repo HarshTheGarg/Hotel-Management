@@ -134,7 +134,6 @@ def searchCustomer(customerId: str, caller: str = "notFind") -> int:
         # Check all customerIds in a loop
 
         if resCustomerId[0] == customerId:
-
             return 1
             # customerId found
 
@@ -382,7 +381,7 @@ def calcPrice(customerId: str, outDate: datetime.date) -> int:
     # .days() to get as int
     # No of days
 
-    return rate*noOfDays
+    return rate * noOfDays
 
 
 def addRoom(roomId: str, ac: str, qty: int, rate: int, tax: float) -> int:
@@ -540,8 +539,12 @@ def endConn() -> None:
     Close the MySQL connection before exiting
     :rtype: None
     """
-    global_.cur.close()
-    # Close the cursor
+    try:
+        global_.cur.close()
+        # Close the cursor
 
-    global_.conn.close()
-    # Close the connection
+        global_.conn.close()
+        # Close the connection
+
+    except AttributeError:
+        pass
