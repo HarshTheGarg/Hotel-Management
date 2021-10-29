@@ -8,9 +8,9 @@ from twilio.rest import Client  # API Client which sends the sms
 # To use environment variables
 import os
 
-sid = os.environ['TWILIO_ACCOUNT_SID']
-auth_token = os.environ['TWILIO_AUTH_TOKEN']
-
+with open("info.txt", "r") as infoFile:
+    sid = infoFile.readline()
+    auth_token = infoFile.readline()
 
 def sendOTP(otp: int, number: str) -> None:
     """
