@@ -10,18 +10,11 @@ import global_  # Importing the variables file
 
 def estConnect() -> None:
     """
-    Establish the connection with the MySQL server
+    Establish the connection with the MySQL server at 100.70.172.242
     :rtype: None
     """
-
-    # Getting the ip address of the server
-    with open("info.txt") as infoFile:
-        infoFile.readline()
-        infoFile.readline()
-        add = infoFile.readline()
-
     try:
-        global_.conn = sql.connect(host=add, user=global_.username, password=global_.password)
+        global_.conn = sql.connect(host="100.70.172.242", user=global_.username, password=global_.password)
         # Connect to the MySQL server
 
         # Check If Connection Was Successful

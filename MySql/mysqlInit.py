@@ -54,8 +54,7 @@ def createDbAndTables() -> None:
             # Use the database
 
         # If any error in creating/using the database
-        except MySql.mysqlConn.sql.Error as e:
-            print(e)
+        except MySql.mysqlConn.sql.Error:
 
             global_.condition = 0
 
