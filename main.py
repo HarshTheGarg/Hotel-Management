@@ -88,7 +88,7 @@ def intCheck(text: str) -> int:
 
 def lenCheck(text: str, length: int) -> int:
     """
-    Check if correct number of digits are entered for aadhaar and mobile number)
+    Check if correct number of digits are entered for aadhaar and mobile number
     :param text: Entered Value
     :param length: Expected Length
     :rtype: int
@@ -194,7 +194,7 @@ def checkIn() -> None:
     # Customer Name Entry Box
     customerName = tk.Entry(frame1, width=30, justify=tk.CENTER)
     customerName.grid(row=0, column=1, padx=(15, 30), pady=25, sticky=tk.W)
-    customerName.focus_set()  # Auto focus on first entry box
+    customerName.focus_set()  # Autofocus on first entry box
 
     # Customer Aadhaar Label
     customerAadhaarLab = tk.Label(frame1, text="Customer's Aadhaar Number:")
@@ -212,7 +212,7 @@ def checkIn() -> None:
     customerMobile = tk.Entry(frame1, width=30, justify=tk.CENTER)
     customerMobile.grid(row=1, column=1, padx=(15, 30), pady=25, sticky=tk.W)
 
-    # Customer Room Id Label
+    # Customer Room ID Label
     customerRoomIdLab = tk.Label(frame1, text="Room Type: ")
     customerRoomIdLab.grid(row=1, column=2, pady=25, padx=5, sticky=tk.E)
 
@@ -230,7 +230,7 @@ def checkIn() -> None:
     room.set("Select")
     # Set default value to be displayed
 
-    # To display the drop down menu
+    # To display the drop-down menu
     customerRoomId = tk.OptionMenu(frame1, room, *roomNames)
     customerRoomId.grid(row=1, column=3, padx=(15, 0), pady=25, sticky=tk.W)
 
@@ -421,7 +421,7 @@ def checkIn() -> None:
                     # Dimensions of the SignIn screen
 
                     otpScreen.focus_force()
-                    # To automatically focus on the pop up screen
+                    # To automatically focus on the pop-up screen
 
                     if darkModeFlag:
                         # Dark Mode
@@ -489,7 +489,7 @@ def updateCustomer() -> None:
     clearFrame(frame1)
     # Clearing the frame
 
-    # Select Customer Id Label
+    # Select Customer ID Label
     customerIdLab = tk.Label(frame1, text="Enter Customer Id:")
     customerIdLab.grid(row=0, column=0, pady=30, padx=5, sticky=tk.E)
 
@@ -674,11 +674,11 @@ def checkOut() -> None:
     clearFrame(frame1)
     # Clear the frame
 
-    # Select Customer Id Label
+    # Select Customer ID Label
     customerIdLab = tk.Label(frame1, text="Enter Customer Id:")
     customerIdLab.grid(row=0, column=0, pady=30, padx=5, sticky=tk.E)
 
-    # Customer Id Entry Box
+    # Customer ID Entry Box
     customerId = tk.Entry(frame1, justify=tk.CENTER)
     customerId.grid(row=0, column=1, padx=(15, 30), pady=25, sticky=tk.W)
     customerId.focus_set()
@@ -858,11 +858,11 @@ def findCustomer() -> None:
     clearFrame(frame1)
     # Clear the frame
 
-    # Select Customer Id Label
+    # Select Customer ID Label
     customerIdLab = tk.Label(frame1, text="Enter Customer Id:")
     customerIdLab.grid(row=0, column=0, pady=30, padx=5, sticky=tk.E)
 
-    # Customer Id Entry Box
+    # Customer ID Entry Box
     customerId = tk.Entry(frame1, justify=tk.CENTER)
     customerId.grid(row=0, column=1, padx=(15, 30), pady=25, sticky=tk.W)
     customerId.focus_set()
@@ -1115,7 +1115,7 @@ def showCustomers() -> None:
                 # Add spaces in mobile number for better readability
 
                 """Contents"""
-                # Customer Id
+                # Customer ID
                 customerIdContentLabel = tk.Label(
                     frame12,
                     text=customer_data[0],
@@ -1296,7 +1296,7 @@ def showCustomers() -> None:
                 if checkOutDate is None:
                     checkOutDate = "-"
 
-                # Customer Id
+                # Customer ID
                 customerIdContentLabel = tk.Label(
                     frame12,
                     text=customer[0],
@@ -1406,7 +1406,7 @@ def showCustomers() -> None:
                     customerData = [data[0]] + [data[1]] + ["'" + str(data[2])] + [data[3]] + \
                                    [roomType] + [str(data[5])] + [str(data[6])] + [data[7]] + \
                                    [str(data[8])] + [str(float(data[9]))]
-                    # ' is added before aadhaar number so that all the digits are displayed in excel
+                    # ' is added before aadhaar number so that all the digits are displayed in Excel
 
                     finalData += [customerData]
 
@@ -1459,7 +1459,7 @@ def addRoom() -> None:
     roomIdLab = tk.Label(frame1, text="Select Room Type:")
     roomIdLab.grid(row=0, column=0, pady=15, padx=5, sticky=tk.E)
 
-    # Room Id Option Menu
+    # Room ID Option Menu
     room = tk.StringVar()  # Tkinter string data type
 
     # List of room options
@@ -1679,7 +1679,7 @@ def updateRoom() -> None:
     # Length of the word with max length
 
     room = tk.StringVar()  # Tkinter string data type
-    # Room Id Option Menu
+    # Room ID Option Menu
 
     room.set("Select")
     # Set default value for Room Selector
@@ -1950,7 +1950,7 @@ def showRooms() -> None:
             elif room_data[1] == "n":
                 acStatus = "No"
 
-            # Room Id
+            # Room ID
             idRoomContentLabel = tk.Label(
                 frame1,
                 text=showRoomId,
@@ -2289,7 +2289,7 @@ def signIn() -> None:
     # Dimensions of the Sign-in screen
 
     signInScreen.focus_force()
-    # Automatically focus on the pop up screen
+    # Automatically focus on the pop-up screen
 
     def enterAdmin(event: tk.Event) -> None:
         """
