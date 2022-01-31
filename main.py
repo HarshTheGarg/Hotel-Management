@@ -1440,12 +1440,6 @@ def showCustomers() -> None:
             myCanvas.configure(bg="#2A2A2A", bd=0, highlightthickness=0)
             frame12.configure(bg="#2A2A2A", bd=0, padx=5)
 
-            """style = ttk.Style()
-            print(style.theme_names())
-            print(style.element_options("Vertical.TScrollbar.trough"))
-            style.theme_use('alt')
-            style.configure("Vertical.TScrollbar", troughcolor="#505050")"""
-
 
 def addRoom() -> None:
     """
@@ -1530,7 +1524,7 @@ def addRoom() -> None:
 
     # Tax of rooms Label
     taxRoomsLab = tk.Label(frame1, text="Room Tax (%):")
-    taxRoomsLab.grid(row=2, column=0, pady=15, padx=5, sticky=tk.E)
+    taxRoomsLab.grid(row=2, column=0, pady=20, padx=5, sticky=tk.E)
 
     # Tax entry box
     taxRoom = tk.Entry(frame1, justify=tk.CENTER)
@@ -2132,7 +2126,7 @@ def submitted() -> None:
             os.system("HotelMan.exe")
             # Start the file again
 
-        # Display the sign out button
+        # Display the sign-out button
         signOutButton = tk.Button(frame0, text="Sign Out", command=signOut, width=10)
         signOutButton.grid(row=3, column=0, padx=(10, 5))
 
@@ -2180,7 +2174,7 @@ def submitted() -> None:
 
             frame1.configure(bg="#2A2A2A", fg="#DADADA")
 
-        root.mainloop()  # Canvas wont work without mainloop
+        root.mainloop()  # Canvas won't work without mainloop
 
     else:
         # If connection to database was failed
@@ -2209,7 +2203,7 @@ def signIn() -> None:
         :rtype: None
         """
         exitApplication()
-        print(event)
+        eventErrorHandler(event)
 
     root.bind("<Escape>", escapePressed)
 
@@ -2365,6 +2359,8 @@ def darkMode() -> None:
 
     logoImgDark = ImageTk.PhotoImage(Image.open("./Assets/LogoWhiteName.png"))
     imgLabel.configure(bg="#2A2A2A", image=logoImgDark)
+    imgLabel.image = logoImgDark
+    imgLabel.pack()
     logInButton.configure(bd=0, bg="#505050", fg="#DADADA", padx=8, pady=5)
     global_.statusBar.configure(bg="#343434", fg="#DADADA", bd=0)
 

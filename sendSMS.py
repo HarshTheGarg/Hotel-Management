@@ -24,7 +24,7 @@ def sendOTP(otp: int, number: str) -> None:
 
     client.messages.create(body=f"\nYour OTP is: {otp}\n"
                                 f"Please do not share with anyone",
-                           from_="+18453932470",
+                           from_="+17655776220",
                            to=f"+91{number}"
                            )
     # Sending the message
@@ -61,7 +61,7 @@ def sendWelcomeSMS(
                                 f"Your CustomerId is {customerId} "
                                 f"and you are staying in a {roomType} room\n"
                                 f"(Rate -> \u20B9{rate} Tax -> {tax}%)",
-                           from_="+18453932470",
+                           from_="+17655776220",
                            to=f"+91{number}"
                            )
     # Sending the message
@@ -90,7 +90,7 @@ def sendByeSMS(name: str, price: int, tax: float, number: str) -> None:
                                 f"Please pay \u20B9 {round(priceFinal, 0)} at the reception\n"
                                 f"You can ask for a copy of the receipt at the reception.\n"
                                 f"Thank you, Please visit again",
-                           from_="+18453932470",
+                           from_="+17655776220",
                            to=f"+91{number}"
                            )
     # Sending the message
